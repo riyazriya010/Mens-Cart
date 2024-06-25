@@ -1,0 +1,174 @@
+<%- include('../userPartials/header') %>
+
+<style>
+     body {
+      background-color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .breadcrumb-item+.breadcrumb-item::before {
+      content: ">";
+    }
+
+    .coll-1,
+    .coll-2,
+    .coll-3 {
+      border: 1px solid rgb(234, 234, 234);
+    }
+
+    .payment-option {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .payment-option input {
+      margin-right: 10px;
+    }
+
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    
+
+    .step-indicator span {
+      
+      margin: 0 15px;
+    }
+
+    .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 100%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+</style>
+
+<body>
+    
+    
+  <!---- step indicator ---->
+  <div class="container mt-2">
+    <div class="step-indicator">
+      <h6 style="color: black;">Address</h6>
+      <span style="color: black;">>>>></span>
+      <h6 style="color: black;">Payment</h6>
+      <span style="color: rgb(188, 187, 187);">>>>></span>
+      <h6 style="color: rgb(188, 187, 187);">Place Order</h6>
+    </div>
+  </div>
+
+
+  
+  <!---- main content ----->
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="coll-1 col-lg-6 p-4">
+        <div class="text-center">
+          <h3>Payment Method</h3>
+          <hr>
+          <form id="paymentForm">
+            <div class="payment-option">
+                <input type="radio" name="paymentMethod" id="cod" value="Cash On Delivery">
+                <label for="cod">Cash On Delivery</label>
+            </div>
+            <div class="payment-option">
+                <input type="radio" name="paymentMethod" id="paypal" value="PayPal">
+                <label for="paypal">PayPal</label>
+            </div>
+            <div class="payment-option">
+                <input type="radio" name="paymentMethod" id="wallet" value="Wallet">
+                <label for="wallet">Wallet</label>
+            </div>
+            <button type="submit" class="full-width-button mt-4">Continue</button>
+        </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+    <%- include('../userPartials/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+       document.getElementById('paymentForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const paymentMethods = document.getElementsByName('paymentMethod');
+            let selectedPaymentMethod = null;
+
+            for (let method of paymentMethods) {
+                if (method.checked) {
+                    selectedPaymentMethod = method.value;
+                    break;
+                }
+            }
+            console.log(selectedPaymentMethod);
+
+            if (!selectedPaymentMethod) {
+                // No payment method selected, show SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'No Payment Method Selected',
+                    text: 'Please select a payment method before continuing.',
+                });
+            } else {
+
+                fetch(`/checkout/paymentSelected?method=${selectedPaymentMethod}`, {
+                    method: 'POST',
+                })
+                .then(response => response.json())
+                .then(data => {
+                  if(!data.success && data.CODNotAllowd){
+                    Swal.fire({
+                            icon: 'info',
+                            title: 'Cash On Delivery',
+                            text: 'More than ₹1000 COD not allowed!',
+                        }).then(() => {
+                            // window.location.href = '/checkout/payment'; // Redirect to a success page
+                            $('#paymentForm').load('/checkout/payment #paymentForm > *');
+                        });
+                   }else if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Payment Method Selected',
+                            text: 'Your order has been processed successfully!',
+                        }).then(() => {
+                            window.location.href = '/checkout/placeOrder'; // Redirect to a success page
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Payment Error',
+                            text: data.message || 'There was an error processing your payment.',
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Payment Error',
+                        text: 'There was an error processing your payment.',
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>

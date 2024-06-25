@@ -1,0 +1,424 @@
+<%- include('../adminPartials/header') %>
+
+  <style>
+
+.full-width-Add {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 20%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+
+        .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 100%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+        .full-width-modal {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 40%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+  </style>
+
+  <body>
+
+
+    <!---- mian content ----->
+    <div class="container mt-4">
+
+      <div class="row">
+        <div class="col">
+
+          <button class="full-width-Add mb-2" data-bs-toggle="modal" data-bs-target="#addCategoryOfferModal">Add
+            New Category Offer</button>
+
+          <div class="row mb-2">
+            <div class="col-6">
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col">
+              <div class="table-responsive">
+                <table class="table table-hover text-center">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Category Name</th>
+                      <th>Offer Percentage</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>Current Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    <% for(i=0; i<categoryOfferData.length; i++) { %>
+                      <tr>
+                        <td>
+                          <%= categoryOfferData[i].categoryName %>
+                        </td>
+                        <td>
+                          <%= categoryOfferData[i].categoryOfferPercentage %>%
+                        </td>
+                        <td>
+                          <%= categoryOfferData[i].startDate.toLocaleDateString('en-US', { year: 'numeric' ,
+                            month: '2-digit' , day: '2-digit' }) %>
+                        </td>
+                        <td>
+                          <%= categoryOfferData[i].endDate.toLocaleDateString('en-US', { year: 'numeric' ,
+                            month: '2-digit' , day: '2-digit' }) %>
+                        </td>
+                        <td>
+                          <%= categoryOfferData[i].currentStatus %>
+                        </td>
+                        <td>
+                          <button type="button" class="full-width-button" data-bs-toggle="modal"
+                            data-bs-target="#editModal<%= i %>">Edit</button>
+                        </td>
+                      </tr>
+
+                      <% } %>
+                  </tbody>
+
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <!------- pagination ----->
+      <nav aria-label="pagination">
+        <ul class="pagination justify-content-center">
+          <% if (currentPage> 1) { %>
+            <li class="page-item">
+              <a href="?page=<%= currentPage - 1 %>" class="page-link" aria-label="Previous"
+                style="background-color: black;">
+                <span aria-hidden="true" style="color: white;">&laquo;</span>
+              </a>
+            </li>
+            <% } else { %>
+              <li class="page-item disabled">
+                <a href="#" class="page-link" aria-label="Previous" style="background-color: black;">
+                  <span aria-hidden="true" style="color: white;">&laquo;</span>
+                </a>
+              </li>
+              <% } %>
+
+                <% for (let i=1; i <=totalPages; i++) { %>
+                  <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                    <a href="?page=<%= i %>" class="page-link" <% if (currentPage===i) { %>
+                      style="background-color: #a49b9b; color: white;"
+                      <% } else { %>
+                        style="color: black;"
+                        <% } %>><%= i %>
+                    </a>
+                  </li>
+                  <% } %>
+
+                    <% if (currentPage < totalPages) { %>
+                      <li class="page-item">
+                        <a href="?page=<%= currentPage + 1 %>" class="page-link" aria-label="Next"
+                          style="background-color: black;">
+                          <span aria-hidden="true" style="color: white;">&raquo;</span>
+                        </a>
+                      </li>
+                      <% } else { %>
+                        <li class="page-item disabled">
+                          <a href="#" class="page-link" aria-label="Next" style="background-color: black;">
+                            <span aria-hidden="true" style="color: white;">&raquo;</span>
+                          </a>
+                        </li>
+                        <% } %>
+        </ul>
+      </nav>
+
+
+    </div>
+
+
+    <!--Category Offer Modal -->
+    <div class="modal fade" id="addCategoryOfferModal" tabindex="-1" aria-labelledby="addCategoryOfferModalLabel"
+      aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="addCategoryOfferModalLabel">Add Category Offer</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form id="addCategoryOfferForm" role="form">
+            <div class="modal-body">
+
+              <div class="input-group mb-3">
+                <label class="container">
+                  <label for="categoryName" class="mb-2">Category Name: </label>
+                  <select name="categoryName" id="categoryName" class="form-select">
+                    <% categoryData.forEach(category=> { %>
+                      <option value="<%= category.categoryName %>">
+                        <%= category.categoryName %>
+                      </option>
+
+                      <% }); %>
+                  </select>
+                </label>
+              </div>
+              <div class="offerPercentageInput p-2">
+                <label for="categoryOfferPercentage" class="mb-2">Category Offer
+                  Percentage: </label>
+                <div class="input-group">
+                  <input id="categoryOfferPercentage" name="categoryOfferPercentage" class="form-control"
+                    placeholder="Enter the offer percentage">
+                </div>
+                <div class="form-text">Choose a percentage to be discounted. Between 5%
+                  and 90%.</div>
+              </div>
+
+              <div class="startDateInput p-2">
+                <label for="categoryOfferStartDate">Offer Start Date: </label>
+                <div class="input-group">
+                  <input id="categoryOfferStartDate" name="categoryOfferStartDate" type="date" class="form-control">
+                </div>
+                <div class="form-text">Choose a start date for the offer to be
+                  considered.</div>
+              </div>
+
+              <div class="endDateInput p-2">
+                <label for="categoryOfferEndDate">Offer Expiry Date : </label>
+                <div class="input-group">
+                  <input id="categoryOfferEndDate" name="categoryOfferEndDate" type="date" class="form-control">
+                </div>
+                <div class="form-text">Choose an exipry date for offer to end.</div>
+              </div>
+
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button id="addCouponBtn" type="submit" class="full-width-modal">Save
+                changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!------ edit cat offer modal ----->
+    <!-- edit cat offer modal -->
+    <% categoryOfferData.forEach(function(categoryOffer, index) { %>
+      <div class="modal fade" id="editModal<%= index %>" tabindex="-1" aria-labelledby="modalLabel<%= index %>" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel<%= index %>">Edit Offer</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editCategoryOfferForm<%= index %>" role="form">
+              <div class="modal-body">
+                <!-- ... -->
+    
+                <div class="categoryName p-2">
+                  <label for="categoryName<%= index %>" class="mb-2">Category Name: </label>
+                  <div class="input-group">
+                    <input id="categoryName<%= index %>" name="categoryName" class="form-control"
+                    value="<%= categoryOffer.categoryName %>" disabled>
+                  </div>
+                </div>
+    
+                <div class="offerPercentageInput p-2">
+                  <label for="categoryOfferPercentage<%= index %>" class="mb-2">Category Offer Percentage: </label>
+                  <div class="input-group">
+                    <input id="categoryOfferPercentage<%= index %>" name="categoryOfferPercentage" class="form-control"
+                      placeholder="Enter the offer percentage" value="<%= categoryOffer.categoryOfferPercentage %>" required>
+                  </div>
+                  <div class="form-text">Choose a percentage to be discounted. Between 5% and 90%.</div>
+                </div>
+    
+                <div class="startDateInput p-2">
+                  <label for="startDate<%= index %>" class="mb-2">Offer Start Date: </label>
+                  <div class="input-group">
+                    <input id="startDate<%= index %>" name="startDate" type="date" class="form-control"
+                      value="<%= categoryOffer.startDate.toISOString().substring(0, 10) %>" required>
+                  </div>
+                  <div class="form-text">Choose a start date for the offer to be considered.</div>
+                </div>
+    
+                <div class="endDateInput p-2">
+                  <label for="endDate<%= index %>" class="mb-2">Offer Expiry Date : </label>
+                  <div class="input-group">
+                    <input id="endDate<%= index %>" name="endDate" type="date" class="form-control"
+                      value="<%= categoryOffer.endDate.toISOString().substring(0, 10) %>" required>
+                  </div>
+                  <div class="form-text">Choose an expiry date for offer to end.</div>
+                </div>
+    
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="editOfferBtn<%= index %>" type="submit" class="full-width-modal">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    
+      <script>
+        $(document).ready(function() {
+          $('#editCategoryOfferForm<%= index %>').validate({
+            rules: {
+              categoryOfferPercentage: {
+                required: true,
+                min: 5,
+                max: 90
+              },
+              startDate: {
+                required: true
+              },
+              endDate: {
+                required: true,
+                greaterThan: "#startDate<%= index %>"
+              }
+            },
+            messages: {
+              categoryOfferPercentage: {
+                required: "Please enter the category offer percentage",
+                min: "Category offer percentage must be at least 5%",
+                max: "Category offer percentage must be at most 90%"
+              },
+              startDate: "Please enter the start date",
+              endDate: {
+                required: "Please enter the end date",
+                greaterThan: "End date must be after the start date"
+              }
+            },
+            submitHandler: async function (form, event) {
+              event.preventDefault();
+              try {
+                const formData = {
+                  categoryName: form.categoryName.value,
+                  categoryOfferPercentage: form.categoryOfferPercentage.value,
+                  startDate: form.startDate.value,
+                  endDate: form.endDate.value,
+                  categoryOfferId: "<%= categoryOffer._id %>"
+                }
+    
+                const response = await fetch(`/admin/categoryOfferManagement/editOffer`, {
+                  method: 'PUT',
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(formData)
+                });
+                const data = await response.json();
+                 if (data.success) {
+                  await Swal.fire({
+                    title: 'Category Offer Edited Successfully',
+                    icon: 'success',
+                    showConfirmButton: false,
+                    timer: 1500
+                  });
+                  window.location.href = '/admin/categoryOffer';
+                } else {
+                  throw new Error('Category not found');
+                }
+              } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', error.message || 'There was a problem with your request.', 'error');
+              }
+            }
+          });
+    
+          $.validator.addMethod("greaterThan", function(value, element, params) {
+            if (!/Invalid|NaN/.test(new Date(value))) {
+              return new Date(value) > new Date($(params).val());
+            }
+            return isNaN(value) && isNaN($(params).val()) || (Number(value) > Number($(params).val()));
+          }, 'Must be greater than {0}.');
+        });
+      </script>
+    
+    <% }) %>
+
+
+
+
+        <%- include('../adminPartials/footer') %>
+
+
+
+          <script>
+            // const category = '
+            // const parsedData = JSON.parse(category)
+            // console.log(parsedData);
+            $(document).ready(function () {
+              $("#addCategoryOfferForm").validate({
+                rules: {
+                  categoryName: {
+                    required: true
+                  },
+                  categoryOfferPercentage: {
+                    required: true,
+                    min: 5,
+                    max: 90
+                  },
+                  categoryOfferStartDate: {
+                    required: true,
+                  },
+                  categoryOfferEndDate: {
+                    required: true,
+                  }
+                },
+                submitHandler: async function (form, event) {
+                  event.preventDefault()
+
+
+
+                  let formData = {
+                    // categoryId:fomr.categoryId.value,
+                    categoryName: form.categoryName.value,
+                    categoryOfferPercentage: form.categoryOfferPercentage.value,
+                    categoryOfferStartDate: form.categoryOfferStartDate.value,
+                    categoryOfferEndDate: form.categoryOfferEndDate.value
+                  }
+
+                  let response = await fetch('/admin/categoryOfferManagement/addOffer', {
+                    method: 'POST',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(formData)
+                  })
+
+                  let result = await response.json()
+
+                  if (result.success) {
+                    await Swal.fire({
+                      icon: "success",
+                      title: "Category offer succesfully added",
+                      showConfirmButton: false,
+                      timer: 1000
+                    }).then(() => location.reload())
+                  } else {
+                    await Swal.fire({
+                      icon: "error",
+                      title: "Product Offer Already Exists for This Product",
+                      text: "Please try editing the offer of this particular product",
+                    });
+                  }
+                }
+              });
+            });
+          </script>
+
+  </body>

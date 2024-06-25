@@ -1,0 +1,218 @@
+<%- include('../userPartials/header') %>
+
+<style>
+  body {
+    background-color: white;
+  }
+
+  .list {
+    text-decoration: none;
+    color: black;
+    margin-top: 10%;
+  }
+
+  .form-control[readonly] {
+    background-color: #e9ecef;
+    opacity: 1;
+  }
+
+  .referral-link {
+    margin-top: 20px;
+    text-align: center;
+  }
+
+  .referral-link a {
+    text-decoration: none;
+    color: #337ab7;
+  }
+
+  .referral-link a:hover {
+    color: #23527c;
+  }
+
+  .nav-sidebar {
+    background-color: #feffdf;
+    padding: 40px;
+    border-radius: 4px;
+    width: 250px;
+  }
+
+  .nav-sidebar .list-group {
+    margin-bottom: 0;
+  }
+
+  .nav-sidebar .list-group-item {
+    background-color: transparent;
+    border: none;
+    padding: 20px;
+    font-size: 18px;
+    color: black;
+  }
+
+  .nav-sidebar .list-group-item:hover {
+    background-color: #295f4e;
+    color: white;
+  }
+
+  .nav-sidebar .list-group-item.active {
+    background-color: #337ab7;
+    color: #fff;
+  }
+
+  .nav-sidebar .list-group-item.active:hover {
+    background-color: #23527c;
+  }
+  .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            border-radius: 2px;
+            width: 100%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+</style>
+
+<body>
+
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-lg-3 mb-4 nav-sidebar">
+        <h4 class=" mb-4" style="color: black;">My Account</h4>
+        <div class="list-group">
+          <a href="/order" class="list-group-item list">Orders</a>
+          <a href="/address" class="list-group-item list">My Address</a>
+          <a href="/wallet" class="list-group-item list">Wallet</a>
+          <a href="/wishlist" class="list-group-item list">Wishlist</a>
+          <a class="dropdown-item" href="/logout">
+            <button
+              style="
+                margin-top: 2%;
+                background-color: #295f4e;
+                border: 1px solid #295f4e;
+                border-radius: 4px;
+                color: white;
+                padding: 4%;
+              "
+            >
+              logout
+            </button>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-8">
+        <div class="card shadow-sm" id="user-profile">
+          <div class="card-body">
+            <h3 class="text-center mb-4">User Profile</h3>
+            <form id="userForm">
+              <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" id="username" value="<%= userData.username %>" />
+              </div>
+              <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" id="email" value="<%= userData.email %>" readonly />
+              </div>
+              <div class="mb-3">
+                <label for="phone" class="form-label">Phone</label>
+                <input type="tel" name="phone" class="form-control" id="phone" value="<%= userData.phone %>" />
+              </div>
+              <button type="submit" class="full-width-button">Save Changes</button>
+            </form>
+          </div>
+        </div>
+
+        <div class="row mt-3" style="margin-left: 2%;">
+          <input type="hidden" id="referralCode"
+              value="http://localhost:<%= process.env.PORT %>/signUp?referral= <%= userData.referralCode %> "
+              readonly>
+          <p onclick="copyReferralCode()"
+              style=" cursor: pointer; box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; padding: 25px 50px;">
+              <b class="text-success fw-700">Click here to get the referral link</b><br>
+              <b class="text-secondary fw-700">Refer your friends! Get Rs.500 added to your wallet for each new user</b>
+          </p>
+      </div>
+      
+      </div>
+
+    </div>
+    </div>
+
+
+    
+    <!------ referel code copying ----->
+    <script>
+      // Function to copy the referral code to clipboard
+      function copyReferralCode() {
+          const referralCodeValue = document.getElementById('referralCode').value;
+
+          const tempInput = document.createElement('input');
+          document.body.appendChild(tempInput);
+          tempInput.value = referralCodeValue;
+          tempInput.select();
+          document.execCommand('copy');
+          document.body.removeChild(tempInput);
+
+          // Optionally, you can show a notification to indicate the code has been copied
+          Swal.fire('Referral code copied to clipboard!');
+      }
+  </script>
+
+    <%- include('../userPartials/footer') %>
+
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+      <script>
+       $(document).ready(function () {
+    $('#userForm').validate({
+      rules: {
+        username: {
+          pattern: /^[a-zA-Z]+(?: [a-zA-Z]+)*$/,
+          required: true
+        },
+        email: {
+          pattern: /^[a-z0-9]+(?:[._%+-][a-z0-9]+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}$/,
+          required: true
+        },
+        phone: {
+          pattern: /^\+?[1-9][0-9]{9}$/,
+          required: true
+        }
+      },
+      submitHandler: function (form, event) {
+        event.preventDefault();
+        const formData = {
+          username: form.username.value,
+          email: form.email.value,
+          phone: form.phone.value
+        };
+        fetch('/userProfileVerify', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(result => {
+          if (result.phoneExist) {
+            Swal.fire('Phone Number Already Exists', '', 'info').then(() => {
+              window.location.href = '/userProfile';
+            });
+          } else {
+            Swal.fire('Changes Saved', '', 'success').then(() => {
+              // window.location.href = '/userProfile';
+              $('#user-profile').load('/userProfile #user-profile > *');
+            });
+          }
+        })
+        .catch(error => {
+          Swal.fire('Error!', 'There was a problem with your request.', 'error');
+        });
+      }
+    });
+  });
+      </script>
+
+  </body>

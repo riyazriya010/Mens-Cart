@@ -1,0 +1,436 @@
+<%- include('../adminPartials/header') %>
+
+    <style>
+        body {
+            background-color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+        }
+
+        .coll-1,
+        .coll-2,
+        .coll-3,
+        .coll-4 {
+            border: 1px solid rgb(232, 232, 232);
+        }
+
+        .addressDetails-base-name {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            color: #03a685;
+            font-weight: 700;
+            border: 1px solid #03a685;
+            margin-left: 8px;
+            line-height: 12px;
+        }
+
+        .full-width-button {
+            color: white;
+            background-color: rgb(240, 65, 65);
+            border: 1px solid rgb(236, 65, 65);
+            border-radius: 2px;
+            width: 100%;
+            padding: 6px;
+            box-sizing: border-box;
+        }
+
+        .table-cell-pending,
+        .table-cell-delivered,
+        .table-cell-cancelled,
+        .table-cell-shipped,
+        .table-cell-requestedToreturn,
+        .table-cell-requestApproved,
+        .table-cell-requestRejected {
+            display: inline-block;
+            padding: 10px 10px;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            border: 1px solid;
+            font-size: 14px;
+            font-weight: bold;
+            box-sizing: border-box;
+            margin-top: 10px;
+        }
+
+        .table-cell-pending {
+            background-color: #295f4e;
+        }
+
+        .table-cell-delivered {
+            background-color: #295f4e;
+        }
+
+        .table-cell-cancelled {
+            background-color: #295f4e;
+        }
+
+        .table-cell-shipped {
+            background-color: #295f4e;
+        }
+        .table-cell-requestedToreturn {
+            background-color: #295f4e;
+        }
+        .table-cell-requestApproved {
+            background-color: #295f4e;
+        }
+        .table-cell-requestRejected {
+            background-color: #295f4e;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        .dropdown-menu a {
+            display: block;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #eee;
+        }
+    </style>
+
+    <body>
+
+        <!---- main content ---->
+        <div class="container mt-5">
+
+            <!----- Shipping and Order Info ----->
+            <div class="row mb-3">
+                <div class="col-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><strong>Shipping Address</strong></h5>
+                            <% for(let i=0; i<address.length; i++) { %>
+                                <div style="display: flex;">
+                                    <p>
+                                        <%= address[i].name %>
+                                    </p>
+                                    <p><span class="addressDetails-base-name">
+                                            <%= address[i].addressTitle %>
+                                        </span></p>
+                                </div>
+                                <p>
+                                    <%= address[i].address1 %>, <%= address[i].address2 %> <br>
+                                            <%= address[i].city %>
+                                                <%= address[i].state %> - <%= address[i].pincode %>
+                                </p>
+                                <% } %>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card mt-2">
+                        <div class="card-body">
+                            <h5 class="card-title"><strong>Order Information</strong></h5>
+                            <p><strong>Order ID: </strong>
+                                <%= order.orderId %>
+                            </p>
+                            <p><strong>Order Date:</strong>
+                                <%= order.orderDate.toDateString() %>
+                            </p>
+
+                            <% if(status==='Pending' ) { %>
+                                <p><strong>Status:</strong> <span class="table-cell-pending">
+                                        <%= status %>
+                                    </span></p>
+                                <% }else if(status==='Shipped' ) { %>
+                                    <p><strong>Status:</strong> <span class="table-cell-shipped">
+                                            <%= status %>
+                                        </span></p>
+                                    <% }else if(status==='Delivered' ) { %>
+                                        <p><strong>Status:</strong> <span class="table-cell-delivered">
+                                                <%= status %>
+                                            </span></p>
+                                        <% }else if(status==='requested to return' ) { %>
+                                            <p><strong>Status:</strong> <span class="table-cell-requestedToreturn">
+                                                <%= status %>
+                                            </span></p>
+                                        <% } else if(status==='Cancelled' ) { %>
+                                            <p><strong>Status:</strong> <span class="table-cell-cancelled">
+                                                    <%= status %>
+                                                </span></p>
+                                            <% } else if(status==='Approved Return' ) { %>
+                                                <p><strong>Status:</strong> <span class="table-cell-requestApproved">
+                                                        <%= status %>
+                                                    </span></p>
+                                                <% } else if(status==='Reject Return' ) { %>
+                                                    <p><strong>Status:</strong> <span class="table-cell-requestRejected">
+                                                            <%= status %>
+                                                        </span></p>
+                                                    <% } %>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!----- Ordered Products ----->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table text-center align-middle">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product Name</th>
+                                    <th>Status</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Subtotal</th>
+                                    <th>Action</th>
+                                    <% for(let j=0; j < cart.length; j++) { %>
+                                        <% if(cart[j].status === 'Cancelled') { %>
+                                            <th>Reason</th>
+                                        <% } %>
+                                    <% } %>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for(let i=0; i < cart.length; i++) { %>
+                                    <!--- Find the product that matches the current cart item --->
+                                    <% let product=products.find(p=> p._id.toString() === cart[i].productId.toString());
+                                        %>
+                                        <tr>
+                                            <% if (product) { %>
+                                                <!-- Ensure product exists before accessing its properties -->
+                                                <td style="width: 100px;">
+                                                    <img src="/assets/uploadimages/uploads/<%= product.productImage[0] %>"
+                                                        alt=""
+                                                        style="max-width: 100%; height: 60px; object-fit: cover;">
+                                                </td>
+                                                <td>
+                                                    <%= product.productName %>
+                                                </td>
+
+                                                <% if(cart[i].status==='Pending' ) { %>
+                                                    <td> <span class="table-cell-pending">
+                                                            <%= cart[i].status %>
+                                                        </span> </td>
+                                                    <% }else if(cart[i].status==='Delivered' ) { %>
+                                                        <td> <span class="table-cell-delivered">
+                                                                <%= cart[i].status %>
+                                                            </span> </td>
+                                                        <% }else if(cart[i].status==='Cancelled' ) { %>
+                                                            <td> <span class="table-cell-cancelled">
+                                                                    <%= cart[i].status %>
+                                                                </span> </td>
+                                                            <% }else if(cart[i].status==='Shipped' ) { %>
+                                                                <td> <span class="table-cell-shipped">
+                                                                        <%= cart[i].status %>
+                                                                    </span> </td>
+                                                                <% }else if(cart[i].status==='requested to return') { %>
+                                                                    <td> <span class="table-cell-requestedToreturn">
+                                                                        <%= cart[i].status %>
+                                                                    </span> </td>
+                                                                    <% }else if(cart[i].status==='Approved Return') { %>
+                                                                        <td> <span class="table-cell-requestApproved">
+                                                                            <%= cart[i].status %>
+                                                                        </span> </td>
+                                                                        <% }else if(cart[i].status==='Reject Return') { %>
+                                                                            <td> <span class="table-cell-requestRejected">
+                                                                                <%= cart[i].status %>
+                                                                            </span> </td>
+                                                                            <% } %>
+
+                                                                    <td>
+                                                                        <%= cart[i].totalCostPerProduct %>
+                                                                    </td>
+                                                                    <td>
+                                                                        <%= cart[i].productQuantity %>
+                                                                    </td>
+                                                                    <td> $ <%= cart[i].totalCostPerProduct *
+                                                                            cart[i].productQuantity %>
+                                                                    </td> <!-- Assuming product price is available -->
+                                                                    <td>
+                                                                        <% if(cart[i].status === 'Cancelled' ) { %>
+                                                                            <h6 style="color: red;">
+                                                                                <strong>Cancelled</strong>
+                                                                            </h6>
+                                                                            <% }else if(cart[i].status === 'Delivered' ){ %>
+                                                                                <h6 style="color: black;">
+                                                                                <strong>Delivered</strong>
+                                                                            </h6>
+                                                                           <% }else if(cart[i].status === "Approved Return") { %>
+                                                                            <h6 style="color: black;">
+                                                                                <strong>Approved Return</strong>
+                                                                            </h6>
+                                                                        <% }else if(cart[i].status === "Reject Return") { %>
+                                                                            <h6 style="color: black;">
+                                                                                <strong>Reject return</strong>
+                                                                            </h6>
+                                                                        <% }else if(cart[i].status === "requested to return") { %>
+                                                                                <h6 style="color: black;">
+                                                                                    <strong>requested to return</strong>
+                                                                                </h6>
+                                                                            <% } else{ %>
+                                                                                <select style="width: 150px;"
+                                                                                    id="status<%= cart[i]._id %>"
+                                                                                    class="form-select form-select-sm"
+                                                                                    onchange="changeOrderStatus(event,'<%= cart[i].productId %>','<%= order._id %>', this.value)">
+                                                                                    <option selected>Select Status
+                                                                                    </option>
+                                                                                    <option value="Pending">Pending
+                                                                                    </option>
+                                                                                    <option value="Cancelled">Cancelled
+                                                                                    </option>
+                                                                                    <option value="Delivered">Delivered
+                                                                                    </option>
+                                                                                    <option value="Shipped">Shipped
+                                                                                    </option>
+                                                                                    <!-- <option value="Return">Return
+                                                                                    </option> -->
+                                                                                </select>
+                                                                                <% } %>
+                                                                    </td>
+                                                                    <% if(cart[i].status === 'Cancelled' ) { %>
+                                                                        <td><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#cancelOrder<%= i %>">Reason</button></td>
+                                                                        <% } %>
+
+                                                                          <!----- reason cart ---->
+                                                    <div class="modal" tabindex="-1" id="cancelOrder<%= i %>">
+                                                        <div class="modal-dialog">
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <h5 class="modal-title">Reason For cancelled Order
+                                                                    </h5>
+                                                                    <button type="button" class="btn-close"
+                                                                        data-bs-dismiss="modal"
+                                                                        aria-label="Close"></button>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <p>
+                                                                        <%= cart[i].cancelReason %>
+                                                                    </p> <!-- Display the reason here -->
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                                    <% } %>
+                                        </tr>
+                                        <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!----- Price Details ----->
+            <div class="row mb-3">
+                <div class="col-lg-6 offset-lg-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">PRICE DETAILS</h6>
+                            <p>Total Items: <span style="font-weight: bold;">
+                                    <%= totalQuantity %>
+                                </span></p>
+                            <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                                <p>Subtotal</p>
+                                <p> ₹ <%= subtotal %>
+                                </p>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                                <p>Shipping</p>
+                                <p style="color: green;">FREE</p>
+                            </div>
+                            <hr>
+                            <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                                <p>Grand Total</p>
+                                <p> ₹ <%= subtotal %>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <%- include('../adminPartials/footer') %>
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+            <script>
+                async function changeOrderStatus(event, productId, orderId, value) {
+                    event.preventDefault();
+                    console.log(productId, orderId, value);
+                    try {
+
+                        // Show confirmation alert
+                        const result = await Swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this! Cancel?",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, Cancel it!'
+                        });
+
+                        if (result.isConfirmed) {
+
+                            let object = {
+                                productId: productId,
+                                orderId: orderId,
+                                value: value
+                            }
+
+                            let response = await fetch(`/admin/orderStatus/change?object=${encodeURIComponent(JSON.stringify(object))}`, {
+                                method: "PUT"
+                            })
+                            // const result = response.json();
+
+                            if (response.ok) {
+                                const responseData = await response.json();
+                                if (responseData.success) {
+                                    // Show success alert
+                                    await Swal.fire({
+                                        title: 'Status Changed!',
+                                        text: 'Status has been Changed.',
+                                        icon: 'success',
+                                        confirmButtonText: 'OK'
+                                    });
+                                    // Redirect to the cart page after successful cancellation
+                                    window.location.reload();
+                                } else {
+                                    throw new Error('Status Change unsuccessful');
+                                }
+                            } else {
+                                throw new Error('Network response was not ok');
+                            }
+                        }
+
+                    } catch (error) {
+                        console.error('Error:', error);
+                        // Show error alert
+                        Swal.fire({
+                            title: 'Error!',
+                            text: 'Failed to change status Please try again later.',
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+
+                }
+            </script>
+
+
+
+    </body>

@@ -1,0 +1,203 @@
+<%- include("../userPartials/header") %>
+
+<style>
+/* Override Bootstrap input focus border */
+.form-control:focus {
+        box-shadow: none;
+        border-color: #ced4da; /* or whatever color you want */
+      }
+      .card{
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      #login-btn{
+        background-color: #295f4e;
+        color: white;
+      }
+      .breadcrumb-item + .breadcrumb-item::before{
+        content:">";
+      }
+
+      .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 100%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+</style>
+
+<body style="background: whitesmoke;">
+    
+
+    <!---- breadcrumbs ---->
+    <div class="container-fluid">
+        <div class="row justify-content-end" style="background-color: #e2e2e2;height: 30px;">
+         
+          <div class="col-7 col-md-7 col-lg-9">
+            <h5>SIGNUP</h5>
+          </div>
+         
+          <div class="col-5 col-md-4 col-lg-2">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+      
+                <li class="breadcrumb-item "  aria-current="page">
+                  <a href="home.html" style="text-decoration: none;color: black;">Home</a>
+                </li>
+      
+                <li class="breadcrumb-item active"  aria-current="page">
+                  Sigup
+                </li>
+      
+              </ol>
+            </nav>
+          </div>
+        </div>
+        
+      </div>
+  
+  
+  
+  
+      <!---- Main Content ----->
+  
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+          <div class="col-12 col-sm-12 col-md-8 col-lg-4">
+            <!-----form----->
+
+           
+            <div class="card">
+              <h3 class="mt-2 text-center">SignUp</h3>
+              <div class="card-body">
+  
+                <form id="registerForm">
+                  <div class="form-group mt-3 mb-3">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" class="form-control" id="username"  />
+                  </div>
+
+                  <div class="form-group mt-3 mb-3">
+                    <label for="emailId">Email</label>
+                    <input type="email" name="email" class="form-control" id="emailId" />
+                  </div>
+  
+                  <div class="form-group mt-3 mb-3">
+                    <label for="phone">Phone</label>
+                    <input type="tel" name="phone" class="form-control" id="phone" />
+                  </div> 
+  
+                  <div class="form-group mt-3 mb-3">
+                    <label for="pass">Password</label>
+                    <input type="password" name="password" class="form-control" id="pass" placeholder="password (atleast 6 characters long)"/>
+                  </div> 
+  
+                  <div class="form-group mt-3 mb-3">
+                    <label for="con-pass">Confirm Password</label>
+                    <input type="password" name="confirmpassword" class="form-control" id="con-pass" placeholder="same as password"/>
+                  </div>
+
+                  <div class="form-group mt-3 mb-3">
+                    <label for="referalCode">Referral Code</label>
+                    <input type="tel" name="referalCode" class="form-control" id="referalCode"/>
+                  </div>
+  
+                <button type="submit" class="full-width-button" style="color: white;" id="login-btn">Register</button>
+                </form>
+  
+                <hr/>
+                
+                <p class="text-center mb-0">
+                  Already have an account?
+                  <a href="/login"><button class="btn btn-block mb-2"style="border-radius: 30px; width: 46px; height: 46px">
+                      <i class="fa-solid fa-right-to-bracket" style="font-size: 20px;margin-left: -8%;margin-top: -15%;"></i></button></a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    <%- include("../userPartials/footer") %>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+    <script>
+       $(document).ready(function () {
+      $('#registerForm').validate({
+          rules: {
+              username: {
+                  pattern: /^[a-zA-Z]+(?: [a-zA-Z]+)*$/,
+                  required: true
+              },
+              email: {
+                  pattern: /^[a-z0-9]+(?:[._%+-][a-z0-9]+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}$/,
+                  required: true
+              },
+              phone: {
+                  pattern: /^\+?[1-9][0-9]{9}$/,
+                  required: true
+              },
+              password: {
+                  pattern: /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/,
+                  required: true
+              },
+              confirmpassword: {
+                  equalTo: '#pass',
+                  required: true
+              }
+          },
+
+          messages:{
+            password:{
+              pattern:"Password must be at least 6 characters long, and it must include letter, number, and special character.",
+            }
+          },
+
+          submitHandler: function (form, event) {
+      event.preventDefault();
+      const formData = {
+        username: form.username.value,
+        email:form.email.value,
+        phone: form.phone.value,
+        password: form.password.value,
+        referalCode:form.referalCode.value
+      };
+      fetch('/signupVerify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => response.json())
+      .then(result => {
+        if(result.codeNotValid){
+          Swal.fire('Code Not Valid!', '', 'error').then(() => {
+            window.location.href = '/signup';
+          });
+      }else if (result.exists) {
+          Swal.fire('User already exists!', '', 'info').then(() => {
+            window.location.href = '/signup';
+          });
+        } else {
+          Swal.fire('OTP sent to your email!', '', 'success').then(() => {
+            window.location.href = '/otp'; // Redirect to OTP verification page
+          });
+        }
+      })
+      .catch(error => {
+        Swal.fire('Error!', 'There was a problem with your request.', 'error');
+      });
+    }
+      });
+  });
+  </script>
+
+
+</body>

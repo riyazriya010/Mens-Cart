@@ -1,0 +1,124 @@
+
+<%- include("../adminPartials/header") %>
+
+    <style>
+      /* Override Bootstrap input focus border */
+      .form-control:focus {
+        box-shadow: none;
+        border-color: #ced4da; /* or whatever color you want */
+      }
+      .card{
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      #login-btn{
+        background-color: #656464;
+        color: white;
+      }
+      .breadcrumb-item + .breadcrumb-item::before{
+        content:">";
+      }
+
+    </style>
+    
+
+
+  <body style="background: whitesmoke;">
+
+    <!---- Main Content ----->
+
+    <div class="container mt-5">
+      <!-- <h1 class="text-center">Men's Cart</h1> -->
+      <div class="row justify-content-center">
+        <div class="col-12 col-sm-12 col-md-8 col-lg-4">
+          <!-----form----->
+
+          <div class="card">
+            <h3 class="card-header text-center">Admin LogIn</h3>
+            <div class="card-body">
+              <form action="/adminLoginVerify" method="post" id="loginAdmin">
+                <div class="form-group mt-3 mb-3">
+                  <label for="emailId">Email</label>
+                  <input type="email" name="email" class="form-control" id="emailId" placeholder="Email" />
+                </div>
+
+                <div class="form-group mt-3 mb-3">
+                  <label for="pass">Password</label>
+                  <input type="password" name="password" class="form-control" id="pass" placeholder="password"/>
+                </div>
+
+                <!-- <div class="form-group text-center mt-3 mb-3">
+                  <a href="#" class="float-right" style="text-decoration: none; color: black">Forgot Password?</a>
+                </div> -->
+
+                <button type="submit" class="btn btn-block" style="width: 100%;color: white;" id="login-btn">Login</button>
+              </form>
+
+              <!-- <hr/>
+
+              <a href="#"><button type="button" class="btn btn-dark btn-block mb-2" style="border-radius: 30px;width: 46px;height: 46px;margin-left: 41%;">
+                  <i class="fa-brands fa-google-plus" style="font-size: 40px; margin-left: -45%; margin-top: -15%"></i></button></a>
+
+              <p class="text-center mb-0">
+                Don't have an account?
+                <a href="#"><button class="btn btn-dark btn-block mb-2"style="border-radius: 30px; width: 46px; height: 46px">
+                    <i class="fa-solid fa-user-plus" style="font-size: 20px;margin-left: -8%;margin-top: -15%;"></i></button></a>
+              </p> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <%- include("../adminPartials/footer") %>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+      $("#loginAdmin").validate({
+        rules:{
+          email:{
+            pattern:
+              /^[a-z0-9]+(?:[._%+-][a-z0-9]+)*@[a-z0-9]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}$/,
+              required:true,
+          },
+          password:{
+            pattern:
+            /^.{6,30}$/,
+            required:true,
+          },
+        },
+        submitHandler: async function (form, event) {
+              event.preventDefault();
+
+              const formData = {
+                email: form.email.value,
+                password: form.password.value
+              };
+              try {
+                const response = await fetch('/adminLoginVerify', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                  window.location.href = '/dashboard';
+                } else {
+                  Swal.fire('Invalid Credentials', '', 'error');
+                }
+              } catch (error) {
+                console.error('Error:', error);
+                Swal.fire('Error', 'There was a problem with your request.', 'error');
+              }
+            }
+      })
+    })
+
+    </script>
+
+  </body>

@@ -1,0 +1,419 @@
+<%- include('../userPartials/header') %>
+
+
+    <!----- carosal ----->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"
+      integrity="sha512-tS3S5qG0BlhnQROyJXvNjeEM4UpMXHrQfTGmbQ1gKmelCxlSEBUaxhRBj/EFTzpbP4RVSrpEikbmdJobCvhE3g=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css"
+      integrity="sha512-sMXtMNL1zRzolHYKEujM2AqCLUR9F2C4/05cdbxjjLSRvMQIciEPCQZo++nk7go3BtSuK9kfa/s+a4f4i5pLkw=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    
+<style>
+      body {
+      background-color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .breadcrumb-item+.breadcrumb-item::before {
+      content: ">";
+    }
+
+    .coll-1,
+    .coll-2,
+    .coll-3,
+    .coll-4 {
+      border: 1px solid rgb(225, 224, 224);
+    }
+
+    .addressDetails-base-name {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+      color: #03a685;
+      font-weight: 700;
+      border: 1px solid #03a685;
+      margin-left: 8px;
+      line-height: 12px;
+    }
+
+        .step-indicator {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    
+
+    .step-indicator span {
+      
+      margin: 0 15px;
+    }
+
+    .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 100%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+
+        .carousel-control-prev,
+  .carousel-control-next {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Makes the buttons round */
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    border: none; /* Removes default border */
+    top: 50%; /* Positions buttons vertically centered */
+    transform: translateY(-50%); /* Adjusts vertical position */
+  }
+
+  .carousel-control-prev-icon,
+  .carousel-control-next-icon {
+    background-image: none; /* Removes default icon */
+    color: white; /* Sets icon color */
+    font-size: 24px; /* Adjusts icon size */
+    line-height: 36px; /* Adjusts icon vertical alignment */
+  }
+
+  .carousel-control-prev {
+    left: 10px; /* Positions the previous button */
+  }
+
+  .carousel-control-next {
+    right: 10px; /* Positions the next button */
+  }
+
+  /* Hover effect for buttons */
+  .carousel-control-prev:hover,
+  .carousel-control-next:hover {
+    background-color: rgba(0, 0, 0, 0.8); /* Darkens background on hover */
+  }
+</style>
+
+<body>
+    
+
+    
+  <div class="container mt-2">
+    <div class="step-indicator">
+      <h6 style="color: black;">Address</h6>
+      <span style="color: black;">>>>></span>
+      <h6 style="color: black;">Payment</h6>
+      <span style="color: black;">>>>></span>
+      <h6 style="color: black;">Place Order</h6>
+    </div>
+  </div>
+
+
+
+
+
+ <!---- main content ---->
+<div class="container">
+
+    <!----- row-1 ----->
+    <div class="row">
+        <div class=" coll-1 col-lg-8">
+            <div style="margin-top: 2%;padding: 3%;">
+                <h5 style="font-weight: bold;">Shipping Address</h5>
+              <div class="card">
+                <div class="card-body">
+                  <div style="display: flex;">
+                   
+                    <p> <%= address.name %> </p>
+                    <p><span class="addressDetails-base-name"> <%= address.addressTitle %> </span></p>
+                  </div>
+                  <p><%= address.address1 %>, <%= address.address2 %> <br> <%= address.city %> <%= address.state %> - <%= address.pincode %></p>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="coll-2 col">
+            <h4 class="text-center mt-2">Order Details</h4>
+            <hr>
+            <div class="table-responsive">
+                <table class="table text-center align-middle">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>P-Name</th>
+                            <th>Quantity</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <% for (let i = 0; i < cartData.length; i++) { %>
+                        <% 
+                          const product = cartData[i].productId;
+                          const price = product.offerPrice || product.productPrice;
+                        %>
+                        <tr>
+                          <td style="width: 100px;">
+                            <img src="/assets/uploadimages/uploads/<%= product.productImage[0] %>" alt="<%= product.productName %>" style="max-width: 100%; height: 60px; object-fit: cover;">
+                          </td>
+                          <td><%= cartData[i].productName %></td>
+                          <td><%= cartData[i].productQuantity %></td>
+                          <td><%= cartData[i].productQuantity * price %></td>
+                        </tr>
+                      <% } %>
+                        <!-- Add more rows for other products -->
+                    </tbody>
+                </table>
+            </div>
+          </div>
+    </div>
+
+    <!----- row-1 ---->
+
+    <div class="row">
+      <div class="col-12 col-lg-8">
+        <div id="couponCarousel" class="carousel slide" data-ride="carousel">
+          <div class="carousel-inner" id="coupon-container">
+            <% for(let i = 0; i < coupon.length; i++) { %>
+              <div class="carousel-item <%= i === 0 ? 'active' : '' %>">
+                <div class="card h-80 mt-5">
+                  <div class="card-body text-center">
+                    <h6 class="card-title">Coupon</h6>
+                    <p class="card-text"><strong>Code:</strong> <%= coupon[i].couponCode %></p>
+                    <p class="card-text"><strong>Minimum Purchase:</strong> ₹<%= coupon[i].minimumPurchase.toFixed(2) %></p>
+                    <p class="card-text"><strong>Discount:</strong> <%= coupon[i].discountPercentage %>%</p>
+                    <p class="card-text"><strong>Valid Until:</strong> <%= coupon[i].endDate.toDateString() %></p>
+                    <% if(couponId && coupon[i]._id.toString() === couponId.toString()) { %>
+                      <button class="btn btn-danger apply-coupon" onclick="removeCoupon()">Remove Coupon</button>
+                    <% } else { %>
+                      <button class="btn btn-success apply-coupon" onclick="couponApply('<%= coupon[i]._id %>', '<%= grandTotal %>')">Apply Coupon</button>
+                    <% } %>
+                  </div>
+                </div>
+              </div>
+            <% } %>
+          </div>
+          <a class="carousel-control-prev" href="#couponCarousel" role="button" data-slide="prev">
+            <span class="bi bi-chevron-left"></span>
+            <span class="visually-hidden">Previous</span>
+          </a>
+          <a class="carousel-control-next" href="#couponCarousel" role="button" data-slide="next">
+            <span class="bi bi-chevron-right"></span>
+            <span class="visually-hidden">Next</span>
+          </a>
+        </div>
+      </div>
+    
+      <!------ col-2 ----->
+    
+      <div class="col-12 col-lg-4">
+        <div style="margin-top: 2%; padding: 6%;">
+          <p style="font-size: 11px; font-weight: bold;">DELIVERY ESTIMATES</p>
+          <h6 style="font-size: 12px; font-weight: bold;">PRICE DETAILS (<%= totalItems %> Items)</h6>
+          <div style="display: flex; justify-content: space-between; font-size: 13px;">
+            <h6 style="font-size: 12px;">SUB TOTAL</h6>
+            <p> <%= subtotal %> </p>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 12px;">
+            <p style="font-size: 13px;">Shipping</p>
+            <p style="color: green;">FREE</p>
+          </div>
+    
+          <% if(couponApplied) { %>
+            <div style="display: flex; justify-content: space-between; font-size: 12px;">
+              <p style="font-size: 13px;">Total</p>
+              <p style="color: green;"> <%= total %> </p>
+            </div>
+    
+            <div style="display: flex; justify-content: space-between; font-size: 12px;">
+              <p style="font-size: 13px;">Coupon Applied</p>
+              <p style="color: green;"> <%= discountAmount %> </p>
+            </div>
+          <% } %>
+          
+          <hr>
+          <div style="display: flex; justify-content: space-between; font-weight: bold;">
+            <h6 style="font-weight: bold;">Grand Total</h6>
+            <p> <%= grandTotal %> </p>
+          </div>
+          <hr>
+          <div>
+            <p style="font-size: 13px; font-weight: bold; color: rgb(240, 65, 65);">
+              Chosen Payment Method: <span style="color: black;"> <%= paymentMethod %> </span>
+            </p>
+          </div>
+          <button class="full-width-button" onclick="placeOrder()">Place Order</button>
+        </div>
+      </div>
+    </div>
+    
+
+</div>
+
+<script>
+   $(document).ready(function(){
+    $('#couponCarousel').carousel();
+
+    // Manual carousel controls
+    $('.carousel-control-prev').click(function(){
+      $('#couponCarousel').carousel('prev');
+    });
+
+    $('.carousel-control-next').click(function(){
+      $('#couponCarousel').carousel('next');
+    });
+  });
+</script>
+
+
+    <%- include('../userPartials/footer') %>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+    async function placeOrder() {
+    try {
+      let response = await fetch(`/checkout/placeOrder`, {
+        method: 'POST'  // Use POST since we are creating a new order
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        if (result.paypalLinkGot) {
+          // console.log('link: ',result.paypalLink)
+          window.location.href = result.paypalLink;
+        } else {
+          Swal.fire({
+            icon: 'success',
+            title: 'Order Placed',
+            text: 'Your order has been placed successfully.',
+            confirmButtonText: 'OK'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.href = '/orderPlaced'; // Redirect to the order summary page
+            }
+          });
+        }
+      }else if(!result.success && result.noMoney){
+        Swal.fire({
+          icon: 'info',
+          title: 'Insufficient Amount',
+          text: 'No amount in wallet'
+        });
+      }else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Order Not Places',
+          text: result.message
+        });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'An unexpected error occurred.'
+      });
+    }
+  }
+    </script>
+
+
+
+    <script>
+      async function couponApply(couponId,total){
+        try {
+          
+          const response = await fetch(`/coupon/apply?couponId=${couponId}&total=${total}`,{
+            method: 'PUT'
+          })
+
+          const result = await response.json()
+
+          if(result.success){
+            Swal.fire('Coupon Applied', '', 'success').then(() => {
+            // window.location.href = '/checkout/placeOrder';
+            window.location.reload()
+          });
+          }else{
+            Swal.fire('Insufficient Amount', '', 'info').then(() => {
+            // window.location.href = '/checkout/placeOrder';
+            window.location.reload()
+          });
+          }
+
+        } catch (error) {
+          console.error(error.message)
+        }
+      }
+
+
+      //coupon remove
+      async function removeCoupon(){
+        try {
+          Swal.fire({
+            title: 'Are you sure want to remove?',
+            // text: 'You will not be able to recover this Product!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch(`/coupon/remove`, {
+                method: 'PUT', // Using POST to support forms without JavaScript
+              })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    Swal.fire('Removed', 'Coupon Removed', 'success')
+                      .then((result) => {
+                        window.location.reload()
+                      })
+
+                  } else {
+                    Swal.fire('Error', 'Failed to remove coupon', 'error');
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  Swal.fire('Error', 'There was a problem with your request.', 'error');
+                });
+            }
+          })
+          
+        } catch (error) {
+          console.error(error.message)
+        }
+      }
+    </script>
+
+</body>

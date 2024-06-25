@@ -1,0 +1,225 @@
+   <%- include("../userPartials/header") %>
+
+
+<style>
+ /* Override Bootstrap input focus border */
+ .form-control:focus {
+        box-shadow: none;
+        border-color: #ced4da; /* or whatever color you want */
+      }
+      .card{
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      #login-btn{
+        background-color: #656464;
+        color: white;
+      }
+      .breadcrumb-item + .breadcrumb-item::before{
+        content:">";
+      }
+
+      @media (max-width: 768px) {
+    .col-md-8 {
+        text-align: center;
+    }
+    .col-md-4 {
+        text-align: center;
+    }
+}
+
+.card {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover img {
+      transform: scale(1.1);
+    }
+
+    .card img {
+      transition: transform 0.3s ease;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .card:hover .overlay {
+      opacity: 1;
+    }
+
+    .icons {
+      color: white;
+      font-size: 24px;
+      display: none;
+      margin: 0 20px;
+    }
+
+    .card:hover .icons {
+      display: flex;
+    }
+</style>
+
+<body>
+
+    <!------ banner ----->
+    <div id="banner-carousel" class="carousel slide" data-ride="carousel">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-12">
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#banner-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#banner-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#banner-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+              </div>
+              <div class="carousel-inner">
+        
+                <div class="carousel-item active">
+                  <img class="d-block w-100" src="/img/b-1.jpg" alt="">
+                </div>
+        
+                <div class="carousel-item">
+                  <img class="d-block w-100" src="/img/b-2.jpg" alt="">
+                </div>
+        
+                <div class="carousel-item">
+                  <img class="d-block w-100" src="/img/b-3.jpg" alt="">
+                </div>
+        
+              </div>
+        
+              <button class="carousel-control-prev" type="button" data-bs-target="#banner-carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#banner-carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </div>
+        </div>
+  
+        
+  
+      </div>
+
+
+      
+      <!------- main content ----->
+
+      <!------ section 1 ---->
+      <div class="container my-5">
+        <h4 class="mb-3">New Arrivals</h4>
+        <div class="row">
+          <% for(let i=0; i<products.length; i++) { %>
+          <div class="col-12 col-md-3">
+           <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
+           
+              <img src="/assets/uploadimages/uploads/<%= products[i].productImage[0] %>" alt="" class="card-img-top">
+            
+                <div class="overlay">
+                <i class="fa-solid fa-heart icons"></i>
+              </div>
+            </div>
+          </div> 
+          <% } %>
+  
+        </div>
+      </div>
+
+
+
+      <!------ section 2 ---->
+      <div class="container">
+        <div class="row">
+          <div class="col">
+            <div class="card" style="background-color: black;color: white;">
+              <div class="card-body text-center">
+                <h3>50% Offer for every Purchase</h3>
+                <p>Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nobis, 
+                  ad officiis? Repudiandae vero a iure. <br>Laudantium deleniti aliquid ab 
+                  dolores? Maiores eum esse quo voluptatem, eos sit qui repellat at?</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+      <!------ section 3 ---->
+      <div class="container my-5">
+        <h4 class="mb-3">On Trendz</h4>
+        <div class="row">
+          <div class="col-12 col-md-3">
+            <!-- <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
+              <img src="/img/trouser-1.1.avif" alt="" class="card-img-top">
+                <div class="overlay">
+                <i class="fa-solid fa-heart icons"></i>
+              </div>
+            </div> -->
+          </div>
+  
+  
+          <div class="col-12 col-md-3">
+            <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
+              <img src="/img/navy-jean-1.avif" alt="" class="card-img-top">
+                <div class="overlay">
+                  <i class="fa-solid fa-heart icons"></i>
+                </div>
+            </div>
+          </div>
+  
+          <div class="col-12 col-md-3">
+            <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
+              <img src="/img/shirt-2.1.avif" alt="" class="card-img-top">
+                <div class="overlay">
+                  <i class="fa-solid fa-heart icons"></i>
+                </div>
+            </div>
+          </div>
+  
+          <div class="col-12 col-md-3">
+            <!-- <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
+              <img src="/img/shrit-1.jpg" alt="" class="card-img-top">
+                <div class="overlay">
+                  <i class="fa-solid fa-heart icons"></i>
+                </div>
+            </div> -->
+          </div>
+  
+        </div>
+      </div>
+  
+
+
+      <%- include("../userPartials/footer") %>
+
+
+
+      <script>
+        // Get all card elements
+        const cards = document.querySelectorAll('.card');
+      
+        // Add click event listener to each card
+        cards.forEach(card => {
+          card.addEventListener('click', () => {
+            // Redirect to the shop page
+            window.location.href = '/shop';
+          });
+        });
+      </script>
+
+
+</body>

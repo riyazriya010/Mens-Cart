@@ -1,0 +1,46 @@
+<%- include('../userPartials/header') %>
+
+<style>
+     body {
+      background-color: white;
+      font-family: Arial, sans-serif;
+
+    }
+
+    .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            font-size: 13px;
+            width: 100%; /* Makes the button take full width */
+            padding: 9px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+</style>
+
+<body>
+    
+     <!---- main content ----->
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-6">
+        <div class="card">
+          <div class="card-body">
+            <h1 class="text-center"><i class="fa-sharp fa-regular fa-circle-check" style="color: green;"></i></h1>
+            <h3 class="text-center" style="font-weight: bold;">YOUR ORDER <br> SUCCESSFULLY <br> PLACED </h3>
+            <div class="mt-4" style="display: flex;justify-content: center;">
+              <a href="/shop"><button class="full-width-button">GO TO SHOP</button></a>
+            <a href="/order" style="margin-left: 2%;"><button class="full-width-button">ORDER DETAILS</button></a>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <%- include('../userPartials/footer') %>
+    
+</body>

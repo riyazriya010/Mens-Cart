@@ -1,0 +1,187 @@
+<%- include("../adminPartials/header") %>
+
+
+<style>
+  .table-dark-bordered {
+  border: 1px solid #000; /* Dark border color for the table */
+}
+
+.table-dark-bordered th,
+.table-dark-bordered td {
+  border: 1px solid #000; /* Dark border color for table headers and cells */
+}
+
+.full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 40%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+</style>
+
+<body style="color: whitesmoke;">
+    
+    
+    <!---- breadcrumbs ---->
+    <div class="container-fluid">
+        <div class="row justify-content-end" style="background-color: #e2e2e2;height: 30px;">
+         
+          <div class="col-7 col-md-7 col-lg-9">
+            <h5>User</h5>
+          </div>
+         
+          <div class="col-5 col-md-4 col-lg-2">
+            <nav aria-label="breadcrumb" style="margin-left: -40%;">
+              <ol class="breadcrumb">
+      
+                <li class="breadcrumb-item "  aria-current="page">
+                  <a href="/dashboard" style="text-decoration: none;color: black;">Dashboard</a>
+                </li>
+      
+                <li class="breadcrumb-item active"  aria-current="page">
+                  User
+                </li>
+      
+              </ol>
+            </nav>
+          </div>
+        </div>
+        
+      </div>
+
+
+
+
+      <!---- mian content ----->  
+    <div class="container mt-4">
+      
+        <div class="row">
+            <div class="col">
+
+              <div class="row mb-2">
+                <div class="col-6">
+
+                  <!-- <button class="mb-2" data-bs-toggle="modal" data-bs-target="#add-product"  style="background-color: rgb(61, 124, 207);border: 1px solid rgb(61, 124, 207);color: white;border-radius: 4px;">Add Product</button> -->
+                  <form class="input-group" action="/user/search" method="GET" style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);width: 250px;">
+                    <input type="text" name="searchQuery" class="form-control" placeholder="search for product" aria-describedby="basic-addon2" required style="border: white;border-radius: 3px;margin-top: 2px;">
+                    <button type="submit" class="input-group-addon" style="border: white;background-color: white;border-radius: 3px;width: 40px;margin-left: -4px;margin-top: 2px;"><i class="fa-solid fa-magnifying-glass"></i></button>
+                  </form>
+
+                </div>   
+              </div>
+
+              <div class="row mt-3">
+                <div class="col">
+                  <div class="table-responsive" id="content">
+                    <table class="table table-hover text-center align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Actions</th>
+                                
+                            </tr>
+                        </thead>
+                        <tbody>
+                          <% userData.forEach(user => { %>
+                            <tr>
+                                <td> <%= user.username %>  </td>
+                                <td> <%= user.email %> </td>
+                                <td> <%= user.phone %> </td>
+
+                                <% if(!user.isBlocked) { %>
+                                <td><button class="full-width-button" onclick="blockUser('<%= user._id %>')">
+                                  Unblock</button>
+                                </td>
+                                <% }else { %>
+                                  <td><button class="full-width-button" onclick="UnBlockUser('<%= user._id %>')">
+                                    Blocked</button>
+                                  </td>
+                                  <% } %>
+                               
+                            </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              
+              
+
+            </div>
+        </div>
+
+
+
+          <!---- pagination ---->
+          <nav aria-label="pagination">
+            <ul class="pagination justify-content-center">
+              <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                <a href="/admin/user?page=<%= currentPage - 1 %>" class="page-link" aria-label="Previous" style="background-color: black;">
+                  <span aria-hidden="true" style="color: white;">&laquo;</span>
+                </a>
+              </li>
+              <li class="page-item">
+                <span class="page-link" style="background-color: #a49b9b; color: black;"><%= currentPage %></span>
+              </li>
+              <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                <a href="/admin/user?page=<%= currentPage + 1 %>" class="page-link" aria-label="Next" style="background-color: black;">
+                  <span aria-hidden="true" style="color: white;">&raquo;</span>
+                </a>
+              </li>
+            </ul>
+          </nav> 
+
+
+    </div>
+
+
+
+    <%- include("../adminPartials/footer") %>
+
+
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <script>
+      async function blockUser(userId) {
+    let response = await fetch(`/admin/userManagement/blockUser?userId=${userId}`, {
+        method: 'PUT',
+    });
+    let result = await response.json();
+    if (result.success) {
+        await Swal.fire({
+            icon: "success",
+            title: "User blocked",
+            confirmButtonText: "OK",
+        });
+        // window.location.reload();
+        $('#content').load('/admin/user #content > *');
+    } else if (result.userNotExist) {
+        Swal.fire('User does not exist', '', 'error');
+    }
+}
+
+async function UnBlockUser(userId) {
+    let response = await fetch(`/admin/userManagement/unBlockUser?userId=${userId}`, {
+        method: 'PUT',
+    });
+    let result = await response.json();
+    if (result.success) {
+        await Swal.fire({
+            icon: "success",
+            title: "User unblocked",
+        });
+        // window.location.reload();
+        $('#content').load('/admin/user #content > *');
+    } else if (result.userNotExist) {
+        Swal.fire('User does not exist', '', 'error');
+    }
+}
+    </script>
+</body>

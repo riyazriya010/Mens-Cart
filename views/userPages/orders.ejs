@@ -1,0 +1,282 @@
+<%- include('../userPartials/header') %>
+
+    <style>
+        .table-cell-pending {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: #007bff; */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
+.table-cell-delivered {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: #34f15a; */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
+.table-cell-cancelled {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: rgb(227, 58, 58); */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
+.table-cell-shipped {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: rgb(227, 148, 58); */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
+.table-cell-returnRequest {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: rgb(84, 113, 145); */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
+.table-cell-requestApproved {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: rgb(51, 206, 152); */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
+
+.table-cell-requestRejected {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: rgb(146, 37, 37); */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
+
+.table-cell-paymentFailed {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: rgb(146, 37, 37); */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
+
+.full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 70%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+    </style>
+
+    <body>
+
+        <!------ main content ----->
+
+        <div class="container mt-4">
+
+            <div class="row">
+                <div class="col">
+                    <div class="row mb-2">
+                        <div class="col-6">
+
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col">
+                            <div class="table-responsive">
+                                <table class="table table-hover text-center">
+                                    <thead class="table-lite">
+                                        <tr>
+                                            <th>Order ID</th>
+                                            <th>Payment Method</th>
+                                            <th>Quantity</th>
+                                            <th>Status</th>
+                                            <th>Total</th>
+                                            <th>Discount</th>
+                                            <th>Grand Total</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (orders.length> 0) { %>
+                                            <% orders.forEach(order=> { %>
+                                                <tr onclick="orderId('<%= order._id %>')">
+                                                    <td>
+                                                        <%= order.orderId %>
+                                                    </td>
+                                                    <td>
+                                                        <%= order.paymentType %>
+                                                    </td>
+                                                    <td>
+                                                        <%= order.cartData.reduce((acc, item)=> acc +
+                                                            item.productQuantity, 0) %>
+                                                    </td>
+                                                    
+                                                    <% if(order.paymentType === "Payment Failed") { %>
+                                                        <td><span class="table-cell-paymentFailed"><%= order.paymentType %></span></td>
+                                                        <% }else{ %>
+                                                            <% if(order.orderStatus === 'Pending') { %>
+                                                                <td><span class="table-cell-pending"><%= order.orderStatus %></span></td>
+                                                            <% } else if(order.orderStatus === 'Delivered') { %>
+                                                                <td><span class="table-cell-delivered"><%= order.orderStatus %></span></td>
+                                                            <% } else if(order.orderStatus === 'Cancelled') { %>
+                                                                <td><span class="table-cell-cancelled"><%= order.orderStatus %></span></td>
+                                                            <% } else if(order.orderStatus === 'Shipped') { %>
+                                                                <td><span class="table-cell-shipped"><%= order.orderStatus %></span></td>
+                                                            <% } else if(order.orderStatus === 'requested to return') { %>
+                                                                <td> <span class="table-cell-returnRequest"><%= order.orderStatus %></span> </td>
+                                                            <% }else if(order.orderStatus === 'Approved Return') { %>
+                                                                <td> <span class="table-cell-requestApproved"><%= order.orderStatus %></span> </td>
+                                                            <% }else if(order.orderStatus === 'Reject Return') { %>
+                                                                <td> <span class="table-cell-requestRejected"><%= order.orderStatus %></span> </td>
+                                                                <% } %>
+                                                            <% } %>
+
+                                                            <td> ₹<%= order.grandTotalCost.toFixed(2) %> </td>
+
+                                                            <td> <% if(order.couponApplied){ %>
+                                                                <%= order.couponApplied.discountPercentage %>%
+                                                                <% }else{ %>
+                                                                    Nil
+                                                                    <% } %>
+                                                             </td>
+                                                     <td>
+                                                        <% if(order.discountedPrice) { %>
+                                                            ₹<%= order.discountedPrice %>
+                                                            <% }else{ %>
+                                                                ₹<%= order.grandTotalCost.toFixed(2) %>
+                                                                <% } %>
+
+                                                    </td>
+                                                            <td> <a href="/order/singleOrder/<%= order._id %>"><button class="full-width-button">View</button></a> </td>
+                                                            
+                                                </tr>
+                                                <% }) %>
+                                                    <% } else { %>
+                                                        <tr>
+                                                            <td colspan="5">No orders found.</td>
+                                                        </tr>
+                                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+
+
+
+            <!------- pagination ----->
+            <nav aria-label="pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+                        <a href="?page=<%= currentPage - 1 %>" class="page-link" aria-label="Previous"
+                            style="background-color: black;">
+                            <span aria-hidden="true" style="color: white;">&laquo;</span>
+                        </a>
+                    </li>
+                    <% for (let i=1; i <=totalPages; i++) { %>
+                        <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                            <a href="?page=<%= i %>"
+                                class="page-link <%= currentPage === i ? 'bg-dark text-white' : 'text-dark' %>">
+                                <%= i %>
+                            </a>
+                        </li>
+                        <% } %>
+                            <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+                                <a href="?page=<%= currentPage + 1 %>" class="page-link" aria-label="Next"
+                                    style="background-color: black;">
+                                    <span aria-hidden="true" style="color: white;">&raquo;</span>
+                                </a>
+                            </li>
+                </ul>
+            </nav>
+        </div>
+
+
+
+
+
+
+
+        <%- include('../userPartials/footer') %>
+
+
+            <script>
+                async function orderId(orderId) {
+                    try {
+                        await fetch(`/order/singleOrder?orderId=${orderId}`, {
+                            method: 'GET',
+                        });
+
+                    } catch (error) {
+                        console.error('Error:', error);
+                    }
+                }
+            </script>
+
+    </body>

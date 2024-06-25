@@ -1,0 +1,539 @@
+<%- include('../adminPartials/header') %>
+
+  <style>
+    /* Custom select styles */
+    .custom-select {
+      position: relative;
+      display: inline-block;
+    }
+
+    .select-selected {
+      background-color: #f1f1f1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      cursor: pointer;
+    }
+
+    .select-items {
+      display: none;
+      position: absolute;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      width: 350px;
+      z-index: 1;
+      overflow-y: auto;
+      max-height: 200px;
+    }
+
+    .select-item {
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .select-item:hover {
+      background-color: #f0f0f0;
+    }
+    .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 20%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+        .full-width-edit {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 60%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+        .full-width-modal {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 40%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+  </style>
+
+  <body>
+
+
+
+    <div class="container mt-4">
+
+      <div class="row">
+        <div class="col">
+
+          <button class="mb-2 full-width-button" data-bs-toggle="modal" data-bs-target="#addOffer">Add New Product Offer</button>
+
+          <div class="row mb-2">
+            <div class="col-6">
+            </div>
+          </div>
+
+          <div class="row mt-3">
+            <div class="col">
+              <div class="table-responsive">
+                <table class="table table-hover text-center align-middle">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Product</th>
+                      <th>Offer Percentage</th>
+                      <th>Start Date</th>
+                      <th>End Date</th>
+                      <th>Current Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% for(let i=0; i<productOfferData.length; i++) { %>
+                      <tr>
+                        <td>
+                          <img src="/assets/uploadimages/uploads/<%= productOfferData[i].productId.productImage[0] %>"
+                            alt="" style="max-height: 70px;max-width: 70px;">
+                          <div>
+                            <p>
+                              <%= productOfferData[i].productName %>
+                            </p>
+                          </div>
+                        </td>
+                        <td>
+                          <%= productOfferData[i].productOfferPercentage %>%
+                        </td>
+                        <td>
+                          <%= productOfferData[i].startDate.toLocaleDateString('en-US', { year: 'numeric' ,
+                            month: '2-digit' , day: '2-digit' }) %>
+                        </td>
+                        <td>
+                          <%= productOfferData[i].endDate.toLocaleDateString('en-US', { year: 'numeric' ,
+                            month: '2-digit' , day: '2-digit' }) %>
+                        </td>
+                        <td>
+                          <%= productOfferData[i].currentStatus %>
+                        </td>
+                        <td> <button class="full-width-edit" data-bs-toggle="modal"
+                            data-bs-target="#editModal<%= i %>">Edit</button> </td>
+                      </tr>
+                      <% } %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+
+
+      <!------- pagination ----->
+      <nav aria-label="pagination">
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a href="?page=<%= currentPage - 1 %>" class="page-link" aria-label="Previous" style="background-color: black;">
+                        <span aria-hidden="true" style="color: white;">&laquo;</span>
+                    </a>
+                </li>
+            <% } else { %>
+                <li class="page-item disabled">
+                    <a href="#" class="page-link" aria-label="Previous" style="background-color: black;">
+                        <span aria-hidden="true" style="color: white;">&laquo;</span>
+                    </a>
+                </li>
+            <% } %>
+    
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                    <a href="?page=<%= i %>" class="page-link" 
+                        <% if (currentPage === i) { %>
+                            style="background-color: #a49b9b; color: white;"
+                        <% } else { %>
+                            style="color: black;"
+                        <% } %>><%= i %></a>
+                </li>
+            <% } %>
+    
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a href="?page=<%= currentPage + 1 %>" class="page-link" aria-label="Next" style="background-color: black;">
+                        <span aria-hidden="true" style="color: white;">&raquo;</span>
+                    </a>
+                </li>
+            <% } else { %>
+                <li class="page-item disabled">
+                    <a href="#" class="page-link" aria-label="Next" style="background-color: black;">
+                        <span aria-hidden="true" style="color: white;">&raquo;</span>
+                    </a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+    
+    
+      
+    </div>
+
+
+
+    <!------ add cat modal ------>
+    <div class="modal" tabindex="-1" id="addOffer">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Product Offer</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+
+            <form id="addProductOfferForm" role="form">
+              <div class="modal-body">
+
+                <div class="custom-select">
+                  <div class="select-selected">Select a Product</div>
+                  <div class="select-items">
+                    <% for(let i=0; i<productData.length; i++){ %>
+                      <div class="select-item" data-value="<%=productData[i]._id%>">
+                        <img src="/assets/uploadimages/uploads/<%=productData[i].productImage[0]%>"
+                          alt="<%=productData[i].productName%>" class="product-image"
+                          style="max-width: 70px;max-height: 70px;">
+                        <%=productData[i].productName%>
+
+                      </div>
+                      <% } %>
+                  </div>
+                </div>
+
+                <input type="hidden" id="selectedProductName" name="selectedProductName"
+                  style="border: none; outline: none;">
+
+                <div class="error-message" id="product-error" style="color: red;"></div>
+
+
+                <div class="offerPercentageInput p-2">
+                  <label for="productOfferPercentage" class="mb-2">Product Offer
+                    Percentage: </label>
+                  <div class="input-group">
+                    <input id="productOfferPercentage" name="productOfferPercentage" class="form-control"
+                      placeholder="Enter the offer percentage">
+                  </div>
+                  <div class="form-text">Choose a percentage to be discounted. Between
+                    5% and 90%.</div>
+                </div>
+
+                <div class="startDateInput p-2">
+                  <label for="startDate">Offer Start Date: </label>
+                  <div class="input-group">
+                    <input id="startDate" name="startDate" type="date" class="form-control">
+                  </div>
+                  <div class="form-text">Choose a start date for the offer to be
+                    considered.</div>
+                </div>
+
+                <div class="endDateInput p-2">
+                  <label for="endDate">Offer Expiry Date : </label>
+                  <div class="input-group">
+                    <input id="endDate" name="endDate" type="date" class="form-control">
+                  </div>
+                  <div class="form-text">Choose an exipry date for offer to end.</div>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="addCouponBtn" type="submit" class="full-width-modal">Save
+                  changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Edit Product Offer Modal  -->
+    <% productOfferData.forEach(function(productOffer, index) { %>
+      <div class="modal fade" id="editModal<%= index %>" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="modalLabel">Edit Product Offer</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="editProductOfferForm<%= index %>" role="form">
+              <div class="modal-body">
+                <div class="input-group mb-3">
+                  <label class="container">
+                    <label for="productName" class="mb-2">Product Name:</label>
+                    <input type="text" name="productName" class="form-control" value="<%= productOffer.productName %>"
+                      disabled>
+                  </label>
+                </div>
+
+                <div class="offerPercentageInput p-2">
+                  <label for="productOfferPercentage" class="mb-2">Product Offer Percentage: </label>
+                  <div class="input-group">
+                    <input id="productOfferPercentage<%= index %>" name="productOfferPercentage" class="form-control"
+                      placeholder="Enter the offer percentage" value="<%= productOffer.productOfferPercentage %>">
+                  </div>
+                  <div class="form-text">Choose a percentage to be discounted. Between 5% and 90%.</div>
+                </div>
+
+                <div class="startDateInput p-2">
+                  <label for="startDate">Offer Start Date: </label>
+                  <div class="input-group">
+                    <input id="startDate<%= index %>" name="startDate" type="date" class="form-control"
+                      value="<%= productOffer.startDate.toISOString().split('T')[0] %>">
+                  </div>
+                  <div class="form-text">Choose a start date for the offer to be considered.</div>
+                </div>
+
+                <div class="endDateInput p-2">
+                  <label for="endDate">Offer Expiry Date : </label>
+                  <div class="input-group">
+                    <input id="endDate<%= index %>" name="endDate" type="date" class="form-control"
+                      value="<%= productOffer.endDate.toISOString().split('T')[0] %>">
+                  </div>
+                  <div class="form-text">Choose an exipry date for offer to end.</div>
+                </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button id="editOfferBtn" type="submit" class="full-width-modal">Save changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      <% }) %>
+
+
+        <%- include('../adminPartials/footer') %>
+
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+          <script>
+            $(document).ready(function () {
+              $('.select-selected').click(function () {
+                $('.select-items').toggle();
+              });
+
+              $('.select-item').click(function () {
+                var value = $(this).attr('data-value');
+                var text = $(this).text();
+                $('#selectedProductName').val(value);
+                $('.select-selected').text(text);
+                $('.select-items').hide();
+              });
+
+              $(document).click(function (event) {
+                if (!$(event.target).closest('.custom-select').length) {
+                  $('.select-items').hide();
+                }
+              });
+            });
+
+            // Form Validation for add product
+            $('#addProductOfferForm').validate({
+              ignore: [],
+              rules: {
+                selectedProductName: {
+                  required: true
+                },
+                productOfferPercentage: {
+                  required: true,
+                  number: true,
+                  min: 5,
+                  max: 90
+                },
+                startDate: {
+                  required: true,
+                  date: true
+                },
+                endDate: {
+                  required: true,
+                  date: true,
+                  greaterThan: "#startDate"
+                }
+              },
+              messages: {
+                selectedProductName: {
+                  required: "Please select a product."
+                },
+                productOfferPercentage: {
+                  required: "Please enter the offer percentage.",
+                  number: "Please enter a valid number.",
+                  min: "Percentage must be at least 5%.",
+                  max: "Percentage must be at most 90%."
+                },
+                startDate: {
+                  required: "Please select a start date.",
+                  date: "Please enter a valid date."
+                },
+                endDate: {
+                  required: "Please select an end date.",
+                  date: "Please enter a valid date.",
+                  greaterThan: "End date must be after the start date."
+                }
+              },
+
+              submitHandler: async function (form) {
+                try {
+                  const formData = {
+                    productId: form.selectedProductName.value,
+                    productOfferPercentage: form.productOfferPercentage.value,
+                    startDate: form.startDate.value,
+                    endDate: form.endDate.value
+                  };
+
+                  let response = await fetch(`/admin/productOfferManagement/addOffer`, {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                  })
+
+                  const result = await response.json()
+
+                  if (result.success) {
+                    Swal.fire({
+                      title: 'Success!',
+                      text: 'Product offer added successfully.',
+                      icon: 'success',
+                      confirmButtonText: 'OK'
+                    }).then((result) => {
+                      if (result.isConfirmed) {
+                        window.location.href = "/admin/productOffer";
+                      }
+                    });
+                  } else {
+                    Swal.fire('Error!', 'Failed to add product offer.', 'error');
+                  }
+
+                } catch (error) {
+                  console.error(error.message);
+                }
+
+                // window.location.reload()
+              }
+
+            });
+
+
+
+
+            //Form validation for edit Product
+
+            // console.log("Sdfrevevbv dsgtr");
+            var today = new Date().toISOString().split('T')[0];
+            const productOfferData = '<%- JSON.stringify(productOfferData) %>';
+            const productDetData = '<%- JSON.stringify(productData) %>';
+            const parsedProdOffer = JSON.parse(productOfferData);
+            const parsedProdDet = JSON.parse(productOfferData);
+            // console.log(parsedProdOffer);
+            // console.log(parsedProdDet);
+
+            $(document).ready(function () {
+              parsedProdOffer.forEach((productOffer, index) => {
+                const formId = `#editProductOfferForm${index}`;
+                const startDateSelector = `#startDate${index}`;
+                const endDateSelector = `#endDate${index}`;
+                const startDateElement = $(startDateSelector);
+                const endDateElement = $(endDateSelector);
+
+                $(formId).validate({
+                  rules: {
+                    productOfferPercentage: {
+                      required: true,
+                      min: 5,
+                      max: 90
+                    },
+                    startDate: "required",
+                    endDate: {
+                      required: true,
+                      greaterThan: startDateSelector
+                    }
+                  },
+                  messages: {
+                    productOfferPercentage: {
+                      required: "Please enter the product offer percentage",
+                      min: "Product offer percentage must be at least 5%",
+                      max: "Product offer percentage must be at most 90%"
+                    },
+                    startDate: "Please enter the start date",
+                    endDate: {
+                      required: "Please enter the end date",
+                      greaterThan: "End date must be after the start date"
+                    }
+                  },
+
+                  submitHandler: async function (form, event) {
+                    event.preventDefault();
+
+                    const formData = {
+                      productName: productOffer.productName,
+                      productOfferPercentage: $(formId).find('input[name="productOfferPercentage"]').val(),
+                      startDate: $(startDateSelector).val(),
+                      endDate: $(endDateSelector).val()
+                    };
+
+                    try {
+                      const response = await fetch(`/admin/productOfferManagement/editOffer?productOfferId=${productOffer._id}`, {
+                        method: 'PUT',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(formData)
+                      });
+
+                      const result = await response.json();
+                      console.log(result)
+                      if (result.success) {
+                        Swal.fire({
+                          icon: "success",
+                          title: "Your Product Offer has been updated",
+                          showConfirmButton: true,
+                        }).then((result) => {
+                          if (result.isConfirmed) {
+                            window.location.href = "/admin/productOffer" // Reload the page after user confirms
+                          }
+                        });
+                      } else {
+                        Swal.fire({
+                          icon: "error",
+                          title: "Failed to update the product offer",
+                          text: "Please try again"
+                        });
+                      }
+                    } catch (error) {
+                      console.error(error);
+                      Swal.fire({
+                        icon: "error",
+                        title: "Failed to update the product offer",
+                        text: "Please try again"
+                      });
+                    }
+                  }
+                });
+              })
+            })
+
+            // Custom validator for date comparison
+            $.validator.addMethod("greaterThan", function (value, element, params) {
+              return this.optional(element) || new Date(value) > new Date($(params).val());
+            }, 'End date must be after the start date.');
+
+          </script>
+
+
+
+  </body>

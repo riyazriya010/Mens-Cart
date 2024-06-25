@@ -1,0 +1,265 @@
+<%- include('../userPartials/header') %>
+
+
+<style>
+      body {
+    background-color: white;
+    font-family: Arial, sans-serif;
+
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .card {
+    border-radius: 3px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .address-radio {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fff;
+    border: 2px solid black;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .address-radio:checked {
+    background-color: pink;
+    /* Inner color when selected */
+  }
+
+  .address-radio:checked::before {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .breadcrumb-item+.breadcrumb-item::before {
+    content: ">";
+  }
+
+  .btn-remove {
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding-inline-start: 16px;
+    padding-inline-end: 16px;
+  }
+
+  .btn-edit {
+    margin-left: 2%;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 4px;
+    padding-inline-start: 16px;
+    padding-inline-end: 16px;
+    padding-block-start: 5px;
+    padding-block-end: 5px;
+  }
+
+  .coll-1,
+  .coll-2 {
+    border: 1px solid rgb(210, 208, 208);
+
+  }
+
+  .border-word {
+    border: 1px solid green;
+    padding: 5px 10px;
+    /* Adjust padding to shape the border */
+    display: inline-block;
+    border-radius: px;
+    /* Ensures a fully rounded border */
+    width: 60px;
+    font-size: 12px;
+    /* Makes the text size small */
+  }
+
+  .addressDetails-base-name {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    color: #03a685;
+    font-weight: 700;
+    border: 1px solid #03a685;
+    margin-left: 8px;
+    line-height: 12px;
+  }
+
+  .full-width-button {
+    color: white;
+    background-color: rgb(240, 65, 65);
+    border: 1px solid rgb(236, 65, 65);
+    border-radius: 2px;
+    width: 30%;
+    /* Makes the button take full width */
+    padding: 6px;
+    /* Optional: Adds padding inside the button */
+    box-sizing: border-box;
+    /* Ensures padding and border are included in the width */
+    margin-left: 70%;
+  }
+
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+
+
+
+  .step-indicator span {
+
+    margin: 0 15px;
+  }
+</style>
+
+    <body>
+
+       
+        <!------ main content ----->
+        <div class="container">
+
+            <div class="row justify-content-center">
+
+                <div class=" coll-1 col-lg-8">
+                  <div style="margin-top: 2%;padding: 3%;" id="addressContent">
+                    <div style="display: flex;justify-content: space-between;">
+                      <h6 style="font-weight: bold;">Your Addresses</h6>
+                      <a href="/addAdress"><button style="background-color: white;border: 1px solid black;padding: 6px;font-size: 11px;font-weight: bold;">ADD
+                          NEW ADDRESS</button></a>
+                    </div>
+          
+                    <% if(address.length === 0) { %>
+                      <h5><strong>No any address</strong></h5>
+                      <% }else { %>
+                    
+                    <% for(let i=0; i<address.length; i++){ %>
+                    <div class="row mt-4">
+                      <div class="col">
+                        <div class="card" id="card-<%= i %>" style="position: relative;">
+                          <div class="card-body">
+                            <!-- Custom styled radio button -->
+                            <!-- <input type="radio" name="selectedAddress" value="<%= i %>" id="radio-<%= i %>" class="address-radio" onclick="selectAddress('<%= address[i]._id %>')" style="position: absolute; top: 10px; left: 10px;"> -->
+          
+                            <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+                              <div style="display: flex;">
+                                <p style="margin-bottom: 0;"> <%= address[i].name %> </p>
+                                <p><span class="addressDetails-base-name"> <%= address[i].addressTitle %> </span></p>
+                              </div>
+                              <% if(address[i].setAsDefault) { %>
+                              <p style="font-size: 11px; font-weight: bold;">DEFAULT ADDRESS</p>
+                              <% } %>
+                            </div>
+          
+                            <p> <%= address[i].address1 %>, <%= address[i].address2 %> <br> <%= address[i].city %> <%= address[i].state %> - <%= address[i].pincode %> <br> <strong>Land Mark:</strong> <%= address[i].land %> </p> 
+                            
+                            <div style="display: flex;">
+                              <button class="btn-remove" onclick="deleteAddr('<%= address[i]._id %>')">Remove</button>
+                              <a href="/editAddress/<%= address[i]._id %>" style="margin-left: 2%;"><button class="btn-edit">Edit</button></a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <% } %>
+          
+                    <% } %>
+          
+          
+          
+                  </div>
+                  <!-- <button type="button" class="full-width-button mb-2" onclick="continueToPayment()">Continue</button> -->
+                </div>
+          
+          
+          
+              </div>
+
+        </div>
+
+        <%- include('../userPartials/footer') %>
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+
+            <script>
+                async function deleteAddr(id) {
+                    try {
+                        const confirmation = await swal.fire({
+                            title: 'Are you sure?',
+                            text: "You won't be able to revert this!",
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonColor: '#3085d6',
+                            cancelButtonColor: '#d33',
+                            confirmButtonText: 'Yes, delete it!'
+                        });
+
+                        if (confirmation.isConfirmed) {
+                            let response = await fetch(`/address/delete?addressId=${id}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                swal.fire('Deleted!', 'Your address has been deleted.', 'success')
+                                    .then(() => {
+                                        // window.location.href = '/address';
+                                        $('#addressContent').load('/address #addressContent > *');
+                                    });
+                            } else {
+                                swal.fire('Error!', 'There was a problem deleting your address.', 'error');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error:', error);
+                        swal.fire('Error!', 'There was a problem deleting your address.', 'error');
+                    }
+                }
+            </script>
+
+
+
+            <script>
+                async function select2(addressId){
+                    
+                    try {
+                        
+                        let response = await fetch(`/checkout/address/select2?addressId=${addressId}`,{
+                            method:'POST'
+                        })
+
+                        if(response.ok){
+                            console.log('Address selected');
+                        }else{
+                            console.log('Address not selected');
+                        }
+
+                    } catch (error) {
+                        console.error(error.message)
+                    }
+                }
+            </script>
+
+    </body>

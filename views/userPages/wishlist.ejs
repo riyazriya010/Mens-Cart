@@ -1,0 +1,222 @@
+<%- include('../userPartials/header') %>
+
+    <style>
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+        }
+
+        .wishlist-item {
+            border-bottom: 1px solid #ddd;
+            padding: 15px 0;
+        }
+
+        .wishlist-item img {
+            max-width: 100px;
+            max-height: 100px;
+        }
+
+        .wishlist-item-details {
+            flex: 1;
+            padding-left: 15px;
+        }
+
+        .wishlist-item-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: end;
+            justify-content: space-between;
+        }
+
+        .wishlist-item-actions .btn-link {
+            padding: 0;
+        }
+
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 30vh;
+            /* Full viewport height for demonstration */
+        }
+
+        .btn-link {
+            border: none;
+            background: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .btn-link.mb-2 {
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <body>
+
+
+
+        <!-- Main content -->
+        <div class="container mt-4">
+            <div class="row">
+                <!-- Sidebar -->
+
+                <div class="col-lg-3 order-lg-2 mb-4">
+                    <!-- <div class="card">
+                        <div class="card-body">
+                            <h5>Total Items: 10</h5>
+                            <button class="btn btn-danger w-100">Add All to Cart</button>
+                        </div>
+                    </div> -->
+                </div>
+                <!-- Wishlist Items -->
+                <% if(wishlistData.length===0) { %>
+                    <h5>Your Wishlist was Empty</h5>
+                    <% }else { %>
+                        <h4>Your Wishlist</h4>
+                        <% for(let i=0; i<wishlistData.length; i++) { %>
+                            <div class="col-lg-9 order-lg-1">
+                                <div class="wishlist-item d-flex flex-wrap align-items-center">
+                                    <div class="me-2">
+                                        <img src="/assets/uploadimages/uploads/<%= wishlistData[i].productId.productImage[0] %>"
+                                            alt="Keyboard" style="max-width: 70%;min-height: 70%;">
+                                    </div>
+                                    <div class="wishlist-item-details flex-grow-1">
+                                        <h5>
+                                            <%= wishlistData[i].productId.productName %>
+                                        </h5>
+                                        <!-- <p>Electronics</p> -->
+
+                                        <div style="display: flex;">
+                                            <% if(wishlistData[i].productId.offerPrice !==null) { %>
+
+                                                <span class="text-muted"><strike>₹<%=
+                                                            wishlistData[i].productId.productPrice %>
+                                                    </strike></span>
+                                                <h6 style="color:black;margin-left: 4%;"> ₹<%=
+                                                        wishlistData[i].productId.offerPrice %>
+                                                </h6>
+                                                <span
+                                                    style="margin-left: 4%;color: rgb(255, 0, 247);font-weight: bolder;">
+                                                    <%= wishlistData[i].productId.offerApplied %>%
+                                                </span>
+                                                <% }else{ %>
+                                                    <h6 style="color:black;margin-left: 4%;"> ₹<%=
+                                                            wishlistData[i].productId.productPrice %>
+                                                    </h6>
+                                                    <% } %>
+                                        </div>
+                                    </div>
+                                    <div class="button-container">
+                                        <% if(wishlistData[i].addedToCart === false) { %>
+                                            <button class="btn mb-2" style="color: green;font-size: 25px;"
+                                            onclick="addTOCart('<%= wishlistData[i].productId._id %>')"><i
+                                                class="fa-solid fa-cart-plus"></i></button>
+                                            <% }else{ %>
+                                                <a href="/cart"><button class="btn btn-success">Go to cart</button></a>
+                                                <% } %>
+
+                                        <button class="btn" style="color: red;font-size: 25px;"
+                                            onclick="itemDelete('<%= wishlistData[i].productId._id %>')"><i
+                                                class="fa-sharp fa-solid fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <% } %>
+                                <% } %>
+            </div>
+        </div>
+
+
+        <%- include('../userPartials/footer') %>
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+            <script>
+                async function addTOCart(productId) {
+                    try {
+
+                        const response = await fetch(`/wishlist/product/addToCart?productId=${productId}`, {
+                            method: 'POST'
+                        })
+
+                        const result = await response.json()
+
+                        if (!result.success && result.outOfStock) {
+                            // Show SweetAlert for OutOfStock
+                            await Swal.fire({
+                                title: "Out Of Stock!",
+                                text: "You Cannot add these product to cart.",
+                                icon: "error",
+                                confirmButtonColor: "#3085d6",
+                                confirmButtonText: "OK"
+                            });
+
+                        } else if (!result.success && result.maxQuantityReached) {
+                            // Show SweetAlert for maximum quantity reached
+                            await Swal.fire({
+                                title: "Max Quantity reached in cart!",
+                                text: "You Cannot add these product to cart.",
+                                icon: "error",
+                                confirmButtonColor: "#3085d6",
+                                confirmButtonText: "OK"
+                            });
+                        } else if (result.success) {
+                            await Swal.fire({
+                                title: "Added to cart!",
+                                icon: "success",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#31A94C",
+                                cancelButtonText: "Continue shopping",
+                                confirmButtonText: "Go to cart"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/cart';
+                                } else {
+                                    window.location.href = '/shop';
+                                }
+                            });
+                        }
+
+                    } catch (error) {
+                        console.error(error.message);
+                    }
+                }
+
+
+                //item delete from list
+                async function itemDelete(productId) {
+                    try {
+                        const result = await Swal.fire({
+                            title: 'Are you sure?',
+                            text: 'Do you want to remove the product?',
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, remove it!',
+                            cancelButtonText: 'No, keep it'
+                        });
+
+                        if (result.isConfirmed) {
+                            const response = await fetch(`/wishlist/deleteItem?productId=${productId}`, {
+                                method: 'DELETE'
+                            });
+
+                            const result = await response.json();
+
+                            if (result.success) {
+                                await Swal.fire({
+                                    title: 'Item removed successfully',
+                                    icon: 'success'
+                                })
+                                window.location.href = '/wishlist';
+                            } else {
+                                console.error('Failed to remove the product');
+                                Swal.fire('Error', 'Failed to remove the product', 'error');
+                            }
+                        }
+                    } catch (error) {
+                        console.error(error.message);
+                    }
+                }
+            </script>
+    </body>

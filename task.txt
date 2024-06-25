@@ -1,0 +1,21 @@
+14 days for return product  disable 
+validation want to check for 10th week
+
+end date start date
+
+
+Pendings
+1. add separate input boxes for otp.
+2. show new arrivals in home page.
+3. stocks based on size(optional).
+4. add-landmark field in address.
+5. correct address and name in PayPal.
+6. in order details, its showing wrong price.
+7. once a product is delivered there should be no rollback.
+8. reason not showing in admin side for order return.
+9. show wallet payment in proceed to payment.
+10. add timestamps wherever necessary.
+
+
+
+rating app error problem.

@@ -1,0 +1,103 @@
+<%- include('../userPartials/header') %>
+
+<style>
+    /* Override Bootstrap input focus border */
+    .form-control:focus {
+        box-shadow: none;
+        border-color: #ced4da; /* or whatever color you want */
+      }
+      .card{
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      #email-btn{
+        background-color: #e33e3e;
+        color: white;
+      }
+      .breadcrumb-item + .breadcrumb-item::before{
+        content:">";
+      }
+</style>
+
+<body>
+    
+        <!------ main content ---->
+        <div class="container mt-5">
+            <!-- <h1 class="text-center">Men's Cart</h1> -->
+            <div class="row justify-content-center">
+              <div class="col-12 col-sm-12 col-md-8 col-lg-5">
+                <!-----form----->
+      
+                <div class="card">
+                 
+                  <div class="card-body">
+
+                    <form id="emailVerify">
+                      <div class="form-group mt-3 mb-3">
+                        <label for="email">Enter the e-mail address associated with your account. Click submit to confirm your OTP.</label>
+                        <input type="email" name="email" class="form-control" id="email" style="margin-top: 10px;" />
+                      </div>
+                      <button type="submit" class="btn btn-block" style="width: 100%;color: white;margin-top: 15px;" id="email-btn">Submit</button>
+                    </form>
+      
+                    
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      
+
+    <%- include('../userPartials/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        $('#emailVerify').validate({
+          rules: {
+              email: {
+                pattern: /^[a-z0-9]+(?:[._%+-][a-z0-9]+)*@[a-z0-9]+(?:\.[a-z0-9-]+)*\.[a-z]{2,}$/,
+                required: true,
+              }
+            },
+
+            submitHandler: async function (form, event) {
+              event.preventDefault();
+
+              const formData = {
+                email: form.email.value,
+              };
+
+              try{
+
+                const response = await fetch('/emailVerify', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if(result.NotExist){
+                  Swal.fire('Not an existing user', '', 'error');
+                }else{
+                  swal.fire('Otp send successfully', '', 'success')
+                  .then(() => {
+                    window.location.href = '/recoverOtp'
+                  })
+                }
+
+              }catch(error){
+                console.error(error.message)
+              }
+
+            }
+        })
+      })
+    </script>
+
+</body>

@@ -1,0 +1,115 @@
+<!------ header from partials ------>
+
+<%- include("../adminPartials/header") %>
+
+<style>
+  .table-dark-bordered {
+  border: 1px solid #000; /* Dark border color for the table */
+}
+
+.table-dark-bordered th,
+.table-dark-bordered td {
+  border: 1px solid #000; /* Dark border color for table headers and cells */
+}
+</style>
+
+
+<body style="color: whitesmoke;">
+    
+
+
+    <!---- breadcrumbs ---->
+    <div class="container-fluid">
+        <div class="row justify-content-end" style="background-color: #e2e2e2;height: 30px;">
+         
+          <div class="col-7 col-md-7 col-lg-9">
+            <h5>Ratings</h5>
+          </div>
+         
+          <div class="col-5 col-md-4 col-lg-2">
+            <nav aria-label="breadcrumb" style="margin-left: -40%;">
+              <ol class="breadcrumb">
+      
+                <li class="breadcrumb-item "  aria-current="page">
+                  <a href="/dashboard" style="text-decoration: none;color: black;">Dashboard</a>
+                </li>
+      
+                <li class="breadcrumb-item active"  aria-current="page">
+                  Ratings
+                </li>
+      
+              </ol>
+            </nav>
+          </div>
+        </div>
+        
+      </div>
+  
+  
+  
+      <!------ main content ----->
+  
+      <div class="container mt-4">
+        
+          <div class="row">
+              <div class="col">
+  
+                <div class="row mb-2">
+                  <div class="col-6">
+
+                    <!-- <form class="input-group" action="/category/search" method="GET" style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);width: 250px;">
+                      <input type="text" name="searchQuery" class="form-control" placeholder="search for product" aria-describedby="basic-addon2" required style="border: white;border-radius: 3px;margin-top: 2px;">
+                      <button type="submit" class="input-group-addon" style="border: white;background-color: white;border-radius: 3px;width: 40px;margin-left: -4px;margin-top: 2px;"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    </form> -->
+
+                  </div>   
+                </div>
+
+              
+
+                <div class="row mt-3">
+                  <div class="col">
+                    <div class="table-responsive">
+
+                      
+                      <table class="table table-hover text-center table-bordered table-dark-bordered"">
+                        <thead class="table-dark">
+                          <tr>
+                            <th>Product Name</th>
+                            <th>No Of Star</th>
+                            <th>Rating Description</th>
+                            
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <% ratings.forEach(rating => { %>
+                          <tr>
+                            <td> <%= rating.productName %> </td>
+                            <td> <%= rating.noOfStars %>  </td>
+                            <td> <%= rating.ratingDescription %>  </td>
+                          </tr>
+                         <% }) %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+          </div>
+
+
+  
+        
+       
+  
+
+
+      
+<!----- foooter from partials ---->
+      <%- include("../adminPartials/footer") %>
+
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+</body>
+

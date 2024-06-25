@@ -1,0 +1,189 @@
+<%- include('../userPartials/header') %>
+
+    <style>
+        /* Override Bootstrap input focus border */
+        .form-control:focus {
+            box-shadow: none;
+            border-color: #ced4da;
+        }
+
+        .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 100%;
+            /* Makes the button take full width */
+            padding: 6px;
+            /* Optional: Adds padding inside the button */
+            box-sizing: border-box;
+            /* Ensures padding and border are included in the width */
+        }
+
+        .otp-input {
+            width: 2.5em;
+            text-align: center;
+        }
+
+        #otpInput {
+            border: 2px solid black;
+            box-shadow: none;
+        }
+
+        .breadcrumb-item+.breadcrumb-item::before {
+            content: ">";
+        }
+    </style>
+
+    <body>
+
+        <!------ main content ---->
+        <div class="container mt-5">
+            <!-- <h1 class="text-center">Men's Cart</h1> -->
+            <div class="row justify-content-center">
+                <div class="col-12 col-sm-12 col-md-8 col-lg-4">
+                    <!-----form----->
+
+                    <div class="card" style="border: none;">
+                        <!-- <h3 class="card-header text-center">Authentication</h3> -->
+                        <div class="card-body">
+                            <form id="otpVerifyForm">
+                                <div class="form-group mt-3 mb-3">
+                                    <label for="otp">Confirm OTP</label>
+                                    <div id="otp" class="d-flex justify-content-between" style="margin-top: 10px;">
+                                        <input id="otpInput" type="text" name="otp1" maxlength="1"
+                                            class="form-control otp-input" />
+                                        <input id="otpInput" type="text" name="otp2" maxlength="1"
+                                            class="form-control otp-input" />
+                                        <input id="otpInput" type="text" name="otp3" maxlength="1"
+                                            class="form-control otp-input" />
+                                        <input id="otpInput" type="text" name="otp4" maxlength="1"
+                                            class="form-control otp-input" />
+                                        <input id="otpInput" type="text" name="otp5" maxlength="1"
+                                            class="form-control otp-input" />
+                                        <input id="otpInput" type="text" name="otp6" maxlength="1"
+                                            class="form-control otp-input" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="" id="otpText">Time left: </label>
+                                    <span>
+                                        <h4 id="timer"></h4>
+                                    </span>
+                                </div>
+
+                                <button id="login-btn" type="submit" class="full-width-button"
+                                    style="width: 100%;color: white;margin-top: 15px;">
+                                    Verify
+                                </button>
+                            </form>
+
+                            <form id="resendOtpForm">
+                                <button id="resend-otp" type="submit" class="full-width-button"
+                                    style="width: 100%; margin-top: 15px; display: none;">Re-send Otp</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <%- include('../userPartials/footer') %>
+
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', () => {
+                    const otpVerifyForm = document.getElementById('otpVerifyForm');
+                    const resendOtpForm = document.getElementById('resendOtpForm');
+                    const timerDisplay = document.getElementById('timer');
+                    const resendOtpButton = document.getElementById('resend-otp');
+                    let timer = 60;
+                    let countdown;
+
+                    const startCountdown = () => {
+                        countdown = setInterval(() => {
+                            if (timer > 0) {
+                                timer--;
+                                timerDisplay.textContent = timer;
+                            } else {
+                                clearInterval(countdown);
+                                resendOtpButton.style.display = 'block';
+                            }
+                        }, 1000);
+                    };
+
+                    startCountdown();
+
+
+                    // Auto-focus and navigation between OTP inputs
+                    document.querySelectorAll('.otp-input').forEach((input, index, inputs) => {
+                        input.addEventListener('input', () => {
+                            if (input.value.length === 1 && index < inputs.length - 1) {
+                                inputs[index + 1].focus();
+                            }
+                        });
+
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Backspace' && input.value.length === 0 && index > 0) {
+                                inputs[index - 1].focus();
+                            }
+                        });
+                    });
+
+
+                    otpVerifyForm.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+
+                        const otp = Array.from(document.querySelectorAll('.otp-input'))
+                            .map(input => input.value)
+                            .join('');
+
+                        const response = await fetch(`/forgetVerifyOtp?otp=${otp}`, {
+                            method: 'POST',
+                        });
+
+                        const result = await response.json();
+
+                        if (result.verified) {
+                            console.log(result.verified);
+                            Swal.fire('Otp Verified successfully!', '', 'success').then(() => {
+                                window.location.href = '/recoverPassword';
+                            });
+                        } else {
+                            Swal.fire('Invalid OTP', '', 'error');
+                        }
+                    });
+
+
+
+                    //resned otp
+                    resendOtpForm.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+
+                        const response = await fetch('/otp/resend', {
+                            method: 'GET',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+
+                        const result = await response.json();
+
+                        if (result.resend) {
+                            Swal.fire('OTP re-sent to your mail!', '', 'success');
+                            resendOtpButton.style.display = 'none';
+                            timer = 60;
+                            clearInterval(countdown);
+                            startCountdown();
+                        } else {
+                            Swal.fire('Error!', 'Failed to resend OTP.', 'error');
+                        }
+                    });
+
+
+                })
+            </script>
+
+    </body>

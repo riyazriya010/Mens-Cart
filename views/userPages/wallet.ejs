@@ -1,0 +1,135 @@
+<%- include('../userPartials/header') %>
+
+<style>
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background-color: #f7f7f7;
+        }
+       .wallet-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+       .wallet-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+       .wallet-header.user-name {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+       .wallet-header.wallet-balance {
+            font-size: 24px;
+            font-weight: bold;
+            color: #337ab7;
+        }
+       .wallet-history {
+            padding: 20px;
+        }
+       .wallet-history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+       .wallet-history-table th,
+       .wallet-history-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+       .wallet-history-table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+       .wallet-history-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+</style>
+
+
+<body>
+    
+    <div class="wallet-container">
+        <div class="wallet-header">
+            <div class="user-name"> <%= name %> </div>
+            
+            <div class="wallet-balance"> ₹<%= walletData ? walletData.walletBalance : 'N/A' %> </div>
+            
+        </div>
+        <div class="wallet-history">
+            <h3 style="color:  black;">Wallet History</h3>
+            <table class="wallet-history-table">
+                <thead>
+                    <tr>
+                        <th>Transaction Date</th>
+                        <th>Transaction Type</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (walletData.walletTransaction && walletData.walletTransaction.length > 0) { %>
+                        <% for(let i = walletData.walletTransaction.length - 1; i >= 0; i--) { %>
+                            <tr>
+                                <td> <%= walletData.walletTransaction[i].transactionDate.toDateString() %> </td>
+                                <td> <%= walletData.walletTransaction[i].transactionType %> </td>
+                                <td> <%= parseFloat(walletData.walletTransaction[i].transactionAmount).toFixed(2) %> </td>
+                            </tr>
+                        <% } %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="3"> No transactions found. </td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <nav aria-label="pagination">
+        <ul class="pagination justify-content-center">
+            <% if (currentPage > 1) { %>
+                <li class="page-item">
+                    <a href="?page=<%= currentPage - 1 %>" class="page-link" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            <% } else { %>
+                <li class="page-item disabled">
+                    <a href="#" class="page-link" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            <% } %>
+    
+            <% for (let i = 1; i <= totalPages; i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                    <a href="?page=<%= i %>" class="page-link"><%= i %></a>
+                </li>
+            <% } %>
+    
+            <% if (currentPage < totalPages) { %>
+                <li class="page-item">
+                    <a href="?page=<%= currentPage + 1 %>" class="page-link" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            <% } else { %>
+                <li class="page-item disabled">
+                    <a href="#" class="page-link" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            <% } %>
+        </ul>
+    </nav>
+
+    <%- include('../userPartials/footer') %>
+</body>

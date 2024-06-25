@@ -1,0 +1,317 @@
+<%- include('../adminPartials/header') %>
+
+  <style>
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .full-width-product {
+      color: white;
+      background-color: #295f4e;
+      border: 1px solid #295f4e;
+      /* border-radius: 2px; */
+      width: 150%;
+      padding: 7px;
+      box-sizing: border-box;
+    }
+
+    .full-width-category {
+      color: white;
+      background-color: #295f4e;
+      border: 1px solid #295f4e;
+      /* border-radius: 2px; */
+      width: 150%;
+      padding: 7px;
+      box-sizing: border-box;
+    }
+
+    .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 15%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+  </style>
+
+  <body>
+
+
+    <div class="container">
+
+      <div class="row mt-5 mb-5">
+        <!----- card-1 ----->
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h4>Today's Revenue</h4>
+              <p id="todayRevenue" style="font-weight: bold;"></p>
+              <!-- <p>Shopping fees are not included</p> -->
+            </div>
+          </div>
+        </div>
+
+        <!----- card-2 ----->
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h4>Total Orders</h4>
+              <p id="totalOrders" style="font-weight: bold;"></p>
+            </div>
+          </div>
+        </div>
+
+        <!----- card-3 ----->
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h4>Products</h4>
+              <p id="totalProducts" style="font-weight: bold;"></p>
+              <!-- <p>In 4 Categories</p> -->
+            </div>
+          </div>
+        </div>
+
+        <!----- card-4 ----->
+        <div class="col">
+          <div class="card">
+            <div class="card-body">
+              <h4>Monthly Income</h4>
+              <p id="currentMonthElement" style="font-weight: bold;"></p>
+              <!-- <p>Based on your local time</p> -->
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div style="display: flex; align-items: center; margin-left: 5%;">
+            <!-- Using Bootstrap's form-control-sm -->
+            <select name="chartFilter" class="form-control form-control-sm" id="chartFilter"
+              style="margin-left: 3%; width: 90px; height: 40px;">
+              <option value="">Select</option>
+              <!-- <option value="week">Week</option> -->
+              <option value="Monthly">Monthly</option>
+              <option value="Yearly">Yearly</option>
+            </select>
+            <!-- Filter Button -->
+            <button type="button" class="full-width-button" id="filterButton" style="margin-left: 10px;">Filter</button>
+            <button type="button" class="full-width-button" onclick="window.location.href='/dashboard'" style="margin-left: 10px;">Remove Filter</button>
+          </div>
+        </div>
+      </div>
+
+      <h4 class="text-center mt-3">Two Weeksd Sales</h4>
+
+      <div class="row mt-5 mb-5">
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Category Wise Revenue</h5>
+              <canvas id="pie-chart"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Line Graph</h5>
+              <canvas id="line-graph"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mb-5">
+        <div class="col">
+          <div style="display: flex;justify-content: space-around;">
+            <a href="/admin/dashBoard/topProducts"><button class="full-width-product">Top 10 Selling
+                Product</button></a>
+            <a href="/admin/dashBoard/topCategory"><button class="full-width-category">Top 10 Selling
+                Category</button></a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <%- include('../adminPartials/footer') %>
+
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+
+      <script>
+
+        // Call fetchDashboardData when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+          fetchDashboardData();
+        });
+
+
+
+        // Function to fetch and update dashboard data
+        async function fetchDashboardData(filter) {
+          try {
+            const response = await fetch(`/admin/dashBoard/data?filter=${filter}`, {
+              method: "GET"
+            });
+
+            const result = await response.json();
+
+            const {
+              todayRevenue,
+              totalOrders,
+              totalProducts,
+              currentMonthEarnings,
+              categorySaleTwoWeeks,
+              lastTwoWeekRevenueData
+            } = result.data;
+
+            // Handle todayRevenue and totalOrders
+            const revenue = todayRevenue[0]?.totalRevenue || 0; // Assuming todayRevenue is an array
+            const todayRevenueElement = document.getElementById('todayRevenue');
+            todayRevenueElement.innerText = `₹ ${revenue}`;
+
+            const totalOrderCount = totalOrders.length || 0; // Assuming totalOrders is an array
+            const totalOrdersElement = document.getElementById('totalOrders');
+            totalOrdersElement.innerText = `${totalOrderCount}`;
+
+            const products = totalProducts[0]?.getTotalProducts || 0;
+            const totalProductsElement = document.getElementById('totalProducts');
+            totalProductsElement.innerText = `${products}`;
+
+            const currentMonth = currentMonthEarnings[0]?.currentMonth || 0;
+            const currentMonthElement = document.getElementById('currentMonthElement');
+            currentMonthElement.innerText = `₹ ${Math.floor(currentMonth)}`;
+
+            //pie and line chart data adding to arrray and sending to the charts
+            const labels = [];
+            const data = [];
+
+            for (const [key, value] of Object.entries(categorySaleTwoWeeks)) {
+              labels.push(key);
+              data.push(value);
+            }
+
+            const label2 = [];
+            const data2 = [];
+
+            lastTwoWeekRevenueData.forEach(element => {
+              const { orderDate, price } = element;
+
+              // Check if orderDate is a Date object, if not, convert it
+              const dateObj = orderDate instanceof Date ? orderDate : new Date(orderDate);
+
+              // Validate if dateObj is a valid Date object
+              if (Object.prototype.toString.call(dateObj) === "[object Date]" && !isNaN(dateObj.getTime())) {
+                const formattedDate = dateObj.toISOString().split('T')[0]; // Extracts yyyy-mm-dd from ISO date
+                // const price = discountedPrice !== null ? discountedPrice : grandTotalCost;
+
+                label2.push(formattedDate); // Store formatted date as label
+                data2.push(price); // Store price as data
+              } else {
+                console.error(`Invalid orderDate format for element: ${JSON.stringify(element)}`);
+              } // Store price as data
+            });
+
+            console.log(label2, data2)
+            console.log(lastTwoWeekRevenueData)
+
+            // Initialize charts after fetching data
+            initCharts(labels, data, label2, data2);
+
+
+
+          } catch (error) {
+            Swal.fire('Error', 'An error occurred while fetching the data', 'error');
+            console.error('Fetch error:', error);
+          }
+        }
+
+        // Function to initialize charts
+        function initCharts(labels, data, label2, data2) {
+          // Pie Chart
+          const pieCtx = document.getElementById("pie-chart").getContext('2d');
+          const pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Sales by Category (Last 2 Weeks)',
+                backgroundColor: [
+                  'rgba(255, 99, 132, 1)',
+                  'rgba(54, 162, 235, 1)',
+                  'rgba(255, 206, 86, 1)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  'rgba(255, 159, 64, 1)',
+                  'rgba(255, 99, 132, 1)'
+                ],
+                data: data,
+              }]
+            },
+            options: {
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    beginAtZero: true,
+                  }
+                }]
+              }
+            },
+          });
+
+
+          // Line Graph
+          const lineCtx = document.getElementById("line-graph").getContext('2d');
+          const lineChart = new Chart(lineCtx, {
+            type: 'line',
+            data: {
+              // labels: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+              labels: label2,
+              datasets: [{
+                label: 'Last two weeks',
+                backgroundColor: 'rgba(161, 198, 247, 1)',
+                borderColor: 'rgb(47, 128, 237)',
+                // data: [100, 4000, 2000, 5000, 8000, 1000, 10000, 100, 4000, 2000, 5000, 8000, 1000, 10000],
+                data: data2,
+              }]
+            },
+            options: {
+              scales: {
+                yAxes: [{
+                  ticks: {
+                    beginAtZero: true,
+                    max: 12000,
+                  }
+                }]
+              }
+            },
+          });
+        }
+
+
+        // Event listener for the filter button click
+        $('#filterButton').on("click", async function () {
+          const filter = $('#chartFilter').val();
+          console.log(filter);
+
+          // Call fetchDashboardData function
+          await fetchDashboardData(filter);
+        });
+
+
+      </script>
+
+  </body>

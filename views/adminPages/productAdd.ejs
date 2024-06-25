@@ -1,0 +1,272 @@
+<%- include('../adminPartials/header') %>
+
+<body>
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-12 col-md-8 col-lg-4">
+        <!-----form----->
+
+        <div class="card">
+          <h3 class="card-header text-center">Add Product</h3>
+          <div class="card-body">
+
+            <form id="addProductForm" novalidate>
+
+              <div class="form-group mt-3 mb-3">
+                <label for="prod-name">Product Name</label>
+                <input type="text" name="productName" class="form-control" id="prod-name" />
+              </div>
+
+              <div class="form-group mt-3 mb-3">
+                <label for="prod-cat">Product Category</label>
+                <select name="productCategory" class="form-control" id="prod-cat">
+                  <option value="">Select a category</option>
+                  <% for(let i=0; i < categoryData.length; i++) { %>
+                    <option value="<%= categoryData[i].categoryName %>">
+                      <%= categoryData[i].categoryName %>
+                    </option>
+                    <% } %>
+                </select>
+              </div>
+
+              <div class="form-group mt-3 mb-3">
+                <label for="images">Product Images</label>
+                <input type="file" name="images" id="images" multiple accept="image/*">
+                <div id="croppedImagesContainer" class="mt-3"></div>
+              </div>
+
+              <div class="form-group mt-3 mb-3">
+                <label for="prod-price">Product Price INR</label>
+                <input type="text" name="price" class="form-control" id="prod-price" />
+              </div>
+
+              <div class="form-group mt-3 mb-3">
+                <label for="In-stock">In-stock</label>
+                <input type="text" name="stock" class="form-control" id="In-stock" />
+              </div>
+
+              <hr>
+              <a href="/admin/product">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              </a>
+              <button type="submit" class="btn btn-primary">Add</button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cropper.js Modal -->
+  <div class="modal" tabindex="-1" id="cropper-modal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Crop Image</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <img id="image" style="max-width: 100%; height: auto;" />
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" id="crop-button" class="btn btn-primary">Crop</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Include Cropper.js and jQuery Validation -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+  <script>
+    $(document).ready(function () {
+      let cropper;
+      const image = document.getElementById('image');
+      const inputFile = document.getElementById('images');
+      let croppedImages = [];
+      let currentFileIndex = 0;
+      let files = [];
+
+      inputFile.addEventListener('change', function (event) {
+        files = Array.from(event.target.files);
+        if (files.length > 0) {
+          currentFileIndex = 0;
+          loadImageForCropping(files[currentFileIndex]);
+        }
+      });
+
+      function loadImageForCropping(file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          image.src = e.target.result;
+          $('#cropper-modal').modal('show');
+        };
+        reader.readAsDataURL(file);
+      }
+
+      $('#cropper-modal').on('shown.bs.modal', function () {
+        cropper = new Cropper(image, {
+          aspectRatio: NaN, // Remove aspect ratio constraint
+          autoCropArea: 1, // Set initial crop area to cover the entire image
+          movable: false, // Disable moving the crop box
+          zoomable: false, // Disable zooming
+          viewMode: 1 // Show only the cropped area
+        });
+      }).on('hidden.bs.modal', function () {
+        cropper.destroy();
+        cropper = null;
+      });
+
+      $('#crop-button').on('click', function () {
+        const croppedCanvas = cropper.getCroppedCanvas();
+        if (croppedCanvas) { // Check if there's a cropped canvas
+          croppedCanvas.toBlob(function (blob) {
+            const croppedImageFile = new File([blob], `cropped_image_${currentFileIndex}.png`, {
+              type: 'image/png'
+            });
+            croppedImages.push(croppedImageFile);
+            addCroppedImageToContainer(URL.createObjectURL(croppedImageFile), currentFileIndex);
+            $('#cropper-modal').modal('hide');
+            currentFileIndex++;
+            if (currentFileIndex < files.length) {
+              loadImageForCropping(files[currentFileIndex]);
+            }
+          });
+        } else {
+          // Clear the file input to ensure only cropped images are processed
+          inputFile.value = '';
+          // Show a message or handle the case when no image is cropped
+          alert("Please crop the image before adding.");
+        }
+      });
+
+      function addCroppedImageToContainer(src, index) {
+        const container = document.getElementById('croppedImagesContainer');
+        const imageWrapper = document.createElement('div');
+        imageWrapper.classList.add('cropped-image-wrapper');
+        const img = document.createElement('img');
+        img.src = src;
+        img.classList.add('cropped-image');
+        const dropButton = document.createElement('button');
+        dropButton.textContent = 'Drop';
+        dropButton.classList.add('btn', 'btn-danger', 'btn-sm', 'drop-button');
+        dropButton.addEventListener('click', function () {
+          container.removeChild(imageWrapper);
+          croppedImages.splice(index, 1); // Remove the image from the croppedImages array
+        });
+        imageWrapper.appendChild(img);
+        imageWrapper.appendChild(dropButton);
+        container.appendChild(imageWrapper);
+      }
+
+      $('#addProductForm').validate({
+        rules: {
+          productName: {
+            required: true,
+            pattern: /^[a-zA-Z]+(?:[- ][a-zA-Z]+)*$/, // Allow only alphanumeric characters and spaces
+          },
+          productCategory: {
+            required: true
+          },
+          images: {
+            required: true
+          },
+          price: {
+            required: true,
+            number: true,
+            pattern: /^\d+(\.\d{1,2})?$/ // Allow only numbers with up to 2 decimal places
+          },
+          stock: {
+            required: true,
+            digits: true,
+            pattern: /^\d+$/ // Allow only whole numbers
+          }
+        },
+        messages: {
+          productName: {
+            required: "Please enter the product name",
+            pattern: "Please enter a valid product name (only alphanumeric and spaces)"
+          },
+          productCategory: {
+            required: "Please select a product category"
+          },
+          images: {
+            required: "Please upload at least one image"
+          },
+          price: {
+            required: "Please enter the product price",
+            number: "Please enter a valid price",
+            pattern: "Please enter a valid price (up to 2 decimal places)"
+          },
+          stock: {
+            required: "Please enter the stock quantity",
+            digits: "Please enter a valid stock quantity",
+            pattern: "Please enter a valid stock quantity (whole numbers only)"
+          }
+        },
+        errorElement: 'div',
+        errorPlacement: function (error, element) {
+          error.addClass('invalid-feedback');
+          if (element.prop('type') === 'checkbox') {
+            error.insertAfter(element.siblings('label'));
+          } else {
+            error.insertAfter(element);
+          }
+        },
+        highlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-invalid').removeClass('is-valid');
+        },
+        unhighlight: function (element, errorClass, validClass) {
+          $(element).addClass('is-valid').removeClass('is-invalid');
+        },
+        submitHandler: function (form) {
+          const formData = new FormData(form);
+          // Remove the original images from the form data
+          formData.delete('images');
+          // Append only the cropped images
+          croppedImages.forEach((image) => {
+            formData.append('images', image);
+          });
+
+          fetch('/admin/addProduct/verify', {
+            method: 'POST',
+            body: formData
+          })
+            .then(response => response.json())
+            .then(data => {
+              if (data.productExist) {
+                Swal.fire('Product Already Exists', '', 'error');
+              } else if (data.error) {
+                Swal.fire('Error', data.error, 'error');
+              } else {
+                Swal.fire({
+                  title: 'Product Added Successfully',
+                  icon: 'success',
+                  showConfirmButton: false,
+                  timer: 1500
+                }).then(() => {
+                  window.location.href = '/admin/product';
+                });
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              Swal.fire('Error', 'There was a problem with your request.', 'error');
+            });
+
+          return false; // Prevent default form submission
+        }
+      });
+
+    });
+  </script>
+
+  <%- include('../adminPartials/footer') %>
+
+</body>
+

@@ -1,0 +1,301 @@
+<%- include("../adminPartials/header") %>
+
+ 
+
+  <style>
+    .breadcrumb-item+.breadcrumb-item::before {
+      content: ">";
+    }
+
+    .table-dark-bordered {
+      border: 1px solid #000;
+      /* Dark border color for the table */
+    }
+
+    .table-dark-bordered th,
+    .table-dark-bordered td {
+      border: 1px solid #000;
+      /* Dark border color for table headers and cells */
+    }
+
+    .cropped-image-wrapper {
+      position: relative;
+      display: inline-block;
+      margin: 10px;
+    }
+
+    .cropped-image {
+      max-width: 100px;
+      max-height: 100px;
+      display: block;
+    }
+
+    .drop-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+    }
+
+    .full-width-button {
+            color: white;
+            background-color: #295f4e;
+            border: 1px solid #295f4e;
+            /* border-radius: 2px; */
+            width: 100%; /* Makes the button take full width */
+            padding: 6px; /* Optional: Adds padding inside the button */
+            box-sizing: border-box; /* Ensures padding and border are included in the width */
+        }
+
+  </style>
+
+  <body style="background: whitesmoke;">
+
+
+
+    <!---- breadcrumbs ---->
+    <div class="container-fluid">
+      <div class="row justify-content-end" style="background-color: #e2e2e2;height: 30px;">
+
+        <div class="col-7 col-md-7 col-lg-9">
+          <h5>Product</h5>
+        </div>
+
+        <div class="col-5 col-md-4 col-lg-2">
+          <nav aria-label="breadcrumb" style="margin-left: -40%;">
+            <ol class="breadcrumb">
+
+              <li class="breadcrumb-item " aria-current="page">
+                <a href="/dashboard" style="text-decoration: none;color: black;">Dashboard</a>
+              </li>
+
+              <li class="breadcrumb-item active" aria-current="page">
+                Product
+              </li>
+
+            </ol>
+          </nav>
+        </div>
+      </div>
+
+    </div>
+
+
+
+
+
+    <!------ main content ----->
+
+    <div class="container mt-4">
+
+      <div class="row">
+        <div class="col">
+
+          <div style="display: flex;justify-content: space-between;">
+            <a href="/admin/addProduct">
+              <button class="mb-2 full-width-button">AddProduct</button></a>
+                <a href="/admin/productOffer"><button class="full-width-button">Product Offer Management</button></a>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-6">
+              
+              <form class="input-group" action="/product/search" method="GET"
+                style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);width: 250px;">
+                <input type="text" name="searchQuery" class="form-control" placeholder="search for product"
+                  aria-describedby="basic-addon2" required style="border: white;border-radius: 3px;margin-top: 2px;">
+                <button type="submit" class="input-group-addon"
+                  style="border: white;background-color: white;border-radius: 3px;width: 40px;margin-left: -4px;margin-top: 2px;"><i
+                    class="fa-solid fa-magnifying-glass"></i></button>
+              </form>
+            </div>
+          </div>
+
+
+
+          <div class="row mt-3">
+            <div class="col">
+              <div class="table-responsive">
+                <table class="table table-hover align-middle text-center">
+                  <thead class="table-dark">
+                    <tr>
+                      <th>Product Name</th>
+                      <th>Product Category</th>
+                      <th>Product Images</th>
+                      <th>Price in INR</th>
+                      <th>In-stock</th>
+                      <th>List/Unlist</th>
+                      <th>Actions</th>
+                      <th>Delete</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <% for(let i=0;i<productData.length;i++) { %>
+
+                        <td>
+                          <%= productData[i].productName %>
+                        </td>
+                        <td>
+                          <%= productData[i].parentCategory.categoryName %>
+                        </td>
+
+                        <td>
+                          <% for(let j=0; j<productData[i].productImage.length; j++) { %>
+                            <img src="/assets/uploadimages/uploads/<%= productData[i].productImage[j] %>"
+                              style="height: 70px; width: 60px; border-radius: 0;">
+                            <% } %>
+                        </td>
+
+                        <td>
+                          <%= productData[i].productPrice %>
+                        </td>
+                        <td>
+                          <%= productData[i].productStock %>
+                        </td>
+
+                        <td>
+                          <% if (productData[i].isListed) { %>
+                            <button class="full-width-button" onclick="unList('<%= productData[i]._id %>')">
+                              Unlist</button>
+                            <% } else { %>
+                              <button class="full-width-button" onclick="List('<%= productData[i]._id %>')">
+                                List</button>
+                              <% } %>
+                        </td>
+
+                        <td>
+                          <a href="/admin/editProduct/<%= productData[i]._id %>"><button class="full-width-button">
+                            Edit</button>
+                          </a>
+                      </td>
+
+                        <td>
+
+                          <button onclick="deleteProduct('<%= productData[i]._id %>')"
+                            style="background-color: rgb(234, 71, 71);border: 1px solid rgb(234, 71, 71);color: white;border-radius: 4px;">
+                            <i class="fa-sharp fa-solid fa-trash"></i></button>
+
+                        </td>
+                    </tr>
+
+                    <% } %>
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+    </div>
+
+
+
+    <!---- pagination ---->
+    <nav aria-label="pagination">
+      <ul class="pagination justify-content-center">
+        <li class="page-item <%= currentPage === 1 ? 'disabled' : '' %>">
+          <a href="/admin/product?page=<%= currentPage - 1 %>" class="page-link" aria-label="Previous"
+            style="background-color: black;">
+            <span aria-hidden="true" style="color: white;">&laquo;</span>
+          </a>
+        </li>
+        <li class="page-item">
+          <span class="page-link" style="background-color: #a49b9b; color: black;">
+            <%= currentPage %>
+          </span>
+        </li>
+        <li class="page-item <%= currentPage === totalPages ? 'disabled' : '' %>">
+          <a href="/admin/product?page=<%= currentPage + 1 %>" class="page-link" aria-label="Next"
+            style="background-color: black;">
+            <span aria-hidden="true" style="color: white;">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+
+
+
+    <%- include("../adminPartials/footer") %>
+
+
+      <script>
+        async function unList(productId) {
+          let response = await fetch(`/admin/product/unList?productId=${productId}`, {
+            method: 'PUT',
+          });
+          let result = await response.json();
+          if (result.success) {
+            await Swal.fire({
+              icon: "success",
+              title: "Product unListed",
+              confirmButtonText: "OK",
+            });
+            window.location.reload();
+          } else if (result.userNotExist) {
+            Swal.fire('Prodcut does not exist', '', 'error');
+          }
+        }
+
+        async function List(productId) {
+          let response = await fetch(`/admin/product/list?productId=${productId}`, {
+            method: 'PUT',
+          });
+          let result = await response.json();
+          if (result.success) {
+            await Swal.fire({
+              icon: "success",
+              title: "Prodcut Listed",
+            });
+            window.location.reload();
+          } else if (result.userNotExist) {
+            Swal.fire('Product does not exist', '', 'error');
+          }
+        }
+
+
+
+        // Function to handle category deletion
+        function deleteProduct(id) {
+          Swal.fire({
+            title: 'Are you sure?',
+            text: 'You will not be able to recover this Product!',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'Cancel'
+          }).then((result) => {
+            if (result.isConfirmed) {
+              fetch(`/admin/product/delete/${id}?_method=DELETE`, {
+                method: 'POST', // Using POST to support forms without JavaScript
+              })
+                .then(response => response.json())
+                .then(data => {
+                  if (data.success) {
+                    Swal.fire('Deleted!', 'Product has been deleted.', 'success')
+                      .then((result) => {
+                        window.location.reload()
+                      })
+
+                  } else {
+                    Swal.fire('Error', 'Failed to delete Product', 'error');
+                  }
+                })
+                .catch(error => {
+                  console.error('Error:', error);
+                  Swal.fire('Error', 'There was a problem with your request.', 'error');
+                });
+            }
+          });
+        }
+
+      </script>
+
+
+
+  </body>
