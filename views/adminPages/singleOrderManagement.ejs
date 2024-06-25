@@ -44,6 +44,7 @@
         }
 
         .table-cell-pending,
+        .table-cell-paymentFailed,
         .table-cell-delivered,
         .table-cell-cancelled,
         .table-cell-shipped,
@@ -63,6 +64,9 @@
         }
 
         .table-cell-pending {
+            background-color: #295f4e;
+        }
+        .table-cell-paymentFailed {
             background-color: #295f4e;
         }
 
@@ -145,6 +149,9 @@
                             <p><strong>Order Date:</strong>
                                 <%= order.orderDate.toDateString() %>
                             </p>
+                            <% if(order.paymentType === 'Payment Failed') { %>
+                                <td> <span class="table-cell-paymentFailed"> <%= order.paymentType %> </span> </td>
+                                <% }else{ %>
 
                             <% if(status==='Pending' ) { %>
                                 <p><strong>Status:</strong> <span class="table-cell-pending">
@@ -176,6 +183,8 @@
                                                         </span></p>
                                                     <% } %>
 
+                                                    <% } %>
+
                         </div>
                     </div>
                 </div>
@@ -193,8 +202,10 @@
                                     <th>Status</th>
                                     <th>Price</th>
                                     <th>Quantity</th>
+                                    <th>Discount</th>
                                     <th>Subtotal</th>
                                     <th>Action</th>
+
                                     <% for(let j=0; j < cart.length; j++) { %>
                                         <% if(cart[j].status === 'Cancelled') { %>
                                             <th>Reason</th>
@@ -218,6 +229,10 @@
                                                 <td>
                                                     <%= product.productName %>
                                                 </td>
+
+                                                <% if(order.paymentType === 'Payment Failed') { %>
+                                                    <td> <span class="table-cell-paymentFailed"> <%= order.paymentType %> </span> </td>
+                                                    <% }else{ %>
 
                                                 <% if(cart[i].status==='Pending' ) { %>
                                                     <td> <span class="table-cell-pending">
@@ -249,15 +264,23 @@
                                                                             </span> </td>
                                                                             <% } %>
 
+                                                                            <% } %>
+
                                                                     <td>
-                                                                        <%= cart[i].totalCostPerProduct %>
+                                                                        ₹<%= cart[i].productPrice %>
                                                                     </td>
                                                                     <td>
                                                                         <%= cart[i].productQuantity %>
                                                                     </td>
-                                                                    <td> $ <%= cart[i].totalCostPerProduct *
-                                                                            cart[i].productQuantity %>
-                                                                    </td> <!-- Assuming product price is available -->
+                                                                    <td> 
+                                                                        <% if(cart[i].offerApplied) { %>
+                                                                          <%= cart[i].offerApplied%>%
+                                                                          <% }else{ %>
+                                                                            Nil
+                                                                            <% } %>
+                                                                      </td>
+                                                                      <td>₹<%= cart[i].totalCostPerProduct %></td>
+                                                                    <!-- Assuming product price is available -->
                                                                     <td>
                                                                         <% if(cart[i].status === 'Cancelled' ) { %>
                                                                             <h6 style="color: red;">

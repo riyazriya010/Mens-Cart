@@ -14,7 +14,7 @@ exports.wishlistGet = async (req, res, next) => {
         res.render('userPages/wishlist', { wishlistData });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -46,7 +46,7 @@ exports.additemToWishlist = async (req, res, next) => {
         res.json({ success: true })
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -98,7 +98,7 @@ exports.addToCart = async (req, res, next) => {
         res.json({ success: true })
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 

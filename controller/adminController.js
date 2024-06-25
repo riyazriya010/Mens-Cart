@@ -21,7 +21,7 @@ exports.adminLoginGet = (req, res, next) => {
         }
         res.render('adminPages/loginPage'); // Render login page
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -42,7 +42,7 @@ exports.adminLoginVerify = (req, res, next) => {
             res.json({success:false});
         }
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -59,7 +59,7 @@ exports.dashBoard = (req,res, next) => {
             res.redirect('/adminLogin');
         }
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
     
 }
@@ -70,13 +70,13 @@ exports.adminLogout = (req,res, next) => {
         
         req.session.destroy((error) => {
             if (error) {
-                console.error('Error destroying session:', err);
+                // console.error('Error destroying session:', err);
                 return res.status(500).send('Internal Server Error');
             }
             res.redirect('/adminLogin');
           });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -105,30 +105,9 @@ exports.getData = async (req, res, next) => {
         } });
 
     } catch (error) {
-        console.error(error.message);
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
-
-
-
-//top 10 Products
-// exports.topProducts = async (req,res,next) => {
-//     try {
-
-//         const topProd = await topProducts();
-
-//         const sortedProd = topProd.sort((a,b) => b.quantity - a.quantity)
-
-//         console.log('sortedProd: ',sortedProd);
-
-//         res.render('adminPages/topProducts',{ topProducts: sortedProd });
-        
-//     } catch (error) {
-//         console.error(error.message);
-//         next(new AppError(500));
-//     }
-// }
 
 
 // Controller function to fetch and render top products with pagination
@@ -159,8 +138,7 @@ exports.topProducts = async (req, res, next) => {
             totalPages: Math.ceil(allProducts.length / pageSize)
         });
     } catch (error) {
-        console.error(error.message);
-        next(new AppError(500)); // Handle error appropriately
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -196,8 +174,7 @@ exports.topCategory = async (req, res, next) => {
             totalPages: Math.ceil(allCategory.length / pageSize)
         });
     } catch (error) {
-        console.error(error.message);
-        next(new AppError(500)); // Handle error appropriately
+        next(new AppError(error.message, 500))
     }
 };
 

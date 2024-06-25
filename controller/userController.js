@@ -29,6 +29,7 @@ exports.loginGet = (req, res) => {
 //login Verify
 exports.loginVerify = async (req,res,next) => {
     try {
+
         const loginData = {
             email:req.body.email,
             password:req.body.password
@@ -63,7 +64,7 @@ exports.loginVerify = async (req,res,next) => {
         }
 
     } catch (error) {
-        next(new AppError(500));         
+        next(new AppError(error.message, 500))      
     }
 }
 
@@ -154,7 +155,7 @@ exports.signupVerify = async (req,res,next) => {
             res.json({ exists: false });
             
     }catch(error){
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -248,7 +249,7 @@ exports.otpVerify = async (req,res,next) => {
         }
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
   }
 }
 
@@ -283,7 +284,7 @@ exports.resendOtp = async (req,res,next) => {
         const deleteOtpCollection = async () => {
             try {
               await otpCollection.otp.deleteMany({});
-              console.log('Resend OTP collection deleted');
+            //   console.log('Resend OTP collection deleted');
             } catch (err) {
               console.error('Error deleting OTP collection:', err);
             }
@@ -315,7 +316,7 @@ exports.getRemainingTime = async (req, res, next) => {
         const remainingTime = Math.max(otpData.expireAt - Date.now(), 0);
         res.json({ remainingTime: Math.ceil(remainingTime / 1000) }); // return in seconds, rounded up to avoid showing fractions
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -340,7 +341,7 @@ exports.googleCallback = async (req,res,next) => {
         res.redirect('/');
 
     } catch(error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -371,10 +372,6 @@ exports.emailVerify = async (req, res, next) => {
 
             const hashedOtp = await bcrypt.hash(otp, 10)
 
-
-            // // Create TTL index on generatedAt field with a 60-second expiration time
-            // await otpCollection.otp.createIndex({ generatedAt: 1 }, { expireAfterSeconds: 60 });
-
             //creating collection for otp
             const otpDocument = new otpCollection.otp({
                 email: userData.email,
@@ -396,7 +393,7 @@ exports.emailVerify = async (req, res, next) => {
             const deleteOtpCollection = async () => {
                 try {
                   await otpCollection.otp.deleteMany({});
-                  console.log('OTP collection deleted');
+                //   console.log('OTP collection deleted');
                 } catch (err) {
                   console.error('Error deleting OTP collection:', err);
                 }
@@ -412,7 +409,7 @@ exports.emailVerify = async (req, res, next) => {
 
     } catch (error) {
 
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
 
     }
 }
@@ -430,7 +427,7 @@ exports.otpGetForget = (req, res, next) => {
         }
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 
 }
@@ -442,14 +439,14 @@ exports.forgetVerifyOtp = async (req, res, next) => {
     // console.log(req.body)
     try {
 
-        console.log('otps: ',req.query)
+        // console.log('otps: ',req.query)
 
         const  otp  = req.query.otp;
         const storedOtp = req.session.verifyOtp;
         const userData = req.session.userData
-        console.log('storedOtp: ',storedOtp);
+        // console.log('storedOtp: ',storedOtp);
         if ( otp ===  storedOtp) {
-            console.log('matched')
+            // console.log('matched')
             // Delete OTP collection from db
             //  await otpCollection.otp.deleteMany({ email: userData.email });
 
@@ -458,13 +455,13 @@ exports.forgetVerifyOtp = async (req, res, next) => {
             return res.json({ verified: true });
 
         } else {
-            console.log('not matched');
+            // console.log('not matched');
             res.json({ verified: false });
         }
 
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -481,7 +478,7 @@ exports.recoverPasswordGet = (req, res, next) => {
         }
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 
 }
@@ -505,7 +502,7 @@ exports.recoverPassVerify = async (req, res, next) => {
         res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -539,7 +536,7 @@ exports.otpResend = async (req,res,next) => {
         const deleteOtpCollection = async () => {
             try {
               await otpCollection.otp.deleteMany({});
-              console.log('OTP collection deleted');
+            //   console.log('OTP collection deleted');
             } catch (err) {
               console.error('Error deleting OTP collection:', err);
             }
@@ -551,7 +548,7 @@ exports.otpResend = async (req,res,next) => {
           res.json({resend:true})
         
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -560,48 +557,53 @@ exports.otpResend = async (req,res,next) => {
 
 /* ----- user Management admin side ---- */
 
-exports.userGet = async (req,res) => {
-    if(req.session.adminVerify){
-
-        // const user = await userCollection.user.find()
-
-        // Pagination setup
-        const page = parseInt(req.query.page) || 1;
-        const limit = 4; // Number of categories per page
-        const skip = (page - 1) * limit;
-
-        let userData;
-        let totalUser;
-        const searchQuery = req.query.searchQuery || null;
-
-        if (searchQuery) {
-            // Perform a search query in your MongoDB collection
-            userData = await userCollection.user.find({
-                username: { $regex: searchQuery, $options: 'i' }
-            }).skip(skip).limit(limit);
-            totalUser = await userCollection.user.countDocuments({
-                username: { $regex: searchQuery, $options: 'i' }
-            });
-        } else {
-            totalUser = await userCollection.user.countDocuments({});
-            userData = await userCollection.user.find({}).skip(skip).limit(limit);
+exports.userGet = async (req,res,next) => {
+    try {
+        if(req.session.adminVerify){
+    
+            // const user = await userCollection.user.find()
+    
+            // Pagination setup
+            const page = parseInt(req.query.page) || 1;
+            const limit = 4; // Number of categories per page
+            const skip = (page - 1) * limit;
+    
+            let userData;
+            let totalUser;
+            const searchQuery = req.query.searchQuery || null;
+    
+            if (searchQuery) {
+                // Perform a search query in your MongoDB collection
+                userData = await userCollection.user.find({
+                    username: { $regex: searchQuery, $options: 'i' }
+                }).skip(skip).limit(limit);
+                totalUser = await userCollection.user.countDocuments({
+                    username: { $regex: searchQuery, $options: 'i' }
+                });
+            } else {
+                totalUser = await userCollection.user.countDocuments({});
+                userData = await userCollection.user.find({}).skip(skip).limit(limit);
+            }
+    
+            const totalPages = Math.ceil(totalUser / limit);
+    
+    
+    
+            res.render("adminPages/userManage", { 
+                userData,
+                totalUser,
+                currentPage: page,
+                totalPages,
+                searchQuery,
+             });
+            
+        }else{
+    
+            res.redirect('/adminLogin');
         }
-
-        const totalPages = Math.ceil(totalUser / limit);
-
-
-
-        res.render("adminPages/userManage", { 
-            userData,
-            totalUser,
-            currentPage: page,
-            totalPages,
-            searchQuery,
-         });
         
-    }else{
-
-        res.redirect('/adminLogin');
+    } catch (error) {
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -637,7 +639,7 @@ exports.userBlock = async (req, res, next) => {
 
         // console.log(userUpdate);
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -662,7 +664,7 @@ exports.userUnBlock = async (req, res, next) => {
 
         // console.log(userUpdate);
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -675,7 +677,7 @@ exports.userSearch = async (req, res, next) => {
             await exports.userGet(req, res);
             
         } catch (error) {
-            next(new AppError(500));
+            next(new AppError(error.message, 500))
         }
     } else {
         res.redirect('/adminLogin');

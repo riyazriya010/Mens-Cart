@@ -12,37 +12,7 @@ const AppError = require('../middleware/errorHandling.js');
 const { invoicePdf } = require("../service/invoicePdf");
 
 
-
-
-
-// exports.orderGet = async (req, res) => {
-//     try {
-//         const page = parseInt(req.query.page) || 1; 
-//         const limit = 5;
-//         const skip = (page - 1) * limit; // Calculate the number of orders to skip
-
-//         const totalOrders = await orderCollection.orders.countDocuments({ userId: req.session.userId }); // Get total count of orders
-//         const totalPages = Math.ceil(totalOrders / limit); // Calculate total number of pages
-
-//         const orders = await orderCollection.orders.find({ userId: req.session.userId })
-//             .skip(skip)
-//             .limit(limit);
-
-//         res.render('userPages/orders', {
-//             orders,
-//             currentPage: page,
-//             totalPages
-//         });
-//     } catch (error) {
-//         console.error(error.message);
-//         res.status(500).render('500');
-//     }
-// };
-
-
 ///orderget
-
-
 exports.orderGet = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -142,7 +112,7 @@ exports.orderGet = async (req, res, next) => {
             totalPages
         });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -279,7 +249,7 @@ exports.orderDetailsPage = async (req, res, next) => {
         res.render('userPages/singleOrder', { order, orderId, cart, products, totalQuantity, subtotal, status, address, fourteenDaysFromNow });
 
     } catch (error) {
-        next(new AppError(error.message,500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -321,62 +291,17 @@ exports.downloadInvoice = async (req,res,next) => {
 
         
     } catch (error) {
-        next(new AppError(error.message,500));
+        next(new AppError(error.message, 500))
     }
 }
 
-
-
-
-
-//cancelling the Order
-// exports.cancelOrder = async (req, res) => {
-//     try {
-//         console.log(req.query)
-//         const { productId, productQuantity, orderId } = req.query;
-
-//         //checking orderId and productId are valid ObjectIds
-//         if (!ObjectId.isValid(orderId) || !ObjectId.isValid(productId)) {
-//             return res.status(400).json({ success: false, message: 'Invalid orderId or productId' });
-//         }
-
-//         const orderObjectId = new ObjectId(orderId);
-//         const productObjectId = new ObjectId(productId);
-
-//         console.log(`Updating order with ID: ${orderObjectId} for product ID: ${productObjectId}`);
-
-//         const result = await orderCollection.orders.updateOne(
-//             { 
-//                 _id: orderObjectId, 
-//                 "cartData.productId": productObjectId 
-//             },
-//             { 
-//                 $set: { "cartData.$.status": "Cancelled" } 
-//             }
-//         );
-
-
-
-//         if (result.matchedCount === 0) {
-//             console.log('Update failed: Product not found or already cancelled');
-//             return res.status(400).json({ success: false, message: 'Product not found or already cancelled' });
-//         }
-
-//         console.log('Update successful:', result);
-//         return res.json({ success: true });
-
-//     } catch (error) {
-//         console.error('Error cancelling order:', error.message);
-//         res.status(500).json({ success: false, message: 'Internal server error' });
-//     }
-// };
 
 
 exports.cancelOrder = async (req, res, next) => {
 
     try {
 
-        console.log(req.query);
+        // console.log(req.query);
 
         const { productId, productQuantity, orderId, reason } = req.query;
 
@@ -388,7 +313,7 @@ exports.cancelOrder = async (req, res, next) => {
         const orderObjectId = new ObjectId(orderId);
         const productObjectId = new ObjectId(productId);
 
-        console.log(`Updating order with ID: ${orderObjectId} for product ID: ${productObjectId}`);
+        // console.log(`Updating order with ID: ${orderObjectId} for product ID: ${productObjectId}`);
 
         const orderDatas = await orderCollection.orders.findById(orderObjectId)
 
@@ -414,7 +339,7 @@ exports.cancelOrder = async (req, res, next) => {
         );
 
         if (result.matchedCount === 0) {
-            console.log('Update failed: Product not found or already cancelled');
+            // console.log('Update failed: Product not found or already cancelled');
             return res.status(400).json({ success: false, message: 'Product not found or already cancelled' });
         }
 
@@ -423,7 +348,7 @@ exports.cancelOrder = async (req, res, next) => {
         // Retrieve current product quantity
         const product = await productCollection.product.findById(productId);
         if (!product) {
-            console.log('Product not found');
+            // console.log('Product not found');
             return res.status(400).json({ success: false, message: 'Product not found' });
         }
 
@@ -431,11 +356,11 @@ exports.cancelOrder = async (req, res, next) => {
         const newProductQuantity = product.productStock + parseInt(productQuantity);
         await productCollection.product.findByIdAndUpdate(productId, { productStock: newProductQuantity });
 
-        console.log('Product quantity updated successfully');
+        // console.log('Product quantity updated successfully');
         return res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -447,7 +372,7 @@ exports.returnOrder = async (req, res, next) => {
     try {
        
         const { orderId, productId, reason } = req.body
-        console.log('reason: ',reason)
+        // console.log('reason: ',reason)
 
         // Ensure the orderId and productId are valid ObjectId instances
         if (!ObjectId.isValid(orderId) || !ObjectId.isValid(productId)) {
@@ -472,7 +397,7 @@ exports.returnOrder = async (req, res, next) => {
             }
         );
 
-        console.log('result: ',result);
+        // console.log('result: ',result);
 
         if (result.matchedCount === 0) {
             return res.status(404).json({ success: false, message: 'Order or Product not found' });
@@ -484,7 +409,7 @@ exports.returnOrder = async (req, res, next) => {
         return res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -506,7 +431,7 @@ exports.checkoutAddress = async (req, res, next) => {
         res.render('userPages/checkOut-1', { address });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -517,7 +442,7 @@ exports.checkoutPayment = async (req, res, next) => {
     try {
         res.render('userPages/checkOut-2')
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -529,7 +454,7 @@ exports.orderPlaced = (req, res, next) => {
         res.render('userPages/orderPlaced')
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -571,7 +496,7 @@ exports.checkoutOrder = async (req, res, next) => {
         res.render('userPages/checkOut-3', { address, paymentMethod, grandTotal, cartData, subtotal, totalItems, coupon, couponApplied, couponId, discountAmount, total, });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -590,7 +515,7 @@ exports.proceedCheckout = async (req, res, next) => {
 
     } catch (error) {
 
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -608,7 +533,7 @@ exports.addressSelected = async (req, res, next) => {
         return res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -634,7 +559,7 @@ exports.paymentSelected = async (req, res, next) => {
         return res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 
 }
@@ -651,7 +576,7 @@ exports.placeOrder = async (req, res, next) => {
         if (req.session.paymentMethod === "PayPal") {
             // console.log('return to paypal');
             const paypalLink = await paypalPayment.payAmount(req);
-            console.log('paypal: ', paypalLink);
+            // console.log('paypal: ', paypalLink);
             return res.json({ success: true, paypalLinkGot: true, paypalLink: paypalLink });
         }
 
@@ -659,12 +584,12 @@ exports.placeOrder = async (req, res, next) => {
         if(req.session.paymentMethod === "Wallet"){
 
             const walletBuying = await walletBuy(req);
-            console.log('walletBuying: ',walletBuying);
+            // console.log('walletBuying: ',walletBuying);
             if(!walletBuying){
-                console.log('no money')
+                // console.log('no money')
                 return res.status(200).json({ success: false, noMoney: true });
             }
-            console.log('money')
+            // console.log('money')
            return res.status(200).json({ success: true });
         }
 
@@ -741,7 +666,7 @@ exports.placeOrder = async (req, res, next) => {
         res.status(200).json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 
 };

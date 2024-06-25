@@ -5,100 +5,6 @@ const AppError = require('../middleware/errorHandling.js');
 
 
 
-//cart get
-// exports.cartGet = async (req, res) => {
-//     try {
-//       const cartData = await cartCollection.cart.find({ userId: req.session.userId }).populate('productId');
-  
-//       let totalItems = 0;
-//       let grandTotal = 0;
-//       let outOfStockItems = [];
-  
-//       // Loop through the cart items and check actual available quantities
-//       for (const item of cartData) {
-//         const product = item.productId;
-  
-//         if (product.productStock < item.productQuantity) {
-//           // If available quantity is less than cart quantity, adjust it
-//           outOfStockItems.push({ productName: product.productName, requestedQuantity: item.productQuantity, availableQuantity: product.productStock });
-  
-//           // Update the cart item to reflect the actual available quantity
-//           await cartCollection.cart.updateOne({ _id: item._id }, { $set: { productQuantity: product.productStock, totalCostPerProduct: product.productStock * product.offerPrice } });
-  
-//           item.productQuantity = product.productStock;
-//           item.totalCostPerProduct = product.productStock * product.offerPrice;
-//         }
-  
-//         totalItems += item.productQuantity;
-//         grandTotal += item.totalCostPerProduct;
-//       }
-  
-//       res.render("userPages/cartPage", { cartData, totalItems, grandTotal, outOfStockItems });
-  
-//     } catch (error) {
-//       console.error(error.message);
-//       res.status(500).render('500');
-//     }
-//   };
-  
-
-
-
-
-//add to cart
-// exports.addToCart = async (req, res) => {
-//     // console.log(req.query);
-//     try {
-//         if (!req.session.userId) {
-//             return res.json({ success: false, userNotLogged: true });
-//         }
-
-//         const { productId, qty } = req.query;
-//         const productData = await productCollection.product.findById(productId);
-       
-
-//         if (productData) {
-//             const cartItem = await cartCollection.cart.findOne({ userId: req.session.userId, productId: productId });
-//             const currentQuantityInCart = cartItem ? cartItem.productQuantity : 0;
-
-//             if ((parseInt(qty) + currentQuantityInCart) > productData.productStock) {
-//                 console.log("Max quantity reached");
-//                 return res.json({ success: false, maxQuantityReached: true });
-//             }
-
-//             const categoryData = await categoryCollection.category.findById(productData.parentCategory);
-//             const existingCartItem = await cartCollection.cart.findOne({ userId: req.session.userId, productId: productId });
-
-//             if (existingCartItem) {
-//                 existingCartItem.productQuantity += parseInt(qty);
-//                 existingCartItem.totalCostPerProduct = existingCartItem.productQuantity * productData.offerPrice;
-//                  await existingCartItem.save();
-//             } else {
-//                  await cartCollection.cart.create({
-//                     userId: req.session.userId,
-//                     productId: productData._id,
-//                     productName: productData.productName,
-//                     categoryName: categoryData.categoryName,
-//                     productQuantity: qty,
-//                     totalCostPerProduct: qty * productData.offerPrice
-//                 });
-//             }
-//             res.json({ success: true });
-//         } else {
-//             res.json({ success: false });
-//         }
-//     } catch (error) {
-//         console.error(error.message);
-//         res.status(500).render('500');
-//     }
-// };
-
-
-
-
-
-//increase quantity
-
 exports.cartGet = async (req, res, next) => {
     try {
       const cartData = await cartCollection.cart.find({ userId: req.session.userId }).populate('productId');
@@ -130,7 +36,7 @@ exports.cartGet = async (req, res, next) => {
       res.render("userPages/cartPage", { cartData, totalItems, grandTotal, outOfStockItems });
   
     } catch (error) {
-      next(new AppError(500));
+      next(new AppError(error.message, 500))
     }
   };
 
@@ -151,7 +57,7 @@ exports.addToCart = async (req, res, next) => {
         const currentQuantityInCart = cartItem ? cartItem.productQuantity : 0;
   
         if ((parseInt(qty) + currentQuantityInCart) > productData.productStock) {
-          console.log("Max quantity reached");
+          // console.log("Max quantity reached");
           return res.json({ success: false, maxQuantityReached: true });
         }
   
@@ -180,7 +86,7 @@ exports.addToCart = async (req, res, next) => {
         res.json({ success: false });
       }
     } catch (error) {
-      next(new AppError(500));
+      next(new AppError(error.message, 500))
     }
   };
 
@@ -208,7 +114,7 @@ exports.increaseQty = async (req, res, next) => {
         );
         res.status(200).json({ maxLimitReached: false });
     } catch (error) {
-      next(new AppError(500));
+      next(new AppError(error.message, 500))
     }
 }
 
@@ -250,7 +156,7 @@ exports.decreaseQty = async (req, res, next) => {
         );
         res.status(200).json({ minLimitReached: false });
     } catch (error) {
-      next(new AppError(500)); 
+      next(new AppError(error.message, 500))
     }
 }
 
@@ -264,14 +170,14 @@ exports.deleteCartItem = async (req, res, next) => {
 
         if (cartData) {
             await cartData.deleteOne();
-            console.log("deleted");
+            // console.log("deleted");
             return res.status(200).send(); // Send a success status
         }
 
-        console.log("not deleted");
+        // console.log("not deleted");
         return res.status(404).send(); // Send a not found status if the item wasn't found
     } catch (error) {
-      next(new AppError(500));
+      next(new AppError(error.message, 500))
     }
 }
 
@@ -285,14 +191,14 @@ exports.deleteAll = async (req,res, next) => {
         const result = await cartCollection.cart.deleteMany({ userId: req.session.userId });
 
         if (result.deletedCount > 0) {
-            console.log(`${result.deletedCount} items deleted`);
+            // console.log(`${result.deletedCount} items deleted`);
             return res.status(200).send(); // Send a success status
         } else {
-            console.log("No items found to delete");
+            // console.log("No items found to delete");
             return res.status(404).send(); // Send a not found status if no items were found
         }
 
     }catch(error) {
-      next(new AppError(500));
+      next(new AppError(error.message, 500))
     }
 }

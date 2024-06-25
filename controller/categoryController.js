@@ -53,7 +53,7 @@ exports.categoryGet = async (req, res, next) => {
 
             res.render("adminPages/categoryPage", data);
         } catch (error) {
-            next(new AppError(500));
+            next(new AppError(error.message, 500))
         }
     } else {
         res.redirect('/adminLogin');
@@ -96,55 +96,10 @@ exports.categoryAdd = async (req, res, next) => {
         res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
-
-
-// Category Edit
-// exports.categoryEdit = async (req, res) => {
-//     try {
-
-//         const { id } = req.params;
-//         const { categoryName, categoryDescription } = req.body;
-
-//         if (!categoryName || !categoryDescription) {
-//             return res.status(400).json({ success: false, message: 'Category name and description are required' });
-//         }
-
-//         function normalizeCategoryName(name) {
-//             return name.trim().toLowerCase().replace(/\s+/g, ' ');
-//         }
-
-//         // Normalize the input category name
-//         const normalizedCategoryName = normalizeCategoryName(categoryName);
-
-//         // Check if a category with the same normalized name already exists, excluding the category with the given id
-//         const categoryExist = await categoryCollection.category.findOne({
-//             _id: { $ne: id }, // Exclude the category with the given id
-//             categoryName: { $regex: new RegExp(`^${normalizedCategoryName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i') }
-//         });
-
-//         if (categoryExist) {
-//             return res.status(400).json({ categoryExist: true });
-//         }
-
-//         const updatedCategory = await categoryCollection.category.findByIdAndUpdate(id, {
-//             categoryName: normalizedCategoryName,
-//             categoryDescription: categoryDescription.trim().replace(/\s+/g, ' '),
-//         });
-
-//         if (!updatedCategory) {
-//             return res.status(404).json({ success: false, message: 'Category not found' });
-//         }
-
-//         res.json({ success: true });
-//     } catch (error) {
-//         console.error(error.message);
-//         res.status(500).json({ success: false, message: 'Internal Server Error' });
-//     }
-// };
 
 
 // Category Edit
@@ -187,7 +142,7 @@ exports.categoryEdit = async (req, res, next) => {
 
         res.json({ success: true });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -211,7 +166,7 @@ exports.categoryDelete = async (req, res, next) => {
         res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -221,15 +176,20 @@ exports.categoryDelete = async (req, res, next) => {
 
 // Category Search
 exports.categorySearch = async (req, res, next) => {
-    if (req.session.adminVerify) {
-        try {
-            // Directly call the categoryGet function
-            await exports.categoryGet(req, res);
-        } catch (error) {
-            next(new AppError(500));
+    try {
+        
+        if (req.session.adminVerify) {
+            try {
+                // Directly call the categoryGet function
+                await exports.categoryGet(req, res);
+            } catch (error) {
+                next(new AppError(500));
+            }
+        } else {
+            res.redirect('/adminLogin');
         }
-    } else {
-        res.redirect('/adminLogin');
+    } catch (error) {
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -261,7 +221,7 @@ exports.unList = async (req, res, next) => {
         console.log(categoryUpdate);
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -289,35 +249,12 @@ exports.List = async (req, res, next) => {
             res.send({ userNotExist: true });
         }
 
-        console.log(categoryUpdate);
+        // console.log(categoryUpdate);
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
-
-
-
-
-
-//category Offer Management
-// exports.categoryOfferManagement = async (req, res) => {
-
-//     try {
-
-//         const categoryData = await categoryCollection.category.find()
-
-//         const categoryOfferData = await categoryOfferCollection.categoryOfferModel.find()
-
-//         res.render('adminPages/categoryOfferManagement', { categoryData, categoryOfferData });
-
-//     } catch (error) {
-
-//         console.error(error.message);
-//         res.status(500).send('Internal Server Error');
-//     }
-// }
-
 
 
 
@@ -342,7 +279,7 @@ exports.categoryOfferManagement = async (req, res, next) => {
             totalPages
         });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -374,7 +311,7 @@ exports.addCategoryOffer = async (req, res, next) => {
         res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -382,7 +319,7 @@ exports.addCategoryOffer = async (req, res, next) => {
 
 exports.editOffer = async (req, res, next) => {
     try {
-        console.log('cat edit offer');
+        // console.log('cat edit offer');
       const { categoryName, categoryOfferPercentage, startDate, endDate, categoryOfferId } = req.body;
   
       const categoryOffer = await categoryOfferCollection.categoryOfferModel.findById(categoryOfferId);
@@ -412,6 +349,6 @@ exports.editOffer = async (req, res, next) => {
       res.json({ success: true, data: updatedCategoryOffer });
   
     } catch (error) {
-      next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
   };

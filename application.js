@@ -58,14 +58,10 @@ app.use(adminRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack); // Log the error stack for debugging purposes
-
-  if (err instanceof AppError) {
-      res.status(err.statusCode).render('500', { error: err.message }); // Render 500 page for AppError
-  } else {
-      res.status(500).render('500', { error: 'An unexpected error occurred' }); // Render 500 page for any other errors
-  }
-});
+    const statusCode = err.statusCode || 500;
+    const status = err.status || 'error';
+    res.status(statusCode).render('500', { statusCode, status, message: err.message });
+  })
 
 
 //404 error for unknown routes

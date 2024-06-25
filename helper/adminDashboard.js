@@ -45,8 +45,7 @@ exports.getTodayRevenue = async (req, res, next) => {
         return orderData; // Return the data to be used in the controller
 
     } catch (error) {
-        console.error(error.message);
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -65,8 +64,7 @@ exports.getTotalOrders = async (req, res, next) => {
         return totalOrders
 
     } catch (error) {
-        console.error(error.message);
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -99,8 +97,7 @@ exports.getTotalProducts = async (req, res, next) => {
         return totalProducts
 
     } catch (error) {
-        console.error(error.message);
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -151,8 +148,7 @@ exports.currentMonth = async (req, res, next) => {
         return monthEarning
 
     } catch (error) {
-        console.error(error.message);
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 

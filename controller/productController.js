@@ -54,7 +54,7 @@ exports.productGet = async (req, res, next) => {
             });
 
         } catch (error) {
-            next(new AppError(500));
+            next(new AppError(error.message, 500))
         }
 
     } else {
@@ -72,7 +72,7 @@ exports.addProductGet = async (req, res, next) => {
     
         res.render('adminPages/productAdd',{ categoryData });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 
 }
@@ -122,7 +122,7 @@ exports.addProduct = async (req, res,next) => {
         res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -141,7 +141,7 @@ exports.renderEditProductPage = async (req, res, next) => {
 
         res.render('adminPages/productEdit', { productData });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -187,7 +187,7 @@ exports.editProduct = async (req, res, next) => {
 
         res.json({ success: true });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -204,7 +204,7 @@ exports.productSearch = async (req, res, next) => {
                 // Directly call the productGet function
                 await exports.productGet(req, res);
             } catch (error) {
-                console.error('Error searching categories:', error);
+                // console.error('Error searching categories:', error);
                 res.status(500).render('500');
             }
         } else {
@@ -212,7 +212,7 @@ exports.productSearch = async (req, res, next) => {
         }
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -244,7 +244,7 @@ exports.unList = async (req, res, next) => {
         // console.log(productUpdate);
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -273,7 +273,7 @@ exports.List = async (req, res, next) => {
         // console.log(productUpdate);
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -294,7 +294,7 @@ exports.deleteProduct = async (req, res, next) => {
         res.json({ success: true });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -308,7 +308,7 @@ exports.deleteImage = async (req, res, next) => {
     try {
         const { productId, imageIndex } = req.query;
 
-        console.log(productId, imageIndex)
+        // console.log(productId, imageIndex)
 
         if (!productId || imageIndex === undefined) {
             return res.status(400).json({ message: 'Product ID and Image Index are required' });
@@ -337,30 +337,9 @@ exports.deleteImage = async (req, res, next) => {
         res.status(200).json({ message: 'Image deleted successfully' });
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
-
-
-
-
-
-// exports.productOfferManagement = async (req,res) => {
-
-//     try {
-
-//         const productData = await productCollection.product.find()
-
-//         const productOfferData = await productOfferCollection.productOffermodel.find().populate('productId')
-
-//         res.render('adminPages/productOfferManagement',{ productData, productOfferData });
-        
-//     } catch (error) {
-        
-//         console.error(error.message);
-//         res.status(500).send('Internal Server Error');
-//     }
-// }
 
 
 
@@ -388,7 +367,7 @@ exports.productOfferManagement = async (req, res, next) => {
             totalPages
         });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -417,7 +396,7 @@ exports.addProductOffer = async (req, res, next) => {
       res.json({ success: true }); // return success response
   
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
   };
 
@@ -460,7 +439,7 @@ exports.addProductOffer = async (req, res, next) => {
       
     } catch (error) {
       // Log the error and respond with a server error status
-      next(new AppError(500));
+      next(new AppError(error.message, 500))
     }
   };
   

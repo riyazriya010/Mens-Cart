@@ -26,6 +26,20 @@
     box-sizing: border-box;
     margin-top: 10px; /* Ensures there is space between the content and the border */
 }
+.table-cell-paymentFailed {
+    display: inline-block;
+    padding: 10px 10px;
+    /* background-color: #007bff; */
+    background-color: #295f4e;
+    color: white;
+    text-align: center;
+    /* border-radius: 5px; */
+    border: 1px solid;
+    font-size: 14px;
+    font-weight: bold;
+    box-sizing: border-box;
+    margin-top: 10px; /* Ensures there is space between the content and the border */
+}
 .table-cell-delivered {
     display: inline-block;
     padding: 10px 10px;
@@ -187,8 +201,11 @@
                             <th>OrderId</th>
                             <th>Name</th>
                             <th>Payment Method</th>
+                            <th>Quantity</th>
                             <th>Status</th>
-                            <th>Amount</th>
+                            <th>Total</th>
+                            <th>Discount</th>
+                            <th>Grand Total</th>
                             <th>Action</th>
                           </tr>
                         </thead>
@@ -198,6 +215,15 @@
                                 <td> <%= orders[i].orderId %> </td>
                                 <td> <%= orders[i].userId.username %> </td>
                                 <td> <%= orders[i].paymentType %> </td>
+                                <td>
+                                  <%= orders[i].cartData.reduce((acc, item)=> acc +
+                                      item.productQuantity, 0) %>
+                              </td>
+
+                              <% if(orders[i].paymentType === "Payment Failed") { %>
+                                <td><span class="table-cell-paymentFailed"><%= orders[i].paymentType %></span></td>
+
+                                <% }else{ %>
 
                                 <% if(orders[i].orderStatus === 'Pending') { %>
                                   <td><span class="table-cell-pending"><%= orders[i].orderStatus %></span></td>
@@ -214,8 +240,27 @@
                                   <% }else if(orders[i].orderStatus === 'Reject Return') { %>
                                     <td><span class="table-cell-requestRejected"><%= orders[i].orderStatus %></span></td>
                                     <% } %>
+
+                                    <% } %>
+
+                                    <td> ₹<%= orders[i].grandTotalCost.toFixed(2) %> </td>
+
+                                    <td> <% if(orders[i].couponApplied){ %>
+                                      <%= orders[i].couponApplied.discountPercentage %>%
+                                      <% }else{ %>
+                                          Nil
+                                          <% } %>
+                                   </td>
                                 
-                                <td> <%= orders[i].grandTotalCost %> </td>
+                                   <td>
+                                    <% if(orders[i].discountedPrice) { %>
+                                        ₹<%= orders[i].discountedPrice %>
+                                        <% }else{ %>
+                                            ₹<%= orders[i].grandTotalCost.toFixed(2) %>
+                                            <% } %>
+
+                                </td>
+
                                 <td> <a href="/admin/singleOrder/<%= orders[i]._id %>" ><button class="table-cell-pending">View</button></a></td>
                             </tr>
                             <% } %>

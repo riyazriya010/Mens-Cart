@@ -7,23 +7,6 @@ const AppError = require('../middleware/errorHandling.js');
 
 
 
-
-// exports.couponGet = async (req,res) => {
-
-//     try {
-
-//         const couponData = await couponCollection.coupon.find({ isDelete:false })
-
-//         const couponDet = await couponCollection.coupon.find({ isDelete:true })
-
-//         res.render('adminPages/couponManagement',{ couponData, couponDet })
-        
-//     } catch (error) {
-//         console.error(error.message);
-//     }
-// }
-
-
 exports.couponGet = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
@@ -45,7 +28,7 @@ exports.couponGet = async (req, res, next) => {
             totalPages
         });
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 };
 
@@ -79,7 +62,7 @@ exports.addCoupon = async (req, res, next) => {
         res.json({ success:true });
         
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -89,8 +72,8 @@ exports.editCoupon = async (req, res, next) => {
 
     try {
 
-        console.log(req.query)
-        console.log(req.body)
+        // console.log(req.query)
+        // console.log(req.body)
         const couponId = req.query.couponId
         const { discountPercentage, startDate, endDate, MinimumPurchase } = req.body
 
@@ -114,7 +97,7 @@ exports.editCoupon = async (req, res, next) => {
         res.json({ success:true })
 
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -132,7 +115,7 @@ exports.deleteCoupon = async (req, res, next) => {
             {$set:{ isDelete:true }}
         );
 
-        console.log(couponData)
+        // console.log(couponData)
 
         if(!couponData){
             return res.status(404).json({ success: false })
@@ -140,7 +123,7 @@ exports.deleteCoupon = async (req, res, next) => {
         
         res.json({success:true});
     }catch(error){
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -156,7 +139,7 @@ exports.restoreCoupon = async (req,res,next) => {
             {$set:{ isDelete:false }}
         );
 
-        console.log(couponData)
+        // console.log(couponData)
 
         if(!couponData){
             return res.status(404).json({ success: false })
@@ -165,7 +148,7 @@ exports.restoreCoupon = async (req,res,next) => {
         res.json({success:true});
         
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 } 
 
@@ -185,10 +168,10 @@ exports.couponApply = async (req,res,next) => {
                 return res.json({success:false});
             }
 
-            console.log('total: ',total);
+            // console.log('total: ',total);
             const discount = total * coupon.discountPercentage /100
             const discountedPrice = total - discount
-            console.log('discountedPrice: ',discountedPrice);
+            // console.log('discountedPrice: ',discountedPrice);
             req.session.couponDiscountPrice = discountedPrice
             req.session.couponId = coupon._id
             req.session.discountAmount = discount
@@ -198,7 +181,7 @@ exports.couponApply = async (req,res,next) => {
         res.json({success:true});
         
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }
 
@@ -215,6 +198,6 @@ exports.removeCoupon = async (req,res,next) => {
         res.json({success:true});
         
     } catch (error) {
-        next(new AppError(500));
+        next(new AppError(error.message, 500))
     }
 }

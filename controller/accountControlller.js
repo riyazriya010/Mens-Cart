@@ -19,7 +19,7 @@ exports.userProfile = async (req, res, next) => {
     res.render('userPages/userProfile', { userData });
 
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 }
 
@@ -56,7 +56,7 @@ exports.userProfileVerify = async (req, res, next) => {
 
     }
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
 
   }
 };
@@ -77,7 +77,7 @@ exports.addressGet = async (req, res, next) => {
     res.render('userPages/addressPage', { address, proceed });
 
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 
 }
@@ -96,7 +96,7 @@ exports.editAddress = async (req, res, next) => {
     res.render('userPages/editAddress', { address });
 
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 
 }
@@ -133,8 +133,7 @@ exports.editAddressVerify = async (req, res, next) => {
     res.status(200).json({ success: true, proceed });
 
   } catch (error) {
-
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 }
 
@@ -148,7 +147,7 @@ exports.addAddressGet = (req, res, next) => {
     res.render('userPages/addAddress');
 
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 }
 
@@ -184,7 +183,7 @@ exports.addAddressVerify = async (req, res, next) => {
     // Respond with success message
     res.status(200).json({ success: true, proceed });
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 };
 
@@ -208,28 +207,13 @@ exports.deleteAddress = async (req, res, next) => {
     res.json({ success: true });
 
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 }
 
 
 
 /* ----------    WALLET ------------*/
-// exports.walletGet = async (req, res) => {
-//   try {
-
-//     const walletData = await walletCollection.wallet.findOne({
-//       userId: req.session.userId
-//     });
-
-//     // console.log(walletData);
-
-//     res.render('userPages/wallet', { walletData });
-
-//   } catch (error) {
-//     console.error(error.message);
-//   }
-// }
 
 
 
@@ -263,7 +247,7 @@ exports.walletGet = async (req, res, next) => {
       walletData  // Ensure walletData is passed to the template
     });
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 };
 
@@ -284,7 +268,7 @@ exports.walletCreation = async (req) => {
     // console.log()
 
   } catch (error) {
-    next(new AppError(500));
+    console.error(error.message)
   }
 }
 
@@ -343,14 +327,14 @@ exports.newUserAddMoney = async (newUser) => {
 exports.walletBuy = async (req) => {
   try {
 
-    console.log('walletBuy')
+    // console.log('walletBuy')
     const wallet = await walletCollection.wallet.findOne({ userId: req.session.userId });
-    console.log('wallet: ', wallet);
+    // console.log('wallet: ', wallet);
 
     const totalAmount = req.session.couponDiscountPrice || req.session.grandTotal
 
     if (wallet.walletBalance < totalAmount) {
-      console.log('no wallet money: ', wallet.walletBalance);
+      // console.log('no wallet money: ', wallet.walletBalance);
       return false
     }
 
@@ -470,10 +454,10 @@ exports.walletBuy = async (req) => {
 //return order amount adding to the wallet
 exports.addingCancellAmountToWallet = async (req, amount) => {
   try {
-    console.log('adding')
-    console.log('wallet: ', amount)
+    // console.log('adding')
+    // console.log('wallet: ', amount)
     const userId = req.session.userId
-    console.log('adding....')
+    // console.log('adding....')
     const wallet = await walletCollection.wallet.findOneAndUpdate(
       { userId },
       { $inc: { walletBalance: amount } }
@@ -502,10 +486,10 @@ exports.addingCancellAmountToWallet = async (req, amount) => {
 //return order amount adding to the wallet
 exports.addingReturnAmountToWallet = async (req, amount) => {
   try {
-    console.log('adding')
-    console.log('wallet: ', amount)
+    // console.log('adding')
+    // console.log('wallet: ', amount)
     const userId = req.session.userId
-    console.log('adding....')
+    // console.log('adding....')
     const wallet = await walletCollection.wallet.findOneAndUpdate(
       { userId },
       { $inc: { walletBalance: amount } }

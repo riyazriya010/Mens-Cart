@@ -58,12 +58,9 @@ exports.reportGet = async (req, res, next) => {
       }
     });
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 };
-
-
-
 
 
 
@@ -151,7 +148,7 @@ exports.report = async (req, res, next) => {
       products,
     });
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 }
 
@@ -186,11 +183,6 @@ exports.filterOptions = async (req, res, next) => {
         orderStatus: "Delivered",
       })
       .sort({ orderDate: -1 })
-      // .populate({
-      //   path: "cartData.productId",
-      //   model: "products",
-      //   as: "productDetails",
-      // })
       .populate('userId')
       .populate('couponApplied');
 
@@ -203,7 +195,7 @@ exports.filterOptions = async (req, res, next) => {
     res.status(200).json({ success: true });
     
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 }
 
@@ -325,7 +317,7 @@ exports.SaledReportDownloadPDF = async (req, res, next) => {
 
     await browser.close();
   } catch (error) {
-    next(new AppError(error, 500));
+    next(new AppError(error.message, 500))
   }
 }
 
@@ -340,7 +332,7 @@ const formatDate = (date) => {
 
 
 //filter based on date
-exports.filterDate = async (req, res) => {
+exports.filterDate = async (req, res, next) => {
   try {
     const startOfDay = (date) => {
       return new Date(
@@ -398,7 +390,7 @@ exports.filterDate = async (req, res) => {
       res.send({ success: true });
     }
   } catch (error) {
-    console.error(error.message);
+    next(new AppError(error.message, 500))
   }
 }
 
@@ -411,7 +403,7 @@ exports.removeAllFillters = async (req, res, next) => {
     req.session.endDate2 = null;
     res.redirect("/admin/report");
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 }
 
@@ -628,6 +620,6 @@ exports.salesReportDownload = async (req, res, next) => {
     await workBook.xlsx.write(res);
     res.end();
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 };

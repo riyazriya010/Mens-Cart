@@ -37,10 +37,6 @@ const userModel = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:'users'
     },
-    failedPayments: {
-        type: [String], // Array of failed payment IDs
-        default: [],
-      },
 }, { timestamps: true,strictPopulate: false }
 );
 

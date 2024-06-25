@@ -292,16 +292,6 @@ exports.failedPayment = async (req, res) => {
         const cartItems = await cartCollections.cart.find({ userId: req.session.userId });
 
 
-        // Reducing the quantity from the product collection
-
-        // for (const item of cartItems) {
-        //     await productCollections.product.findByIdAndUpdate(
-        //       item.productId,
-        //       { $inc: { productStock: -item.productQuantity } }
-        //     );
-        //   }
-
-
         if(req.query.orderId){
             return res.render('userPages/paymentFailed');
         }
@@ -339,7 +329,7 @@ exports.failedPayment = async (req, res) => {
             req.session.discountAmount = null
 
             res.render('userPages/paymentFailed');
-        }
+        }else{
 
         const order = new orderCollections.orders({
             userId: req.session.userId,
@@ -360,6 +350,7 @@ exports.failedPayment = async (req, res) => {
 
 
         res.render('userPages/paymentFailed');
+      }
 
     } catch (error) {
         console.error(error.message);

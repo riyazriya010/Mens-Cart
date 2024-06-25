@@ -36,7 +36,7 @@ exports.shopGet = async (req, res, next) => {
     });
 
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 };
 
@@ -186,7 +186,7 @@ exports.filter = async (req, res, next) => {
     });
 
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
 };
 
@@ -208,40 +208,11 @@ exports.singleProduct = async (req,res, next) => {
       res.render('userPages/singleProduct', { findProduct, ratings });
 
   } catch (error) {
-    next(new AppError(500));
+    next(new AppError(error.message, 500))
   }
  
 }
 
-
-
-// exports.addRatings = async (req, res, next) => {
-//   try {
-
-//       const { productId, star, ratings } = req.body;
-
-//       const findProduct = await productCollection.product.findById(productId);
-
-//       const userId = req.session.userId
-
-//       // Create a new rating instance
-//       const newRating = new ratingCollection.rating({
-//           productId: findProduct._id, // Assuming productId is available in the request
-//           noOfStars: star,
-//           ratingDescription: ratings
-//       });
-
-//       // Save the rating to the database
-//       await newRating.save();
-
-//       // Send success response to client
-//       res.json({ success: true });
-      
-//   } catch (error) {
-
-//     next(new AppError(500));
-//   }
-// }
 
 
 exports.addRatings = async (req, res, next) => {
@@ -295,10 +266,8 @@ exports.addRatings = async (req, res, next) => {
       res.json({ success: true });
 
   } catch (error) {
-      console.error('Error:', error);
-      // Ensure to send a proper HTTP status code on error
-      return res.status(500).json({ success: false, message: 'An error occurred while adding the rating' });
-  }
+    next(new AppError(error.message, 500))
+    }
 };
 
 

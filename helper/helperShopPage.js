@@ -1,8 +1,5 @@
 const productCollection = require('../models/productModel.js');
 const categoryCollection = require('../models/categoryModel.js');
-const ratingCollection = require('../models/ratingsModel.js');
-const productOfferCollection = require('../models/productOfferModal.js');
-const categoryOfferCollection = require('../models/categoryOfferModel.js');
 const { ObjectId } = require('mongodb');
 
 
