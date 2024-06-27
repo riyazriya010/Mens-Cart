@@ -30,9 +30,9 @@ adminRouter.get('/admin/dashBoard/topCategory',adminAuthenticate,adminController
 
 //product Page
 adminRouter.get('/admin/product',adminAuthenticate,productController.productGet);
-adminRouter.get('/admin/addProduct',productController.addProductGet);
+adminRouter.get('/admin/addProduct',adminAuthenticate,productController.addProductGet);
 adminRouter.post('/admin/addProduct/verify',upload.array('images',10),productController.addProduct);
-adminRouter.get('/admin/editProduct/:id', productController.renderEditProductPage);
+adminRouter.get('/admin/editProduct/:id',adminAuthenticate,productController.renderEditProductPage);
 adminRouter.put('/admin/editProductVerify/:id', upload.array('images', 10), productController.editProduct);
 adminRouter.get('/product/search',productController.productSearch);
 adminRouter.put('/admin/product/unList',productController.unList);
