@@ -1,3 +1,7 @@
+// cart
+
+//details in page last
+
 const cartCollection = require('../models/cartModel.js');
 const categoryCollection = require('../models/categoryModel.js');
 const productCollection = require('../models/productModel.js');
@@ -39,6 +43,7 @@ exports.cartGet = async (req, res, next) => {
       next(new AppError(error.message, 500))
     }
   };
+
 
 
 
@@ -89,6 +94,7 @@ exports.addToCart = async (req, res, next) => {
       next(new AppError(error.message, 500))
     }
   };
+
 
 
 
@@ -202,3 +208,12 @@ exports.deleteAll = async (req,res, next) => {
       next(new AppError(error.message, 500))
     }
 }
+
+
+// cartGet
+// addToCart
+// increaseQty
+// decreaseQty
+// deleteAll
+// deleteCartItem
+

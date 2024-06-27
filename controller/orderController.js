@@ -1,3 +1,8 @@
+//  user side order controller
+
+//page details in last
+
+
 const orderCollection = require('../models/ordersModel.js');
 const productCollection = require('../models/productModel.js');
 const cartCollection = require('../models/cartModel.js');
@@ -10,6 +15,7 @@ const couponCollection = require('../models/couponModel.js');
 const { walletBuy, addingCancellAmountToWallet } = require('../controller/accountControlller.js');
 const AppError = require('../middleware/errorHandling.js');
 const { invoicePdf } = require("../service/invoicePdf");
+const { couponCheck } = require('../helper/couponHelper.js');
 
 
 ///orderget
@@ -283,6 +289,8 @@ exports.downloadInvoice = async (req,res,next) => {
           });
 
 
+          // the the details sending to the ../service/invoicePdf
+
           invoicePdf(
             (chunk) => stream.write(chunk),
             () => stream.end(),
@@ -418,7 +426,6 @@ exports.returnOrder = async (req, res, next) => {
 
 /* ---- checkout functionalities ----- */
 
-
 //checout Address
 exports.checkoutAddress = async (req, res, next) => {
 
@@ -462,43 +469,55 @@ exports.orderPlaced = (req, res, next) => {
 
 //checout placeOrder
 exports.checkoutOrder = async (req, res, next) => {
-
     try {
-
+        
         const address = await addressCollections.address.findById(req.session.addressId);
         const cartData = await cartCollection.cart.find({ userId: req.session.userId }).populate('productId');
-        const paymentMethod = req.session.paymentMethod
-        const total = req.session.grandTotal
-        const grandTotal = req.session.couponDiscountPrice || req.session.grandTotal
+        const paymentMethod = req.session.paymentMethod;
+        const total = req.session.grandTotal;
+        const grandTotal = req.session.couponDiscountPrice || req.session.grandTotal;
         const coupon = await couponCollection.coupon.find({ currentStatus: true, isDelete: false });
 
-        let couponApplied = false
-        let couponId = false
-        let discountAmount = false
+        let couponApplied = false;
+        let couponId = false;
+        let discountAmount = false;
+
         if (req.session.couponDiscountPrice && req.session.couponId && req.session.discountAmount) {
-            couponApplied = true
-            couponId = req.session.couponId
-            discountAmount = req.session.discountAmount
+
+            couponApplied = true;
+            couponId = req.session.couponId;
+            discountAmount = req.session.discountAmount;
         }
-
-        // console.log('couponId: ', couponId);
-
 
         // Calculate subtotal and total number of items
         let subtotal = 0;
         let totalItems = 0;
         cartData.forEach(item => {
-            const price = item.productId.offerPrice || item.productId.productPrice
+            const price = item.productId.offerPrice || item.productId.productPrice;
             subtotal += item.productQuantity * price;
             totalItems += item.productQuantity;
         });
 
-        res.render('userPages/checkOut-3', { address, paymentMethod, grandTotal, cartData, subtotal, totalItems, coupon, couponApplied, couponId, discountAmount, total, });
+         res.render('userPages/checkOut-3', { 
+            address, 
+            paymentMethod, 
+            grandTotal, 
+            cartData, 
+            subtotal, 
+            totalItems, 
+            coupon, 
+            couponApplied, 
+            couponId, 
+            discountAmount, 
+            total 
+        });
 
     } catch (error) {
+        console.error(error); // Log the full error for debugging
         next(new AppError(error.message, 500))
     }
 }
+
 
 
 
@@ -670,3 +689,23 @@ exports.placeOrder = async (req, res, next) => {
     }
 
 };
+
+
+
+// orderGet
+// orderDetailsPage
+// downloadInvoice [ ..service/invoicePdf ]
+// cancelOrder
+// returnOrder
+
+  /*--- checkout pages ---- */
+
+// checkoutAddress
+// checkoutPayment
+// orderPlaced
+// checkoutOrder
+// proceedCheckout
+// addressSelected
+// paymentSelected
+// placeOrder [ ../service/paypal ]  [ ../controller/accountController ]
+

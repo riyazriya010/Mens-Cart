@@ -1,3 +1,7 @@
+// sales report details
+
+// page details at last
+
 const orderCollection = require('../models/ordersModel.js')
 const puppeteer = require('puppeteer');
 const exceljs = require("exceljs");
@@ -623,3 +627,13 @@ exports.salesReportDownload = async (req, res, next) => {
     next(new AppError(error.message, 500))
   }
 };
+
+
+// reportGet
+// report
+// filterOptions
+// SaledReportDownloadPDF
+// filterDate
+// removeAllFillters
+// salesReportDownload
+

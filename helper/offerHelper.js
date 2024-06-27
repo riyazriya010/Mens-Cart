@@ -67,10 +67,10 @@ exports.applyOffer = async () => {
 
       if (productOffer !== null && (categoryOffer === null || productPercentage >= categoryPercentage)) {
         maxOffer = productOffer;
-        console.log('maxOffer P:',maxOffer)
+        // console.log('maxOffer P:',maxOffer)
       } else if (categoryOffer !== null && (productOffer === null || categoryPercentage >= productPercentage)) {
         maxOffer = categoryOffer;
-        console.log('maxOffer c:',maxOffer)
+        // console.log('maxOffer c:',maxOffer)
       }
 
 
@@ -112,11 +112,12 @@ exports.checkOffer = async () => {
     const productOfferData = await productOfferCollection.productOffermodel.find();
     const categoryOfferData = await categoryOfferCollection.categoryOfferModel.find();
 
-
     // Product offer loop
     for (let p = 0; p < productOfferData.length; p++) {
 
-      if (productOfferData[p].startDate >= productOfferData[p].endDate) {
+      const currentDate = new Date();
+
+      if (currentDate >= productOfferData[p].endDate) {
         await productOfferCollection.productOffermodel.findByIdAndUpdate(
           productOfferData[p]._id,
           {
@@ -135,7 +136,7 @@ exports.checkOffer = async () => {
           }
         }
         
-      }else if(productOfferData[p].endDate > productOfferData[p].startDate){
+      }else if(new Date(productOfferData[p].startDate) <= currentDate && currentDate < new Date(productOfferData[p].endDate)){
         await productOfferCollection.productOffermodel.findByIdAndUpdate(
           productOfferData[p]._id,
           {
@@ -166,8 +167,10 @@ exports.checkOffer = async () => {
 
     // Category offer loop
     for (let c = 0; c < categoryOfferData.length; c++) {
+      const currentDate = new Date()
 
-      if (categoryOfferData[c].endDate <= categoryOfferData[c].startDate) {
+      if (categoryOfferData[c].endDate <= currentDate) {
+        
         await categoryOfferCollection.categoryOfferModel.findByIdAndUpdate(
           categoryOfferData[c]._id,
           {

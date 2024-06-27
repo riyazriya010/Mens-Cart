@@ -1,3 +1,8 @@
+// category ( add edit delete )
+
+// category Offer Management
+
+//page details last
 
 const categoryCollection = require('../models/categoryModel.js');
 const categoryOfferCollection = require('../models/categoryOfferModel.js');
@@ -257,6 +262,8 @@ exports.List = async (req, res, next) => {
 };
 
 
+                  //   category Offer Management ( add edit delete)
+
 
 exports.categoryOfferManagement = async (req, res, next) => {
     try {
@@ -352,3 +359,22 @@ exports.editOffer = async (req, res, next) => {
         next(new AppError(error.message, 500))
     }
   };
+
+
+  // categoryGet
+  // categoryAdd
+  // categoryEdit
+  // categoryDelete
+  // categorySearch
+  // unList
+  // List
+  // categoryOfferManagement
+  // addCategoryOffer
+  // editOffer
+
+  /*------- category Offer Management ----*/
+  
+  // categoryOfferManagement
+  // addCategoryOffer
+  // editOffer
+

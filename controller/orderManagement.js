@@ -1,3 +1,7 @@
+// admin side oredr management
+
+//page details at last
+
 const orderCollections = require('../models/ordersModel.js');
 const productCollections = require('../models/productModel.js');
 const { addingReturnAmountToWallet } = require('../controller/accountControlller.js');
@@ -337,12 +341,17 @@ exports.returnApprovedOrReject = async (req, res, next) => {
 
     }
 
-
-        // console.log('updated')
-
         res.json({ success: true, order });
 
     } catch (error) {
         next(new AppError(error.message, 500))
     }
 };
+
+
+
+// orderListing
+// adminOrderDetails
+// statusChange
+// returnManagement
+// returnApprovedOrReject

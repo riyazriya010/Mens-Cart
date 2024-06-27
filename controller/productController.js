@@ -1,3 +1,8 @@
+// prodct 
+// product offer management
+
+//page details at last
+
 const productCollection = require("../models/productModel.js");
 const categoryCollection = require("../models/categoryModel.js");
 const productOfferCollection = require('../models/productOfferModal.js');
@@ -6,7 +11,6 @@ const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
 const AppError = require('../middleware/errorHandling.js');
-
 
 
 exports.productGet = async (req, res, next) => {
@@ -148,7 +152,6 @@ exports.renderEditProductPage = async (req, res, next) => {
 
 
 
-
 // Product Edit
 exports.editProduct = async (req, res, next) => {
     try {
@@ -279,6 +282,7 @@ exports.List = async (req, res, next) => {
 
 
 
+
 exports.deleteProduct = async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -340,6 +344,8 @@ exports.deleteImage = async (req, res, next) => {
         next(new AppError(error.message, 500))
     }
 };
+
+
 
 
 
@@ -443,3 +449,21 @@ exports.addProductOffer = async (req, res, next) => {
     }
   };
   
+
+
+// productGet
+// addProductGet
+// addProduct
+// renderEditProductPage
+// editProduct
+// productSearch
+// unList
+// list
+// deleteProduct
+// deleteImage
+
+ /* ------ product offer ----*/
+ // productOfferManagement
+ // addProductOffer
+ // editProductOffer
+

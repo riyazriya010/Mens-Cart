@@ -1,3 +1,8 @@
+//Coupon Management
+
+//page details at last
+
+
 const { order } = require('paypal-rest-sdk');
 const { generateCouponCode } = require('../helper/couponCode.js');
 const couponCollection = require('../models/couponModel.js');
@@ -43,6 +48,7 @@ exports.addCoupon = async (req, res, next) => {
 
         const { discountPercentage, startDate, endDate, MinimumPurchase } = req.body
 
+        // get coupon code from ../helper/couponCode
         const couponCode = generateCouponCode()
 
         // console.log(couponCode);
@@ -62,7 +68,7 @@ exports.addCoupon = async (req, res, next) => {
         res.json({ success:true });
         
     } catch (error) {
-        next(new AppError(error.message, 500))
+        next(new AppError(error.message, 500));
     }
 }
 
@@ -72,8 +78,6 @@ exports.editCoupon = async (req, res, next) => {
 
     try {
 
-        // console.log(req.query)
-        // console.log(req.body)
         const couponId = req.query.couponId
         const { discountPercentage, startDate, endDate, MinimumPurchase } = req.body
 
@@ -107,21 +111,18 @@ exports.editCoupon = async (req, res, next) => {
 exports.deleteCoupon = async (req, res, next) => {
     try{
 
-        // console.log(req.query)
         const couponId = req.query.couponId
-        // console.log(couponId)
 
         const couponData = await couponCollection.coupon.findByIdAndUpdate(couponId,
             {$set:{ isDelete:true }}
         );
-
-        // console.log(couponData)
 
         if(!couponData){
             return res.status(404).json({ success: false })
         }
         
         res.json({success:true});
+
     }catch(error){
         next(new AppError(error.message, 500))
     }
@@ -133,13 +134,10 @@ exports.restoreCoupon = async (req,res,next) => {
     try {
 
         const couponId = req.query.couponId
-        // console.log(couponId)
 
         const couponData = await couponCollection.coupon.findByIdAndUpdate(couponId,
             {$set:{ isDelete:false }}
         );
-
-        // console.log(couponData)
 
         if(!couponData){
             return res.status(404).json({ success: false })
@@ -195,9 +193,19 @@ exports.removeCoupon = async (req,res,next) => {
         req.session.couponId = null
         req.session.discountAmount = null
 
-        res.json({success:true});
+        return res.json({success:true});
         
     } catch (error) {
+        console.error(error.message);
         next(new AppError(error.message, 500))
     }
 }
+
+
+// couponGet
+// addCoupon  [ ../helper/generateCouponCode ]
+// editCoupon
+// removeCoupon
+// couponApply
+// restoreCoupon
+// deleteCoupon

@@ -1,3 +1,7 @@
+// shop controller
+
+// page details at last
+
 const productCollection = require('../models/productModel.js');
 const categoryCollection = require('../models/categoryModel.js');
 const ratingCollection = require('../models/ratingsModel.js');
@@ -282,3 +286,13 @@ exports.rating = async (req,res) => {
 
   res.render('adminPages/ratings',{ratings});
 }
+
+
+
+// shopGet [ ../helper/helperShopPage ]  [  ../helper/offerHelper ]
+// filter
+
+  /*----- single product */
+
+// singleProduct
+// addRatings

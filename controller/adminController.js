@@ -1,3 +1,9 @@
+// admin
+// dashboard
+
+// page details at last
+
+
 const AppError = require('../middleware/errorHandling.js');
 const { 
     getTodayRevenue, 
@@ -84,6 +90,7 @@ exports.adminLogout = (req,res, next) => {
 
 
 // adminDash board
+                     //  getting datas from the ../helper/dashBoard
 exports.getData = async (req, res, next) => {
     try {
         const filter = req.query.filter
@@ -108,6 +115,8 @@ exports.getData = async (req, res, next) => {
         next(new AppError(error.message, 500))
     }
 }
+
+
 
 
 // Controller function to fetch and render top products with pagination
@@ -179,5 +188,13 @@ exports.topCategory = async (req, res, next) => {
 };
 
 
+
+// adminLoginGet
+// adminLoginVerify
+// dashBoard
+// adminLogout
+// getData [ ../helper/dashBoard ]
+// topProducts
+// topCategory
 
 

@@ -2,3 +2,5 @@ git status
 git add .
 git commit -m "Updated the project with latest changes"
 git push origin master
+
+git log // to show the commit what are done
