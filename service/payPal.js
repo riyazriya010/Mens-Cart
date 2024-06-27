@@ -49,8 +49,8 @@ exports.rePayment = async (req, res) => {
           "payment_method": "paypal"
         },
         "redirect_urls": {
-          "return_url": `http://localhost:3005/orderPlaced/paypal?orderId=${orderId}`,
-          "cancel_url": `http://localhost:3005/order/paymentFailed?orderId=${orderId}`
+          "return_url": `http://menscart.site/orderPlaced/paypal?orderId=${orderId}`,
+          "cancel_url": `http://menscart.site/order/paymentFailed?orderId=${orderId}`
         },
         "transactions": [{
           "item_list": {
@@ -129,8 +129,8 @@ exports.payAmount = async (req) => {
                 "payment_method": "paypal"
             },
             "redirect_urls": {
-                "return_url": `http://localhost:3005/orderPlaced/paypal`,
-                "cancel_url": `http://localhost:3005/order/paymentFailed`
+                "return_url": `http://menscart.site/orderPlaced/paypal`,
+                "cancel_url": `http://menscart.site/order/paymentFailed`
             },
             "transactions": [{
                 "item_list": {
