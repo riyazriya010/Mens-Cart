@@ -86,7 +86,7 @@
             background-color: #295f4e;
             border: 1px solid #295f4e;
             /* border-radius: 2px; */
-            width: 20%; /* Makes the button take full width */
+            width: 33%; /* Makes the button take full width */
             padding: 6px; /* Optional: Adds padding inside the button */
             box-sizing: border-box; /* Ensures padding and border are included in the width */
         }
@@ -184,16 +184,16 @@
                             
                         </div>
 
-                        <% if(findProduct.productStock < 3 && findProduct.productStock> 0 ) { %>
+                        <% if(findProduct.productStock <= 3 && findProduct.productStock> 0 ) { %>
                             <p style="color: red;"> Less Stock : <%= findProduct.productStock %>
                             </p>
                             <% } %>
 
-                                <% if(findProduct.productStock===0 ) { %>
+                                <% if(findProduct.productStock === 0 ) { %>
                                     <p style="color: red;">Out Of Stock </p>
                                     <% } %>
 
-                                        <% if(findProduct.productStock !==0 ) { %>
+                                        <% if(findProduct.productStock !== 0 ) { %>
 
                                             <button id="decrement" onclick="decrement()"
                                                 style="border:none;width: 30px;background-color: #ccc;color: white;"><i
@@ -364,116 +364,6 @@
 
             <!----- ratings ---->
 
-
-            <!-- <script>
-                $(document).ready(function () {
-                    $('#addRating').submit(function (event) {
-                        event.preventDefault();
-                        const formData = {
-                            productId: $('#productId').val().trim(), // Trim the product ID before sending it
-                            star: $('#star').val(),
-                            ratings: $('#ratings').val()
-                        };
-                        fetch('/admin/addRating', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(formData)
-                        })
-                            .then(response => response.json())
-                            .then(result => {
-                                if (result.success) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Rating Added',
-                                        text: 'Your rating has been successfully added!',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        // Redirect to the single product page after successful rating
-                                        window.location.reload(); // Adjust this URL to match your single product page route
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: result.error || 'Failed to add rating.',
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'There was a problem with your request.',
-                                });
-                                console.error('Error:', error);
-                            });
-                    });
-                });
-            </script> -->
-
-<!-- 
-            <script>
-                $(document).ready(function () {
-                    $('#addRating').submit(function (event) {
-                        event.preventDefault();
-                        const formData = {
-                            productId: $('#productId').val().trim(), // Trim the product ID before sending it
-                            star: $('input[name="star"]:checked').val(),
-                            ratings: $('#ratings').val()
-                        };
-
-                        if (!formData.star) {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Please select a star rating.',
-                            });
-                            return;
-                        }
-
-                        fetch('/admin/addRating', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(formData)
-                        })
-                            .then(response => response.json())
-                            .then(result => {
-                                if (result.success) {
-                                    Swal.fire({
-                                        icon: 'success',
-                                        title: 'Rating Added',
-                                        text: 'Your rating has been successfully added!',
-                                        confirmButtonText: 'OK'
-                                    }).then(() => {
-                                        // Redirect to the single product page after successful rating
-                                        window.location.reload(); // Adjust this URL to match your single product page route
-                                    });
-                                } else {
-                                    Swal.fire({
-                                        icon: 'error',
-                                        title: 'Error',
-                                        text: result.error || 'Failed to add rating.',
-                                    });
-                                }
-                            })
-                            .catch(error => {
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'There was a problem with your request.',
-                                });
-                                console.error('Error:', error);
-                            });
-                    });
-                });
-
-            </script> -->
-
-
             <script>
                 $(document).ready(function () {
                     $('#addRating').submit(function (event) {
@@ -507,20 +397,25 @@
                                     icon: 'success',
                                     title: 'Rating Added',
                                     text: 'Your rating has been successfully added!',
-                                    confirmButtonText: 'OK'
+                                    confirmButtonText: 'Go to login',
+                                     cancelButtonText: "Back"
                                 }).then(() => {
                                     // Reload the page to reflect the new rating
                                     window.location.reload();
                                 });
                             } else if (result.message === 'User not logged in') {
                                 Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'You need to be logged in to add a rating.',
-                                    confirmButtonText: 'Login'
-                                }).then(() => {
-                                    // Redirect to login page
-                                    window.location.href = '/login'; // Adjust this URL to your login page route
+                                title: "You need to login",
+                                icon: "info",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#31A94C",
+                                confirmButtonText: "Go to login",
+                                cancelButtonText: "Back"
+                                }).then((result) => {
+                                    if(result.isConfirmed){
+                                        window.location.href = '/login'
+                                    }
                                 });
                             } else {
                                 Swal.fire({

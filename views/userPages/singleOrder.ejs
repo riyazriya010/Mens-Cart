@@ -105,19 +105,26 @@
               <% }else{ %>
 
                 <% if(status === 'Pending') { %>
-                  <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p>
+                  <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                  <p><strong>Status:</strong> <strong style="color: #0061c9;"><%= status %></strong></p>
                   <% }else if(status === 'Shipped') { %>
-                    <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p>
+                    <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                    <p><strong>Status:</strong> <strong style="color: rgb(227, 148, 58);"><%= status %></strong></p>
                     <% }else if(status === 'Delivered') { %>
-                      <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p>
+                      <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                      <p><strong>Status:</strong> <strong style="color: #32a048;"><%= status %></strong></p>
                       <% }else if(status === 'requested to return') { %>
-                        <p><strong>Status:</strong> <span class="table-cel"> <%= status %> </span></p>
+                        <!-- <p><strong>Status:</strong> <span class="table-cel"> <%= status %> </span></p> -->
+                        <p><strong>Status:</strong> <strong  style="color: rgb(84, 113, 145);"><%= status %></strong></p>
                      <% }else if(status === 'Cancelled') { %>
-                        <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p>
+                        <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                        <p><strong>Status:</strong> <strong style="color: rgb(227, 58, 58);"><%= status %></strong></p>
                         <% }else if(status === 'Approved Return') { %>
-                          <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p>
+                          <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                          <p><strong>Status:</strong> <strong style="color: rgb(51, 206, 152);"><%= status %></strong></p>
                           <% }else if(status === 'Reject Return') { %>
-                            <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p>
+                            <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                            <p><strong>Status:</strong> <strong style="color: rgb(146, 37, 37);"><%= status %></strong></p>
                             <% } %>
 
                 <% } %>
@@ -173,19 +180,26 @@
                       <% }else{ %>
 
                         <% if(cart[i].status === 'Pending') { %>
-                          <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td>
+                          <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
+                          <td> <strong style="color: #0061c9;"> <%= cart[i].status %> </strong> </td>
                         <% }else if(cart[i].status === 'Delivered') { %>
-                          <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td>
+                          <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
+                          <td> <strong style="color: #32a048;"> <%= cart[i].status %> </strong> </td>
                           <% }else if(cart[i].status === 'Cancelled') { %>
-                            <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td>
+                            <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
+                            <td> <strong style="color: rgb(227, 58, 58);;"> <%= cart[i].status %> </strong> </td>
                             <% }else if(cart[i].status === 'Shipped') { %>
-                              <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td>
+                              <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
+                              <td> <strong style="color: rgb(227, 148, 58);;" > <%= cart[i].status %> </strong> </td>
                               <% }else if(cart[i].status === 'requested to return'){ %>
-                                <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td>
+                                <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
+                                <td> <strong style="color: rgb(84, 113, 145);;"> <%= cart[i].status %> </strong> </td>
                                 <% }else if(cart[i].status === 'Approved Return') {  %>
-                                  <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td>
+                                  <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
+                                  <td> <strong style="color: rgb(51, 206, 152);;"> <%= cart[i].status %> </strong> </td>
                                   <% }else if(cart[i].status === 'Reject Return') { %>
-                                    <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td>
+                                    <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
+                                    <td> <strong style="color: rgb(146, 37, 37);;"> <%= cart[i].status %> </strong> </td>
                                     <% } %>
 
                         <% } %>
@@ -207,7 +221,7 @@
                             <h6 style="color: red;"><strong>Cancelled</strong></h6>
                             <% }else if(cart[i].status === 'Delivered') { %>
                               <% if(fourteenDaysFromNow){ %>
-                                <button data-bs-toggle="modal" data-bs-target="#returnOrder" data-order-id="<%= order._id %>" data-product-id="<%= product._id %>" style="color: white;border: 1px solid #295f4e;background-color: #295f4e;">Return Order</button>
+                                <button class="full-width-button" data-bs-toggle="modal" data-bs-target="#returnOrder" data-order-id="<%= order._id %>" data-product-id="<%= product._id %>">Return Order</button>
                                 <% }else{ %>
                                   <h6 style="color: black;"><strong>Delivered</strong></h6>
                                   <% } %>

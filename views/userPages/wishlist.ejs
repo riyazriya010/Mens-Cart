@@ -56,7 +56,7 @@
 
 
         <!-- Main content -->
-        <div class="container mt-4">
+        <div class="container mt-4" id="listUpdate">
             <div class="row">
                 <!-- Sidebar -->
 
@@ -167,13 +167,14 @@
                                 showCancelButton: true,
                                 confirmButtonColor: "#3085d6",
                                 cancelButtonColor: "#31A94C",
-                                cancelButtonText: "Continue shopping",
-                                confirmButtonText: "Go to cart"
+                                confirmButtonText: "Go to cart",
+                                cancelButtonText: "Back"
                             }).then((result) => {
                                 if (result.isConfirmed) {
                                     window.location.href = '/cart';
                                 } else {
-                                    window.location.href = '/shop';
+                                    // window.location.href = '/shop';
+                                    $('#listUpdate').load('/wishlist #listUpdate > *');
                                 }
                             });
                         }
@@ -208,7 +209,8 @@
                                     title: 'Item removed successfully',
                                     icon: 'success'
                                 })
-                                window.location.href = '/wishlist';
+                                // window.location.href = '/wishlist';
+                                $('#listUpdate').load('/wishlist #listUpdate > *');
                             } else {
                                 console.error('Failed to remove the product');
                                 Swal.fire('Error', 'Failed to remove the product', 'error');

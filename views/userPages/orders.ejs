@@ -121,7 +121,7 @@
             background-color: #295f4e;
             border: 1px solid #295f4e;
             /* border-radius: 2px; */
-            width: 70%; /* Makes the button take full width */
+            width: 100%; /* Makes the button take full width */
             padding: 6px; /* Optional: Adds padding inside the button */
             box-sizing: border-box; /* Ensures padding and border are included in the width */
         }
@@ -173,22 +173,30 @@
                                                     </td>
                                                     
                                                     <% if(order.paymentType === "Payment Failed") { %>
-                                                        <td><span class="table-cell-paymentFailed"><%= order.paymentType %></span></td>
+                                                        <!-- <td><span class="table-cell-paymentFailed"><%= order.paymentType %></span></td> -->
+                                                        <td><strong style="color: #ffb339;"><%= order.paymentType %></strong></td>
+
                                                         <% }else{ %>
                                                             <% if(order.orderStatus === 'Pending') { %>
-                                                                <td><span class="table-cell-pending"><%= order.orderStatus %></span></td>
+                                                                <td><strong style="color: #0061c9; "><%= order.orderStatus %></strong></td>
                                                             <% } else if(order.orderStatus === 'Delivered') { %>
-                                                                <td><span class="table-cell-delivered"><%= order.orderStatus %></span></td>
+                                                                <!-- <td><span class="table-cell-delivered"><%= order.orderStatus %></span></td> -->
+                                                                <td><strong style="color: #43c35d;"><%= order.orderStatus %></strong></td>
                                                             <% } else if(order.orderStatus === 'Cancelled') { %>
-                                                                <td><span class="table-cell-cancelled"><%= order.orderStatus %></span></td>
+                                                                <!-- <td><span class="table-cell-cancelled"><%= order.orderStatus %></span></td> -->
+                                                                <td><strong style="color: rgb(227, 58, 58);"><%= order.orderStatus %></strong></td>
                                                             <% } else if(order.orderStatus === 'Shipped') { %>
-                                                                <td><span class="table-cell-shipped"><%= order.orderStatus %></span></td>
+                                                                <!-- <td><span class="table-cell-shipped"><%= order.orderStatus %></span></td> -->
+                                                                <td><strong style="color: rgb(227, 148, 58);"><%= order.orderStatus %></strong></td>
                                                             <% } else if(order.orderStatus === 'requested to return') { %>
-                                                                <td> <span class="table-cell-returnRequest"><%= order.orderStatus %></span> </td>
+                                                                <!-- <td> <span class="table-cell-returnRequest"><%= order.orderStatus %></span> </td> -->
+                                                                <td><strong style="color: rgb(84, 113, 145);"><%= order.orderStatus %></strong></td>
                                                             <% }else if(order.orderStatus === 'Approved Return') { %>
-                                                                <td> <span class="table-cell-requestApproved"><%= order.orderStatus %></span> </td>
+                                                                <!-- <td> <span class="table-cell-requestApproved"><%= order.orderStatus %></span> </td> -->
+                                                                <td><strong style="color: rgb(51, 206, 152);"><%= order.orderStatus %></strong></td>
                                                             <% }else if(order.orderStatus === 'Reject Return') { %>
-                                                                <td> <span class="table-cell-requestRejected"><%= order.orderStatus %></span> </td>
+                                                                <!-- <td> <span class="table-cell-requestRejected"><%= order.orderStatus %></span> </td> -->
+                                                                <td><strong style="color: rgb(146, 37, 37);"><%= order.orderStatus %></strong></td>
                                                                 <% } %>
                                                             <% } %>
 

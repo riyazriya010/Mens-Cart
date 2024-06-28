@@ -93,96 +93,76 @@
 
 
         <!-- Main content -->
-        <div class="container mt-4">
+        <div class="container mt-4" id="deleteUpdate">
             <div class="row" id="total-cart">
 
                 <% if (cartData && cartData.length> 0) { %>
 
                     <!-- Sidebar -->
-                    <div class="col-lg-3 order-lg-2 mb-4">
-                        <div class="card">
-                            <div class="card-body" id="total">
-                                <h5>Grand Total (<span>
-                                        <%= totalItems %>
-                                    </span> items):</h5>
-                                <h5>INR <%= grandTotal.toFixed(2) %>
-                                </h5>
-                                <button class="full-width-button" onclick="proceed( '<%= grandTotal.toFixed(2) %>' )">Proceed to Checkout</button>
-                            </div>
-                        </div>
+                    <!-- Sidebar -->
+<div class="col-lg-3 order-lg-2 mb-4">
+    <div class="card">
+        <div class="card-body" id="total">
+            <h5>Grand Total (<span id="totalItems"><%= totalItems %></span> items):</h5>
+            <h5 id="grandTotal">INR <%= grandTotal.toFixed(2) %></h5>
+            <button class="full-width-button" onclick="proceed('<%= grandTotal.toFixed(2) %>')">Proceed to Checkout</button>
+        </div>
+    </div>
+</div>
+
+<!-- Cart Items -->
+<div class="col-lg-9 order-lg-1">
+    <h4>Shopping Cart</h4>
+    <button class="btn btn-link" style="color: green;" onclick="deleteAll(event)">Deselect all items</button>
+
+    <% if (outOfStockItems && outOfStockItems.length > 0) { %>
+        <div class="alert alert-warning">
+            <h5>Some items have been updated due to insufficient stock:</h5>
+            <ul>
+                <% outOfStockItems.forEach(item => { %>
+                    <li><%= item.productName %>: Requested <%= item.requestedQuantity %>, Available <%= item.availableQuantity %></li>
+                <% }) %>
+            </ul>
+        </div>
+    <% } %>
+
+    <% for(let i = 0; i < cartData.length; i++) { %>
+        <div class="cart-item d-flex flex-wrap align-items-center" id="cartProduct<%= i %>">
+            <div class="me-2">
+                <img src="/assets/uploadimages/uploads/<%= cartData[i].productId.productImage[0] %>" alt="" style="max-width: 40%; max-height: 40%;">
+            </div>
+            <div class="cart-item-details flex-grow-1">
+                <h5><%= cartData[i].productId.productName %></h5>
+
+                <% if(cartData[i].productId.productStock === 0) { %>
+                    <p style="color: red;">Out Of Stock</p>
+                <% } else if(cartData[i].productId.productStock > 3) { %>
+                    <p style="color: green;">In Stock</p>
+                <% } else { %>
+                    <p style="color: red;">Less Stock</p>
+                <% } %>
+
+                <% if(cartData[i].productId.productStock !== 0) { %>
+                    <div class="quantity-control mb-2">
+                        <button id="decrease" onclick="decrement('<%= i %>', '<%= cartData[i].productId._id %>')">-</button>
+                        <input type="text" id="productQuantity<%= i %>" value="<%= cartData[i].productQuantity %>">
+                        <button id="increase" onclick="increment('<%= cartData[i].productId.productStock %>', '<%= i %>', '<%= cartData[i].productId._id %>')">+</button>
                     </div>
+                <% } %>
+            </div>
+            <div class="cart-item-actions d-flex flex-column align-items-end">
+                <div class="mb-2" style="font-weight: bold;">INR <%= cartData[i].totalCostPerProduct %></div>
+                <button class="btn btn-link" style="color: red; margin-top: 106%;" onclick="deleteProduct(event, '<%= cartData[i].productId._id %>', '<%= cartData[i].productId.productName %>')">
+                    <i class="fa-sharp fa-solid fa-trash"></i>
+                </button>
+            </div>
+        </div>
+    <% } %>
 
-
-                    <!-- Cart Items -->
-                    <div class="col-lg-9 order-lg-1">
-                        <h4>Shopping Cart</h4>
-                        <button class="btn btn-link" style="color: green;" onclick="deleteAll(event)">Deselect all
-                            items</button>
-
-
-                            <% if (outOfStockItems && outOfStockItems.length > 0) { %>
-                                <div class="alert alert-warning">
-                                    <h5>Some items have been updated due to insufficient stock:</h5>
-                                    <ul>
-                                        <% outOfStockItems.forEach(item => { %>
-                                            <li><%= item.productName %>: Requested <%= item.requestedQuantity %>, Available <%= item.availableQuantity %></li>
-                                        <% }) %>
-                                    </ul>
-                                </div>
-                            <% } %>
-
-
-
-                        <% for(let i=0; i<cartData.length; i++) { %>
-
-                            <div class="cart-item d-flex flex-wrap align-items-center" id="cartProduct">
-                                <div class="me-2">
-                                    <img src="/assets/uploadimages/uploads/<%= cartData[i].productId.productImage[0] %>"
-                                        alt="" style="max-width: 40%; max-height: 40%;">
-                                </div>
-                                <div class="cart-item-details flex-grow-1">
-                                    <h5>
-                                        <%= cartData[i].productId.productName %>
-                                    </h5>
-
-                                    <% if(cartData[i].productId.productStock === 0 ) { %>
-                                        <p style="color: red;">Out Of Stock </p>
-                                        <% }else if(cartData[i].productId.productStock > 3) { %>
-                                            <p style="color: green;">In Stock</p>
-                                            <% }else { %>
-                                                <p style="color: red;">Less Stock</p>
-                                                <% } %>
-
-
-                                            <% if(cartData[i].productId.productStock !== 0 ) { %>
-
-                                                <div class="quantity-control mb-2">
-                                                    <button id="decrease"
-                                                        onclick="decrement('<%= i %>','<%= cartData[i].productId._id %>')">-</button>
-
-                                                    <input type="text" id="productQuantity<%= i %>"
-                                                        value="<%= cartData[i].productQuantity %>">
-
-                                                    <button id="increase"
-                                                        onclick="increment('<%= cartData[i].productId.productStock%>',`<%= i %>`,'<%=cartData[i].productId._id%>')">+</button>
-                                                </div>
-                                                <% } %>
-                                </div>
-                                <div class="cart-item-actions d-flex flex-column align-items-end">
-                                    <div class="mb-2" style="font-weight: bold;">INR <%= cartData[i].totalCostPerProduct %>
-                                    </div>
-                                    <button class="btn btn-link" style="color: red; margin-top: 106%;"
-                                        onclick="deleteProduct(event,'<%= cartData[i].productId._id %>','<%= cartData[i].productId.productName %>')"><i
-                                        class="fa-sharp fa-solid fa-trash"></i></button>
-                                </div>
-                            </div>
-
-                            <% } %>
-
-                                <% } else { %>
-                                    <h5 class="text-center">No products available in your cart</h5>
-                                    <% } %>
-                    </div>
+    <% } else { %>
+        <h5 class="text-center">No products available in your cart</h5>
+    <% } %>
+</div>
 
 
             </div>
@@ -226,7 +206,8 @@
                         confirmButtonText: 'OK'
                     }).then(() => {
                         // Redirect to the cart page after successful deletion
-                        window.location.href = '/cart';
+                        // window.location.href = '/cart';
+                        $('#deleteUpdate').load('/cart #deleteUpdate > *');
                     });
                 } else {
                     // Handle errors if any
@@ -240,31 +221,6 @@
     }
             </script>
 
-
-            <!------ delete all products ----->
-            <!-- <script>
-                async function deleteAll(event) {
-                    event.preventDefault()
-
-                    try {
-
-                        const response = await fetch(`/deleteAll`, {
-                            method: 'DELETE'
-                        })
-
-                        if (response.ok) {
-                            window.location.href = '/cart'
-                        } else {
-                            console.error('Falied to Delete the Products');
-                        }
-
-
-                    } catch (error) {
-                        console.error(error.message);
-                        window.location.href = '/500'; // Redirect to error page
-                    }
-                }
-            </script> -->
 
             <script>
                 async function deleteAll(event) {
@@ -301,7 +257,7 @@
             
 
                  <!------ increase product ---->
-            <script>
+            <!-- <script>
                 async function increment(productStock, index, productId) {
                     try {
                         const response = await fetch(`/cart/increase?productId=${productId}`, {
@@ -323,7 +279,7 @@
                                 // Redirect to cart page
                                 // window.location.href = '/cart';
                                 // window.location.reload();
-                                $('#cartProduct').load('/cart #cartProduct > *');
+                                $('#updateDiv').load('/cart #updateDiv > *');
                                 $('#total').load('/cart #total > *');
                             }
                         } else {
@@ -334,12 +290,51 @@
                         window.location.href = '/500'; // Redirect to error page
                     }
                 }
+            </script> -->
+
+
+            <script>
+                async function increment(productStock, index, productId) {
+    try {
+        const response = await fetch(`/cart/increase?productId=${productId}`, {
+            method: 'PUT'
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            if (result.maxLimitReached) {
+                // Show sweet alert for maximum limit reached
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'Maximum stock limit reached!',
+                });
+            } else {
+                // Update the specific quantity div
+                $(`#productQuantity${index}`).val(result.newQuantity);
+
+                // Update the total cost for this product
+                $(`#cartProduct${index} .cart-item-actions .mb-2`).text(`INR ${result.newTotalCostPerProduct}`);
+
+                // Update the grand total and total items
+                $('#totalItems').text(result.totalItems);
+                $('#grandTotal').text(`INR ${result.grandTotal.toFixed(2)}`);
+            }
+        } else {
+            console.error('Failed to increase product quantity');
+        }
+    } catch (error) {
+        console.error(error.message);
+        window.location.href = '/500'; // Redirect to error page
+    }
+}
+
             </script>
 
 
-
             <!----- decrease product ----->
-            <script>
+            <!-- <script>
                 async function decrement(index, productId) {
                     try {
                         const response = await fetch(`/cart/decrease?productId=${productId}`, {
@@ -369,7 +364,47 @@
                         window.location.href = '/500'; // Redirect to error page
                     }
                 }
+            </script> -->
+
+            <script>
+                    async function decrement(index, productId) {
+        try {
+            const response = await fetch(`/cart/decrease?productId=${productId}`, {
+                method: 'PUT'
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                if (result.minLimitReached) {
+                    // Show sweet alert for minimum quantity reached
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'Minimum quantity reached!',
+                    });
+                } else {
+                    // Update the specific quantity div
+                    $(`#productQuantity${index}`).val(result.newQuantity);
+
+                    // Update the total cost for this product
+                    $(`#cartProduct${index} .cart-item-actions .mb-2`).text(`INR ${result.newTotalCostPerProduct}`);
+
+                    // Update the grand total and total items
+                    $('#totalItems').text(result.totalItems);
+                    $('#grandTotal').text(`INR ${result.grandTotal.toFixed(2)}`);
+                }
+            } else {
+                console.error('Failed to decrease product quantity');
+            }
+        } catch (error) {
+            console.error(error.message);
+            window.location.href = '/500'; // Redirect to error page
+        }
+    }
+
             </script>
+
 
 
 <!----- proceed to checkout ----->

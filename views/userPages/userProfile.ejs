@@ -77,7 +77,9 @@
 
   <div class="container mt-5">
     <div class="row">
-      <div class="col-lg-3 mb-4 nav-sidebar">
+
+      <div class="col-sm-6 col-lg-3 mb-4 nav-sidebar">
+
         <h4 class=" mb-4" style="color: black;">My Account</h4>
         <div class="list-group">
           <a href="/order" class="list-group-item list">Orders</a>
@@ -101,7 +103,7 @@
         </div>
       </div>
 
-      <div class="col-lg-8">
+      <div class="col-sm-6 col-lg-8">
         <div class="card shadow-sm" id="user-profile">
           <div class="card-body">
             <h3 class="text-center mb-4">User Profile</h3>
@@ -125,7 +127,7 @@
 
         <div class="row mt-3" style="margin-left: 2%;">
           <input type="hidden" id="referralCode"
-              value="http://localhost:<%= process.env.PORT %>/signUp?referral= <%= userData.referralCode %> "
+              value="http://menscart.site/signUp?referral= <%= userData.referralCode %> "
               readonly>
           <p onclick="copyReferralCode()"
               style=" cursor: pointer; box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px; padding: 25px 50px;">
