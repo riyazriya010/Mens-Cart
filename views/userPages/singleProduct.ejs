@@ -86,9 +86,12 @@
             background-color: #295f4e;
             border: 1px solid #295f4e;
             /* border-radius: 2px; */
-            width: 33%; /* Makes the button take full width */
-            padding: 6px; /* Optional: Adds padding inside the button */
-            box-sizing: border-box; /* Ensures padding and border are included in the width */
+            width: 33%;
+            /* Makes the button take full width */
+            padding: 6px;
+            /* Optional: Adds padding inside the button */
+            box-sizing: border-box;
+            /* Ensures padding and border are included in the width */
         }
     </style>
 
@@ -172,28 +175,31 @@
                         </h3>
 
                         <div style="display: flex;">
-                            <% if(findProduct.offerPrice !== null) { %>
-                                <span class="text-muted"><strike style="margin-left: 2%;">₹<%= findProduct.productPrice %></strike></span>
-                            <h5 style="margin-left: 4%;"> ₹<%= findProduct.offerPrice %>
-                            </h5>
-                            <span style="margin-left: 4%;color: rgb(255, 0, 247);font-weight: bolder;"><%= findProduct.offerApplied %>%</span>
+                            <% if(findProduct.offerPrice !==null) { %>
+                                <span class="text-muted"><strike style="margin-left: 2%;">₹<%= findProduct.productPrice
+                                            %></strike></span>
+                                <h5 style="margin-left: 4%;"> ₹<%= findProduct.offerPrice %>
+                                </h5>
+                                <span style="margin-left: 4%;color: rgb(255, 0, 247);font-weight: bolder;">
+                                    <%= findProduct.offerApplied %>%
+                                </span>
                                 <% }else{ %>
                                     <h5 style="margin-left: 4%;"> ₹<%= findProduct.productPrice %>
                                     </h5>
                                     <% } %>
-                            
+
                         </div>
 
-                        <% if(findProduct.productStock <= 3 && findProduct.productStock> 0 ) { %>
+                        <% if(findProduct.productStock <=3 && findProduct.productStock> 0 ) { %>
                             <p style="color: red;"> Less Stock : <%= findProduct.productStock %>
                             </p>
                             <% } %>
 
-                                <% if(findProduct.productStock === 0 ) { %>
+                                <% if(findProduct.productStock===0 ) { %>
                                     <p style="color: red;">Out Of Stock </p>
                                     <% } %>
 
-                                        <% if(findProduct.productStock !== 0 ) { %>
+                                        <% if(findProduct.productStock !==0 ) { %>
 
                                             <button id="decrement" onclick="decrement()"
                                                 style="border:none;width: 30px;background-color: #ccc;color: white;"><i
@@ -241,21 +247,27 @@
 
                                             <hr>
                                             <h4>Ratings:</h4>
-                                            <% if (ratings && ratings.length > 0) { %>
-                                                <% ratings.forEach(ratingGroup => { %>
-                                                    <% ratingGroup.ratings.forEach(rating => { %>
-                                                        <p><strong><%= rating.username %></strong></p> <!-- Assuming user has a 'username' field -->
-                                                        <% for (let i = 0; i < rating.noOfStars; i++) { %>
-                                                            <span><i class="fa-solid fa-star" style="color: rgb(255, 179, 0);"></i></span>
-                                                        <% } %>
-                                                        <p><%= rating.ratingDescription %></p>
-                                                        <hr>
-                                                    <% }) %>
-                                                <% }) %>
-                                            <% } else { %>
-                                                <p>No ratings available for this product.</p>
-                                            <% } %>
-                                            
+                                            <% if (ratings && ratings.length> 0) { %>
+                                                <% ratings.forEach(ratingGroup=> { %>
+                                                    <% ratingGroup.ratings.forEach(rating=> { %>
+                                                        <p><strong>
+                                                                <%= rating.username %>
+                                                            </strong></p> <!-- Assuming user has a 'username' field -->
+                                                        <% for (let i=0; i < rating.noOfStars; i++) { %>
+                                                            <span><i class="fa-solid fa-star"
+                                                                    style="color: rgb(255, 179, 0);"></i></span>
+                                                            <% } %>
+                                                                <p>
+                                                                    <%= rating.ratingDescription %>
+                                                                </p>
+                                                                <hr>
+                                                                <% }) %>
+                                                                    <% }) %>
+                                                                        <% } else { %>
+                                                                            <p>No ratings available for this product.
+                                                                            </p>
+                                                                            <% } %>
+
 
                     </div>
 
@@ -373,7 +385,7 @@
                             star: $('input[name="star"]:checked').val(),
                             ratings: $('#ratings').val()
                         };
-            
+
                         if (!formData.star) {
                             Swal.fire({
                                 icon: 'error',
@@ -382,7 +394,7 @@
                             });
                             return;
                         }
-            
+
                         fetch('/admin/addRating', {
                             method: 'POST',
                             headers: {
@@ -390,53 +402,54 @@
                             },
                             body: JSON.stringify(formData)
                         })
-                        .then(response => response.json())
-                        .then(result => {
-                            if (result.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Rating Added',
-                                    text: 'Your rating has been successfully added!',
-                                    confirmButtonText: 'Go to login',
-                                     cancelButtonText: "Back"
-                                }).then(() => {
-                                    // Reload the page to reflect the new rating
-                                    window.location.reload();
-                                });
-                            } else if (result.message === 'User not logged in') {
-                                Swal.fire({
-                                title: "You need to login",
-                                icon: "info",
-                                showCancelButton: true,
-                                confirmButtonColor: "#3085d6",
-                                cancelButtonColor: "#31A94C",
-                                confirmButtonText: "Go to login",
-                                cancelButtonText: "Back"
-                                }).then((result) => {
-                                    if(result.isConfirmed){
-                                        window.location.href = '/login'
-                                    }
-                                });
-                            } else {
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Rating Added',
+                                        text: 'Your rating has been successfully added!',
+                                        confirmButtonText: 'Go to login',
+                                        cancelButtonText: "Back"
+                                    }).then(() => {
+                                        // Reload the page to reflect the new rating
+                                        window.location.reload();
+                                    });
+                                } else if (result.message === 'User not logged in') {
+                                    Swal.fire({
+                                        title: "You need to login",
+                                        text: "to add ratings",
+                                        icon: "info",
+                                        showCancelButton: true,
+                                        confirmButtonColor: "#3085d6",
+                                        cancelButtonColor: "#31A94C",
+                                        confirmButtonText: "Go to login",
+                                        cancelButtonText: "Back"
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            window.location.href = '/login'
+                                        }
+                                    });
+                                } else {
+                                    Swal.fire({
+                                        icon: 'error',
+                                        title: 'Error',
+                                        text: result.message || 'Failed to add rating.',
+                                    });
+                                }
+                            })
+                            .catch(error => {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
-                                    text: result.message || 'Failed to add rating.',
+                                    text: 'There was a problem with your request.',
                                 });
-                            }
-                        })
-                        .catch(error => {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'There was a problem with your request.',
+                                console.error('Error:', error);
                             });
-                            console.error('Error:', error);
-                        });
                     });
                 });
             </script>
-            
+
 
 
 
@@ -455,7 +468,20 @@
                         let result = await response.json();
 
                         if (result.userNotLogged) {
-                            window.location.href = '/login';
+                            Swal.fire({
+                                title: "You need to login",
+                                text: "to create a cart",
+                                icon: "info",
+                                showCancelButton: true,
+                                confirmButtonColor: "#3085d6",
+                                cancelButtonColor: "#31A94C",
+                                confirmButtonText: "Go to login",
+                                cancelButtonText: "Back"
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    window.location.href = '/login'
+                                }
+                            });
                         } else if (!result.success && result.maxQuantityReached) {
                             console.log(result);
 

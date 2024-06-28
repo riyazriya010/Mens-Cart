@@ -27,7 +27,7 @@
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
   <style>
     .product-name {
@@ -158,81 +158,90 @@
     }
 
     .wishlist-icon {
-  position: relative;
-}
+      position: relative;
+    }
 
-.wishlist-count {
-  position: absolute;
-  top: -1px; /* adjust the position to your liking */
-  right: -2px; /* adjust the position to your liking */
-  font-size: 10px; /* adjust the font size to your liking */
-  background-color: rgb(228, 38, 38); /* adjust the background color to your liking */
-  border-radius: 100%; /* make it a circle */
-  padding: 2px 8px; /* adjust the padding to your liking */
-  color: white; /* adjust the text color to your liking */
-}
+    .wishlist-count {
+      position: absolute;
+      top: -1px;
+      /* adjust the position to your liking */
+      right: -2px;
+      /* adjust the position to your liking */
+      font-size: 10px;
+      /* adjust the font size to your liking */
+      background-color: rgb(228, 38, 38);
+      /* adjust the background color to your liking */
+      border-radius: 100%;
+      /* make it a circle */
+      padding: 2px 8px;
+      /* adjust the padding to your liking */
+      color: white;
+      /* adjust the text color to your liking */
+    }
 
-.cart-count{
-  position: absolute;
-  top: -12px; /* adjust the position to your liking */
-  right: -10px; /* adjust the position to your liking */
-  font-size: 10px; /* adjust the font size to your liking */
-  background-color: rgb(228, 38, 38); /* adjust the background color to your liking */
-  border-radius: 100%; /* make it a circle */
-  padding: 4px 8px; /* adjust the padding to your liking */
-  color: white; /* adjust the text color to your liking */
+    .cart-count {
+      position: absolute;
+      top: -12px;
+      /* adjust the position to your liking */
+      right: -10px;
+      /* adjust the position to your liking */
+      font-size: 10px;
+      /* adjust the font size to your liking */
+      background-color: rgb(228, 38, 38);
+      /* adjust the background color to your liking */
+      border-radius: 100%;
+      /* make it a circle */
+      padding: 4px 8px;
+      /* adjust the padding to your liking */
+      color: white;
+      /* adjust the text color to your liking */
 
-}
+    }
 
 
-.full-width-button {
-            color: white;
-            background-color: #295f4e;
-            border: 1px solid #295f4e;
-            /* border-radius: 2px; */
-            width: 100%; /* Makes the button take full width */
-            padding: 6px; /* Optional: Adds padding inside the button */
-            box-sizing: border-box; /* Ensures padding and border are included in the width */
-        }
-
+    .full-width-button {
+      color: white;
+      background-color: #295f4e;
+      border: 1px solid #295f4e;
+      /* border-radius: 2px; */
+      width: 100%;
+      /* Makes the button take full width */
+      padding: 6px;
+      /* Optional: Adds padding inside the button */
+      box-sizing: border-box;
+      /* Ensures padding and border are included in the width */
+    }
   </style>
 </head>
 
 <body style="color: white;">
 
-     <!-- header -->
-     <header class="sticky-top" style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)">
-      <!-- Nav bar -->
-      <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: white; color: black">
-        <div class="container">
-          <a class="navbar-brand" href="/" style="margin-right: 30px;">
-            <h1 style="color: black; font-size: 25px;">Men's Cart</h1>
-          </a>
-          <button
-            type="button"
-            class="navbar-toggler"
-            data-bs-toggle="collapse"
-            data-bs-target="#myNavbar"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <i class="fa-solid fa-bars" style="color: black;"></i>
-          </button>
-  
-          <div class="collapse navbar-collapse" id="myNavbar">
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item text-center">
-                <a href="/" class="nav-link" style="color: black;">Home</a>
-              </li>
-              <li class="nav-item text-center">
-                <a href="/shop" class="nav-link" style="color: black">Shop</a>
-              </li>
-            </ul>
-  
-            
-            <ul class="navbar-nav ms-auto">
-              <% if(logged) { %>
+  <!-- header -->
+  <header class="sticky-top" style="box-shadow: 0 0 10px rgba(0, 0, 0, 0.1)">
+    <!-- Nav bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: white; color: black">
+      <div class="container">
+        <a class="navbar-brand" href="/" style="margin-right: 30px;">
+          <h1 style="color: black; font-size: 25px;">Men's Cart</h1>
+        </a>
+        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#myNavbar"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <i class="fa-solid fa-bars" style="color: black;"></i>
+        </button>
+
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="navbar-nav ms-auto">
+            <li class="nav-item text-center">
+              <a href="/" class="nav-link" style="color: black;">Home</a>
+            </li>
+            <li class="nav-item text-center">
+              <a href="/shop" class="nav-link" style="color: black">Shop</a>
+            </li>
+          </ul>
+
+
+          <ul class="navbar-nav ms-auto">
+            <% if(logged) { %>
               <li class="nav-item text-center mt-2">
                 <a href="/userProfile" class="nav-link" style="color: black">
                   <i class="fa-solid fa-user"></i>
@@ -241,43 +250,45 @@
               <li class="nav-item text-center mt-2">
                 <a href="/wishlist" class="nav-link" style="position: relative">
                   <i class="fa-regular fa-heart" style="color: black; position: relative; font-size: 20px"></i>
-                  <span class="wishlist-count"><%= iconData.wishlistCount %></span>
+                  <span class="wishlist-count">
+                    <%= iconData.wishlistCount %>
+                  </span>
                 </a>
               </li>
               <li class="nav-item text-center mt-2">
                 <a href="/cart" class="nav-link" style="position: relative">
                   <i class="fa-solid fa-cart-shopping" style="color: black; position: relative">
-                    <span class="cart-count"><%= iconData.cartCount %></span>
+                    <span class="cart-count">
+                      <%= iconData.cartCount %>
+                    </span>
                   </i>
                 </a>
               </li>
-              <p
-                style="
+              <p style="
                   margin-top: 5%;
                   margin-left: 3%;
                   margin-right: -6%;
                   font-weight: bolder;
-                "
-              >
+                ">
                 <%= name %>
               </p>
               <% }else { %>
-              <li class="nav-item text-center mt-2" style="margin-left: -38%;">
-                <a href="/login" class="nav-link active">
-                  <i class="fa-solid fa-right-to-bracket" style="color: black"></i>
-                </a>
-              </li>
-              <li class="nav-item text-center mt-2">
-                <a href="/signup" class="nav-link">
-                  <i class="fa-solid fa-user-plus" style="color: black"></i>
-                </a>
-              </li>
-              <% } %>
-            </ul>
-          </div>
+                <li class="nav-item text-center mt-2" style="margin-left: -38%;">
+                  <a href="/login" class="nav-link active">
+                    <i class="fa-solid fa-right-to-bracket" style="color: black"></i>
+                  </a>
+                </li>
+                <li class="nav-item text-center mt-2">
+                  <a href="/signup" class="nav-link">
+                    <i class="fa-solid fa-user-plus" style="color: black"></i>
+                  </a>
+                </li>
+                <% } %>
+          </ul>
         </div>
-      </nav>
-    </header>
+      </div>
+    </nav>
+  </header>
 
 
   <!---- breadcrumbs ---->
@@ -293,7 +304,7 @@
           <ol class="breadcrumb">
 
             <li class="breadcrumb-item " aria-current="page">
-              <a href="#" style="text-decoration: none;color: black;">Home</a>
+              <a href="/" style="text-decoration: none;color: black;">Home</a>
             </li>
 
             <li class="breadcrumb-item active" aria-current="page">
@@ -442,9 +453,10 @@
             <!-- Apply Filter Button -->
             <div class="section d-flex justify-content-center flex-column" style="margin-right: 67px;">
               <div class="d-flex justify-content-center flex-column">
-                <button type="button" class="full-width-button" style="font-size: 15px;"
-                  id="applyFiltersButton">Apply filters</button>
-                <a href="/shop"><button type="button" class="full-width-button mt-2" style="font-size: 15px;">Remove filters</button></a>
+                <button type="button" class="full-width-button" style="font-size: 15px;" id="applyFiltersButton">Apply
+                  filters</button>
+                <a href="/shop"><button type="button" class="full-width-button mt-2" style="font-size: 15px;">Remove
+                    filters</button></a>
               </div>
             </div>
 
@@ -461,7 +473,7 @@
 
 
 
-      
+
       <div class="col-sm-6 col-lg-10 mt-3">
 
         <!---- product col, row-1 ----->
@@ -485,22 +497,22 @@
                       <%= product.parentCategory.categoryName %>
                     </p>
 
-                    <% let isInWishlist = false; %>
-                    <% wishlist.forEach(item => { %>
-                      <% if(String(item.productId) === String(product._id)) { %>
-                        <% isInWishlist = true; %>
-                      <% } %>
-                    <% }); %>
-        
-                    <% if(isInWishlist) { %>
-                      <a class="wishlist-icon">
-                        <i class="fas fa-heart" style="color: red;"></i>
-                      </a>
-                    <% } else { %>
-                      <a class="wishlist-icon" onclick="addItemToWishlist(event,'<%= product._id %>')">
-                        <i class="fas fa-heart"></i>
-                      </a>
-                    <% } %>
+                    <% let isInWishlist=false; %>
+                      <% wishlist.forEach(item=> { %>
+                        <% if(String(item.productId)===String(product._id)) { %>
+                          <% isInWishlist=true; %>
+                            <% } %>
+                              <% }); %>
+
+                                <% if(isInWishlist) { %>
+                                  <a class="wishlist-icon">
+                                    <i class="fas fa-heart" style="color: red;"></i>
+                                  </a>
+                                  <% } else { %>
+                                    <a class="wishlist-icon" onclick="addItemToWishlist(event,'<%= product._id %>')">
+                                      <i class="fas fa-heart"></i>
+                                    </a>
+                                    <% } %>
 
                   </div>
 
@@ -567,7 +579,21 @@
               const result = await response.json();
 
               if (!result.success && result.userNotLogged) {
-                window.location.href = '/login';
+                Swal.fire({
+                  title: "You need to login",
+                  text: "to create a wishlist",
+                  icon: "info",
+                  showCancelButton: true,
+                  confirmButtonColor: "#3085d6",
+                  cancelButtonColor: "#31A94C",
+                  confirmButtonText: "Go to login",
+                  cancelButtonText: "Back"
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.href = '/login'
+                  }
+                });
+                // window.location.href = '/login';
               } else if (result.success) {
                 await Swal.fire({
                   title: "Added to wishlist!",
@@ -613,7 +639,8 @@
             </li>
             <% for (let i=1; i <=totalPages; i++) { %>
               <li class="page-item <%= currentPage === i? 'active' : '' %>">
-                <a onclick="pageClick('<%= i %>')" class="page-link" style="background-color: rgb(255, 255, 255);color: black;">
+                <a onclick="pageClick('<%= i %>')" class="page-link"
+                  style="background-color: rgb(255, 255, 255);color: black;">
                   <%= i %>
                 </a>
               </li>
