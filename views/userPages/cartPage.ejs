@@ -299,7 +299,8 @@
 
 
             <!------ increase product ---->
-            <script>
+
+            <!-- <script>
                 async function increment(productStock, index, productId) {
                     try {
                         const response = await fetch(`/cart/increase?productId=${productId}`, {
@@ -345,11 +346,12 @@
 
                     }
                 }
-            </script>
+            </script> -->
 
 
             <!----- decrease product ----->
-            <script>
+
+            <!-- <script>
                 async function decrement(index, productId) {
                     try {
                         const response = await fetch(`/cart/decrease?productId=${productId}`, {
@@ -389,46 +391,73 @@
                         window.location.href = '/500'; // Redirect to error page
                     }
                 }
-            </script>
-
-            <!-- <script>
-                    async function decrement(index, productId) {
-        try {
-            const response = await fetch(`/cart/decrease?productId=${productId}`, {
-                method: 'PUT'
-            });
-
-            const result = await response.json();
-
-            if (response.ok) {
-                if (result.minLimitReached) {
-                    // Show sweet alert for minimum quantity reached
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Oops...',
-                        text: 'Minimum quantity reached!',
-                    });
-                } else {
-                    // Update the specific quantity div
-                    $(`#productQuantity${index}`).val(result.newQuantity);
-
-                    // Update the total cost for this product
-                    $(`#cartProduct${index} .cart-item-actions .mb-2`).text(`INR ${result.newTotalCostPerProduct}`);
-
-                    // Update the grand total and total items
-                    $('#totalItems').text(result.totalItems);
-                    $('#grandTotal').text(`INR ${result.grandTotal.toFixed(2)}`);
-                }
-            } else {
-                console.error('Failed to decrease product quantity');
-            }
-        } catch (error) {
-            console.error(error.message);
-            window.location.href = '/500'; // Redirect to error page
-        }
-    }
-
             </script> -->
+
+
+
+            <script>
+                async function increment(productStock, index, productId) {
+                    try {
+                        const response = await fetch(`/cart/increase?productId=${productId}`, {
+                            method: 'PUT'
+                        });
+            
+                        const result = await response.json();
+            
+                        if (result.maxLimitReached) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Maximum stock limit reached!',
+                            });
+                        } else {
+                            updateCartUI(result);
+                        }
+                    } catch (error) {
+                        console.error(error.message);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong!',
+                        });
+                    }
+                }
+            
+                async function decrement(index, productId) {
+                    try {
+                        const response = await fetch(`/cart/decrease?productId=${productId}`, {
+                            method: 'PUT'
+                        });
+            
+                        const result = await response.json();
+            
+                        if (result.minLimitReached) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Oops...',
+                                text: 'Minimum quantity reached!',
+                            });
+                        } else {
+                            updateCartUI(result);
+                        }
+                    } catch (error) {
+                        console.error(error.message);
+                        window.location.href = '/500'; // Redirect to error page
+                    }
+                }
+            
+                function updateCartUI(result) {
+                    // Update the total items and grand total
+                    document.getElementById('totalItems').textContent = result.totalItems;
+                    document.getElementById('grandTotal').textContent = `INR ${result.grandTotal.toFixed(2)}`;
+            
+                    // Update each cart item
+                    result.updatedCart.forEach((item, index) => {
+                        document.getElementById(`productQuantity${index}`).value = item.productQuantity;
+                        document.querySelector(`#cartProduct${index} .cart-item-actions .mb-2`).textContent = `INR ${item.totalCostPerProduct}`;
+                    });
+                }
+            </script>
 
 
 
