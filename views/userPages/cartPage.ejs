@@ -143,7 +143,8 @@
                                             <img src="/assets/uploadimages/uploads/<%= cartData[i].productId.productImage[0] %>"
                                                 alt="" style="max-width: 40%; max-height: 40%;">
                                         </div>
-                                        <div class="cart-item-details flex-grow-1">
+
+                                        <div class="cart-item-details flex-grow-1" id="update">
                                             <h5>
                                                 <%= cartData[i].productId.productName %>
                                             </h5>
@@ -167,7 +168,8 @@
                                                                 </div>
                                                                 <% } %>
                                         </div>
-                                        <div class="cart-item-actions d-flex flex-column align-items-end">
+                                        <div class="cart-item-actions d-flex flex-column align-items-end"
+                                            id="subUpdate">
                                             <div class="mb-2" style="font-weight: bold;">INR <%=
                                                     cartData[i].totalCostPerProduct %>
                                             </div>
@@ -181,9 +183,9 @@
 
                                         <% } else { %>
                                             <!-- <h5 class="text-center">No products available in your cart</h5> -->
-                                             <script>
+                                            <script>
                                                 window.location.href = '/cart/emptyCart'
-                                             </script>
+                                            </script>
 
                                             <% } %>
                     </div>
@@ -236,7 +238,7 @@
                                     window.location.href = '/cart/emptyCart';
                                     // $('#deleteUpdate').load('/cart #deleteUpdate > *');
                                 });
-                            } else if(result.success){
+                            } else if (result.success) {
                                 // Show success alert
                                 Swal.fire({
                                     title: 'Deleted!',
@@ -248,7 +250,7 @@
                                     // window.location.href = '/cart/emptyCart';
                                     $('#deleteUpdate').load('/cart #deleteUpdate > *');
                                 });
-                            }else {
+                            } else {
                                 // Handle errors if any
                                 console.error('Failed to delete product');
                             }
@@ -316,8 +318,19 @@
                                 });
                             } else {
                                 // window.location.reload()
-                                $('#updateCart').load('/cart #updateCart > *');
-                                $('#total').load('/cart #total > *');
+                                // $('#update').load('/cart #update > *');
+                                // $('#subUpdate').load('/cart #subUpdate > *');
+                                // $('#total').load('/cart #total > *');
+
+                                // Update the UI
+                                $.ajax({
+                                    url: '/cart',
+                                    type: 'GET',
+                                    success: function (data) {
+                                        $('#updateCart').html($(data).find('#updateCart').html());
+                                        $('#total').html($(data).find('#total').html());
+                                    }
+                                });
                             }
                         } else {
                             console.error('Failed to increase product quantity');
@@ -355,8 +368,18 @@
                                 });
                             } else {
                                 // window.location.reload()
-                                $('#updateCart').load('/cart #updateCart > *');
-                                $('#total').load('/cart #total > *');
+                                // $('#update').load('/cart #update > *');
+                                // $('#subUpdate').load('/cart #subUpdate > *');
+                                // $('#total').load('/cart #total > *');
+                                // Update the UI
+                                $.ajax({
+                                    url: '/cart',
+                                    type: 'GET',
+                                    success: function (data) {
+                                        $('#updateCart').html($(data).find('#updateCart').html());
+                                        $('#total').html($(data).find('#total').html());
+                                    }
+                                });
                             }
                         } else {
                             console.error('Failed to decrease product quantity');
