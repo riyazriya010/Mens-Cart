@@ -121,7 +121,9 @@
                                     </div>
                                 </div>
                             </div>
+
                             <% } %>
+                            
                                 <% } %>
             </div>
         </div>
@@ -204,7 +206,14 @@
 
                             const result = await response.json();
 
-                            if (result.success) {
+                            if(result.success && result.listEmpty){
+                                await Swal.fire({
+                                    title: 'Item removed successfully',
+                                    icon: 'success'
+                                }).then(() => {
+                                    window.location.href = '/wishlist/emptyList'
+                                })
+                         }else if (result.success) {
                                 await Swal.fire({
                                     title: 'Item removed successfully',
                                     icon: 'success'

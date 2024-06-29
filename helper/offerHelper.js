@@ -4,9 +4,10 @@ const categoryOfferCollection = require('../models/categoryOfferModel.js');
 
 
 
-
+//Applying offer
 exports.applyOffer = async () => {
   try {
+    
     const productData = await productCollection.product.find().populate('parentCategory');
     const productOfferData = await productOfferCollection.productOffermodel.find();
     const categoryOfferData = await categoryOfferCollection.categoryOfferModel.find();
@@ -19,6 +20,7 @@ exports.applyOffer = async () => {
       let categoryPercentage = null;
       let appliedOfferId = null;
 
+      
       for (let p = 0; p < productOfferData.length; p++) {
         if (productData[i]._id.equals(productOfferData[p].productId)) {
           if (
@@ -41,14 +43,16 @@ exports.applyOffer = async () => {
           }
         }
       }
-
+      
       for (let c = 0; c < categoryOfferData.length; c++) {
         if (productData[i].parentCategory._id.equals(categoryOfferData[c].categoryId)) {
+          
           if (
             categoryOfferData[c].startDate <= Date.now() &&
             categoryOfferData[c].endDate > Date.now() &&
             categoryOfferData[c].currentStatus === true
           ) {
+
             const offerPercentage =
               Math.floor(
                 (Number(productData[i].productPrice) *
@@ -97,7 +101,6 @@ exports.applyOffer = async () => {
         );
       }
 
-
     }
   } catch (error) {
     console.error(error.message);
@@ -106,8 +109,11 @@ exports.applyOffer = async () => {
 
 
 
+
+//Checking for offer valid or Not
 exports.checkOffer = async () => {
   try {
+   
     const productData = await productCollection.product.find().populate('parentCategory');
     const productOfferData = await productOfferCollection.productOffermodel.find();
     const categoryOfferData = await categoryOfferCollection.categoryOfferModel.find();
@@ -125,12 +131,18 @@ exports.checkOffer = async () => {
           }
         );
 
+
         for (let i = 0; i < productData.length; i++) {
-          if (productData[i].productOfferId.equals(productOfferData[p]._id)) {
+          // console.log(productData[i].productOfferId);
+
+          // if(productData[i].productOfferId === null)
+          //   continue;
+
+          if (productData[i].productOfferId && productData[i].productOfferId.equals(productOfferData[p]._id)) {
             await productCollection.product.findByIdAndUpdate(
               productData[i]._id,
               {
-                $set: { offerPrice: null, offerApplied: null }
+                $set: {productOfferId:null, offerPrice: null, offerApplied: null }
               }
             );
           }
@@ -144,10 +156,11 @@ exports.checkOffer = async () => {
           }
         );
 
+       
         for (let i = 0; i < productData.length; i++) {
-          if (productData[i].productOfferId.equals(productOfferData[p]._id)) {
+          if (productData[i].productOfferId && productData[i].productOfferId.equals(productOfferData[p]._id)) {
             const discountPrice = (productOfferData[p].productOfferPercentage * productData[i].productPrice)/100
-            const offerPrice = productData[i] - discountPrice 
+            const offerPrice = productData[i].productPrice - discountPrice 
             await productCollection.product.findByIdAndUpdate(
               productData[i]._id,
               {
@@ -178,12 +191,13 @@ exports.checkOffer = async () => {
           }
         );
 
+        
         for (let j = 0; j < productData.length; j++) {
-          if (productData[j].productOfferId._id.equals(categoryOfferData[c]._id)) {
+          if (productData[j].productOfferId && productData[j].productOfferId.equals(categoryOfferData[c]._id)) {
             await productCollection.product.findByIdAndUpdate(
               productData[j]._id,
               {
-                $set: { offerPrice: null, offerApplied: null }
+                $set: { productOfferId:null, offerPrice: null, offerApplied: null }
               }
             );
           }
@@ -196,11 +210,12 @@ exports.checkOffer = async () => {
             $set: { currentStatus: true }
           }
         );
-        
+
+
         for (let i = 0; i < productData.length; i++) {
-          if (productData[i].productOfferId.equals(productOfferData[c]._id)) {
+          if (productData[i].productOfferId && productData[i].productOfferId.equals(productOfferData[c]._id)) {
             const discountPrice = (categoryOfferData[c].categoryOfferPercentage * productData[i].productPrice)/100
-            const offerPrice = productData[i] - discountPrice 
+            const offerPrice = productData[i].productPrice - discountPrice 
             await productCollection.product.findByIdAndUpdate(
               productData[i]._id,
               {

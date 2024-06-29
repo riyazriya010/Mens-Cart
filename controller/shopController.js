@@ -206,8 +206,6 @@ exports.singleProduct = async (req,res, next) => {
 
    // Fetch ratings for the specific product
    const ratings = await ratingCollection.rating.find({ productId:productId })
-
-   console.log('ratings: ',ratings)
       
       res.render('userPages/singleProduct', { findProduct, ratings });
 

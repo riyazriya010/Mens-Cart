@@ -1,0 +1,193 @@
+<%- include('../userPartials/header') %>
+
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
+
+
+<style>
+    .no-items-cart {
+  padding: 50px;
+  background-color: #f7f7f7;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 300px;
+}
+
+#c-icon {
+  font-size: 80px;
+  color: #ccc;
+  margin-bottom: 20px;
+  animation: shake 2s infinite;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-10px) rotate(-10deg);
+  }
+  50% {
+    transform: translateX(10px) rotate(10deg);
+  }
+  75% {
+    transform: translateX(-10px) rotate(-10deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+.no-items-cart h2 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.no-items-cart p {
+  font-size: 18px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.no-items-cart button {
+  padding: 10px 20px;
+  font-size: 18px;
+  border-radius: 5px;
+  background-color: #337ab7;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.no-items-cart button:hover {
+  background-color: #23527c;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.no-items-cart::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(to bottom, #f7f7f7, #fff);
+  opacity: 0.5;
+  z-index: -1;
+}
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+  .no-items-cart {
+    padding: 20px;
+    height: 250px;
+  }
+  #c-icon {
+    font-size: 60px;
+  }
+  .no-items-cart h2 {
+    font-size: 20px;
+  }
+  .no-items-cart p {
+    font-size: 16px;
+  }
+  .no-items-cart button {
+    padding: 8px 15px;
+    font-size: 16px;
+  }
+}
+@media (max-width: 480px) {
+  .no-items-cart {
+    padding: 10px;
+    height: 200px;
+  }
+  #c-icon {
+    font-size: 40px;
+  }
+  .no-items-cart h2 {
+    font-size: 18px;
+  }
+  .no-items-cart p {
+    font-size: 14px;
+  }
+  .no-items-cart button {
+    padding: 6px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Animation */
+
+#c-icon {
+  animation-duration: 2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateX(-10px) rotate(-10deg);
+  }
+  50% {
+    transform: translateX(10px) rotate(10deg);
+  }
+  75% {
+    transform: translateX(-10px) rotate(-10deg);
+  }
+  100% {
+    transform: translateX(0) rotate(0deg);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.no-items-cart button {
+  animation: pulse 2s infinite;
+}
+  </style>
+
+<body>
+    
+
+    <div class="container" style="margin-top: 7%;margin-bottom: 4%;">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <div class="no-items-cart">
+              <div class="cart-icon" id="c-icon">
+                <i class="fas fa-shopping-cart"></i>
+              </div>
+              <h2>Your cart is empty!</h2>
+              <p>Looks like you haven't added any items to your cart yet.</p>
+              <a href="/shop"><button class="btn btn-primary">Start Shopping</button></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <%- include('../userPartials/footer') %>
+</body>

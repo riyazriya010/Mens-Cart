@@ -190,7 +190,7 @@
                     <% } %>
                   </div>
 
-                  <p> <%= address[i].address1 %>, <%= address[i].address2 %> <br> <%= address[i].city %> <%= address[i].state %> - <%= address[i].pincode %> </p>
+                  <p> <%= address[i].address1 %>, <%= address[i].address2 %> <br> <%= address[i].city %> <%= address[i].state %> - <%= address[i].pincode %> <br> <strong>Land Mark:</strong> <%= address[i].land %> </p>
                   <div style="display: flex;">
                     <button class="btn-remove" onclick="deleteAddr('<%= address[i]._id %>')">Remove</button>
                     <a href="/editAddress/<%= address[i]._id %>" style="margin-left: 2%;"><button class="btn-edit">Edit</button></a>

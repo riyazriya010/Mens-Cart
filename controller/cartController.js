@@ -11,7 +11,12 @@ const AppError = require('../middleware/errorHandling.js');
 
 exports.cartGet = async (req, res, next) => {
     try {
+
       const cartData = await cartCollection.cart.find({ userId: req.session.userId }).populate('productId');
+
+      if(cartData.length === 0){
+        return res.redirect('/cart/emptyCart');
+      }
   
       let totalItems = 0;
       let grandTotal = 0;
@@ -98,177 +103,74 @@ exports.addToCart = async (req, res, next) => {
 
 
 
-// exports.increaseQty = async (req, res, next) => {
-//     try {
-//         const productId = req.query.productId;
-//         const productData = await productCollection.product.findById(productId);
-//         const price = productData.offerPrice || productData.productPrice
-//         const cartItem = await cartCollection.cart.findOne({ productId: productId });
-
-//         if (cartItem.productQuantity + 1 > productData.productStock) {
-//             return res.status(200).json({ maxLimitReached: true });
-//         }
-
-//          await cartCollection.cart.updateOne(
-//             { productId: productId },
-//             {
-//                 $inc: {
-//                     productQuantity: 1,
-//                     totalCostPerProduct: price
-//                 }
-//             }
-//         );
-//         res.status(200).json({ maxLimitReached: false });
-//     } catch (error) {
-//       next(new AppError(error.message, 500))
-//     }
-// }
-
-
 exports.increaseQty = async (req, res, next) => {
-  try {
-      const productId = req.query.productId;
-      const productData = await productCollection.product.findById(productId);
-      const price = productData.offerPrice || productData.productPrice;
-      const cartItem = await cartCollection.cart.findOne({ productId: productId });
-
-      if (cartItem.productQuantity + 1 > productData.productStock) {
-          return res.status(200).json({ maxLimitReached: true });
-      }
-
-      await cartCollection.cart.updateOne(
-          { productId: productId },
-          {
-              $inc: {
-                  productQuantity: 1,
-                  totalCostPerProduct: price
-              }
-          }
-      );
-
-      const updatedCartItem = await cartCollection.cart.findOne({ productId: productId });
-
-      const cartItems = await cartCollection.cart.find();
-      let grandTotal = 0;
-      let totalItems = 0;
+    try {
       
-      cartItems.forEach(item => {
-          grandTotal += item.totalCostPerProduct;
-          totalItems += item.productQuantity;
-      });
+        const productId = req.query.productId;
+        const productData = await productCollection.product.findById(productId);
+        const price = productData.offerPrice || productData.productPrice
+        const cartItem = await cartCollection.cart.findOne({ productId: productId });
 
-      res.status(200).json({
-          maxLimitReached: false,
-          newQuantity: updatedCartItem.productQuantity,
-          newTotalCostPerProduct: updatedCartItem.totalCostPerProduct,
-          grandTotal: grandTotal,
-          totalItems: totalItems
-      });
-  } catch (error) {
-      next(new AppError(error.message, 500));
-  }
-};
+        if (cartItem.productQuantity + 1 > productData.productStock) {
+            return res.status(200).json({ maxLimitReached: true });
+        }
 
+         await cartCollection.cart.updateOne(
+            { productId: productId },
+            {
+                $inc: {
+                    productQuantity: 1,
+                    totalCostPerProduct: price
+                }
+            }
+        );
+        res.status(200).json({ maxLimitReached: false });
+    } catch (error) {
+      next(new AppError(error.message, 500))
+    }
+}
 
 
 
 
 //decrease the qty
-// exports.decreaseQty = async (req, res, next) => {
-//     try {
-//         const productId = req.query.productId;
-//         const cartItem = await cartCollection.cart.findOne({ productId: productId });
-
-//         if (!cartItem) {
-//             return res.status(404).send('Cart item not found');
-//         }
-
-//         if (cartItem.productQuantity <= 1) {
-//             return res.status(200).json({ minLimitReached: true });
-//         }
-
-//         const productData = await productCollection.product.findById(productId);
-//         const price = productData.offerPrice || productData.productPrice
-        
-//         if (!productData) {
-//             return res.status(404).send('Product not found');
-//         }
-
-//         const newQuantity = cartItem.productQuantity - 1;
-//         const newTotalCost = newQuantity * price
-
-//        await cartCollection.cart.updateOne(
-//             { productId: productId },
-//             {
-//                 $set: {
-//                     productQuantity: newQuantity,
-//                     totalCostPerProduct: newTotalCost
-//                 }
-//             }
-//         );
-//         res.status(200).json({ minLimitReached: false });
-//     } catch (error) {
-//       next(new AppError(error.message, 500))
-//     }
-// }
-
 exports.decreaseQty = async (req, res, next) => {
-  try {
-      const productId = req.query.productId;
-      const cartItem = await cartCollection.cart.findOne({ productId: productId });
+    try {
+        const productId = req.query.productId;
+        const cartItem = await cartCollection.cart.findOne({ productId: productId });
 
-      if (!cartItem) {
-          return res.status(404).send('Cart item not found');
-      }
+        if (!cartItem) {
+            return res.status(404).send('Cart item not found');
+        }
 
-      if (cartItem.productQuantity <= 1) {
-          return res.status(200).json({ minLimitReached: true });
-      }
+        if (cartItem.productQuantity <= 1) {
+            return res.status(200).json({ minLimitReached: true });
+        }
 
-      const productData = await productCollection.product.findById(productId);
-      const price = productData.offerPrice || productData.productPrice;
+        const productData = await productCollection.product.findById(productId);
+        const price = productData.offerPrice || productData.productPrice
+        
+        if (!productData) {
+            return res.status(404).send('Product not found');
+        }
 
-      if (!productData) {
-          return res.status(404).send('Product not found');
-      }
+        const newQuantity = cartItem.productQuantity - 1;
+        const newTotalCost = newQuantity * price
 
-      const newQuantity = cartItem.productQuantity - 1;
-      const newTotalCost = newQuantity * price;
-
-      await cartCollection.cart.updateOne(
-          { productId: productId },
-          {
-              $set: {
-                  productQuantity: newQuantity,
-                  totalCostPerProduct: newTotalCost
-              }
-          }
-      );
-
-      const updatedCartItem = await cartCollection.cart.findOne({ productId: productId });
-
-      const cartItems = await cartCollection.cart.find();
-      let grandTotal = 0;
-      let totalItems = 0;
-
-      cartItems.forEach(item => {
-          grandTotal += item.totalCostPerProduct;
-          totalItems += item.productQuantity;
-      });
-
-      res.status(200).json({
-          minLimitReached: false,
-          newQuantity: updatedCartItem.productQuantity,
-          newTotalCostPerProduct: updatedCartItem.totalCostPerProduct,
-          grandTotal: grandTotal,
-          totalItems: totalItems
-      });
-  } catch (error) {
-      next(new AppError(error.message, 500));
-  }
-};
-
-
+       await cartCollection.cart.updateOne(
+            { productId: productId },
+            {
+                $set: {
+                    productQuantity: newQuantity,
+                    totalCostPerProduct: newTotalCost
+                }
+            }
+        );
+        res.status(200).json({ minLimitReached: false });
+    } catch (error) {
+      next(new AppError(error.message, 500))
+    }
+}
 
 
 
@@ -280,15 +182,27 @@ exports.deleteCartItem = async (req, res, next) => {
         if (cartData) {
             await cartData.deleteOne();
             // console.log("deleted");
-            return res.status(200).send(); // Send a success status
+            // return res.status(200).send(); // Send a success status
+
+            const cart = await cartCollection.cart.find({ userId:req.session.userId });
+
+            if(cart.length === 0){
+              return res.json({success:true, cartEmpty:true});
+            }else{
+              return res.json({ success:true });
+            }
         }
 
         // console.log("not deleted");
         return res.status(404).send(); // Send a not found status if the item wasn't found
+
     } catch (error) {
       next(new AppError(error.message, 500))
     }
 }
+
+
+
 
 
 
@@ -310,6 +224,20 @@ exports.deleteAll = async (req,res, next) => {
     }catch(error) {
       next(new AppError(error.message, 500))
     }
+}
+
+exports.emptyCart = async (req,res,next) => {
+  try {
+    const isCart = await cartCollection.cart.find({ userId:req.session.userId })
+
+    if(isCart.length === 0){
+      return res.render('userPages/emptyCart');
+    } 
+    res.redirect('/cart');
+
+  } catch (error) {
+    next(new AppError(error.message, 500))
+  }
 }
 
 

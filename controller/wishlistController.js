@@ -8,8 +8,14 @@ exports.wishlistGet = async (req, res, next) => {
 
     try {
 
+
+
         const wishlistData = await wishlistCollection.wishlist.find({ userId: req.session.userId }).populate('productId')
         // console.log(wishlistData)
+
+        if(wishlistData.length === 0){
+            return res.redirect('/wishlist/emptyList');
+          }
 
         res.render('userPages/wishlist', { wishlistData });
 
@@ -117,7 +123,30 @@ exports.deleteItem = async (req,res, next) => {
             return res.json({success:false, prodcutNotFound:true})
         }
 
+        const isList = await wishlistCollection.wishlist.find({userId:req.session.userId})
+
+        if(isList.length === 0){
+            return res.json({success:true, listEmpty:true})
+        }
+
         res.json({success:true})
+        
+    } catch (error) {
+        next(new AppError(500));
+    }
+}
+
+
+
+exports.emptyWishlist = async (req,res,next) => {
+    try {
+
+        const isList = await wishlistCollection.wishlist.find({userId:req.session.userId})
+
+        if(isList.length === 0){
+            return res.render('userPages/emptyList');
+          } 
+          res.redirect('/wishList');
         
     } catch (error) {
         next(new AppError(500));

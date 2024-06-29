@@ -66,6 +66,7 @@ userRouter.delete('/cart/deleteCart',cartController.deleteCartItem);
 userRouter.delete('/deleteAll',cartController.deleteAll);
 userRouter.put('/cart/increase',cartController.increaseQty);
 userRouter.put('/cart/decrease',cartController.decreaseQty);
+userRouter.get('/cart/emptyCart',middleware.redirectNotLoggedIn,cartController.emptyCart);
 
 
 //wishlist
@@ -73,6 +74,7 @@ userRouter.get('/wishlist',middleware.redirectNotLoggedIn,wishlistController.wis
 userRouter.post('/wishlist/addItem/:id',wishlistController.additemToWishlist);
 userRouter.post('/wishlist/product/addToCart',wishlistController.addToCart);
 userRouter.delete('/wishlist/deleteItem',wishlistController.deleteItem);
+userRouter.get('/wishlist/emptyList',middleware.redirectNotLoggedIn,wishlistController.emptyWishlist);
 
 
 //address
