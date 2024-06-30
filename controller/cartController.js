@@ -195,7 +195,8 @@ exports.increaseQty = async (req, res, next) => {
           }
       );
 
-      const updatedCart = await cartCollection.cart.find();
+      const updatedCart = await cartCollection.cart.find({ userId:req.session.userId });
+      console.log(updatedCart)
       const totalItems = updatedCart.reduce((acc, item) => acc + item.productQuantity, 0);
       const grandTotal = updatedCart.reduce((acc, item) => acc + item.totalCostPerProduct, 0);
 
@@ -245,7 +246,7 @@ exports.decreaseQty = async (req, res, next) => {
           }
       );
 
-      const updatedCart = await cartCollection.cart.find();
+      const updatedCart = await cartCollection.cart.find({userId:req.session.userId});
       const totalItems = updatedCart.reduce((acc, item) => acc + item.productQuantity, 0);
       const grandTotal = updatedCart.reduce((acc, item) => acc + item.totalCostPerProduct, 0);
 
@@ -259,6 +260,110 @@ exports.decreaseQty = async (req, res, next) => {
       next(new AppError(error.message, 500));
   }
 }
+
+
+
+
+// exports.increaseQty = async (req, res, next) => {
+//   try {
+//       const productId = req.query.productId;
+//       const productData = await productCollection.product.findById(productId);
+//       if (!productData) {
+//           return res.status(404).send('Product not found');
+//       }
+
+//       const price = productData.offerPrice || productData.productPrice;
+//       const cartItem = await cartCollection.cart.findOne({ productId: productId });
+
+//       if (cartItem.productQuantity + 1 > productData.productStock) {
+//           return res.status(200).json({ maxLimitReached: true });
+//       }
+
+//       await cartCollection.cart.updateOne(
+//           { productId: productId },
+//           {
+//               $inc: {
+//                   productQuantity: 1,
+//                   totalCostPerProduct: price
+//               }
+//           }
+//       );
+
+//       const totalItems = await cartCollection.cart.aggregate([
+//           {
+//               $group: {
+//                   _id: null,
+//                   totalItems: { $sum: "$productQuantity" },
+//                   grandTotal: { $sum: "$totalCostPerProduct" }
+//               }
+//           }
+//       ]);
+
+//       const updatedCart = await cartCollection.cart.find();
+
+//       res.status(200).json({
+//           maxLimitReached: false,
+//           updatedCart,
+//           totalItems: totalItems[0].totalItems,
+//           grandTotal: totalItems[0].grandTotal
+//       });
+//   } catch (error) {
+//       next(new AppError(error.message, 500));
+//   }
+// };
+
+// exports.decreaseQty = async (req, res, next) => {
+//   try {
+//       const productId = req.query.productId;
+//       const cartItem = await cartCollection.cart.findOne({ productId: productId });
+
+//       if (!cartItem) {
+//           return res.status(404).send('Cart item not found');
+//       }
+
+//       if (cartItem.productQuantity <= 1) {
+//           return res.status(200).json({ minLimitReached: true });
+//       }
+
+//       const productData = await productCollection.product.findById(productId);
+//       if (!productData) {
+//           return res.status(404).send('Product not found');
+//       }
+
+//       const price = productData.offerPrice || productData.productPrice;
+
+//       await cartCollection.cart.updateOne(
+//           { productId: productId },
+//           {
+//               $inc: {
+//                   productQuantity: -1,
+//                   totalCostPerProduct: -price
+//               }
+//           }
+//       );
+
+//       const totalItems = await cartCollection.cart.aggregate([
+//           {
+//               $group: {
+//                   _id: null,
+//                   totalItems: { $sum: "$productQuantity" },
+//                   grandTotal: { $sum: "$totalCostPerProduct" }
+//               }
+//           }
+//       ]);
+
+//       const updatedCart = await cartCollection.cart.find();
+
+//       res.status(200).json({
+//           minLimitReached: false,
+//           updatedCart,
+//           totalItems: totalItems[0].totalItems,
+//           grandTotal: totalItems[0].grandTotal
+//       });
+//   } catch (error) {
+//       next(new AppError(error.message, 500));
+//   }
+// };
 
 
 

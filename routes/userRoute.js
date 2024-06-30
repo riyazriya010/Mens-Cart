@@ -33,6 +33,7 @@ userRouter.get('/auth/google',passport.authenticate('google',{ scope:['email', '
 userRouter.get('/google/callback',passport.authenticate('google',{failureRedirect:'/login'}),userController.googleCallback);
 userRouter.get('/userProfile',middleware.redirectNotLoggedIn,accountController.userProfile);
 userRouter.post('/userProfileVerify',accountController.userProfileVerify);
+userRouter.get('/about',middleware.redirectIfLoggedIn,userController.aboutGet);
 
 
 //forget Password

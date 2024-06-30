@@ -18,6 +18,12 @@ exports.landingPage =  async (req,res) => {
 }
 
 
+exports.aboutGet = async (req,res) => {
+
+    res.render('userPages/about');
+}
+
+
 // Login Get
 exports.loginGet = (req, res) => {
 

@@ -411,7 +411,15 @@
                                 text: 'Maximum stock limit reached!',
                             });
                         } else {
-                            updateCartUI(result);
+                              // Update the total items and grand total
+                    document.getElementById('totalItems').textContent = result.totalItems;
+                    document.getElementById('grandTotal').textContent = `INR ${result.grandTotal.toFixed(2)}`;
+            
+                    // Update each cart item
+                    result.updatedCart.forEach((item, index) => {
+                        document.getElementById(`productQuantity${index}`).value = item.productQuantity;
+                        document.querySelector(`#cartProduct${index} .cart-item-actions .mb-2`).textContent = `INR ${item.totalCostPerProduct}`;
+                    });
                         }
                     } catch (error) {
                         console.error(error.message);
@@ -438,16 +446,7 @@
                                 text: 'Minimum quantity reached!',
                             });
                         } else {
-                            updateCartUI(result);
-                        }
-                    } catch (error) {
-                        console.error(error.message);
-                        window.location.href = '/500'; // Redirect to error page
-                    }
-                }
-            
-                function updateCartUI(result) {
-                    // Update the total items and grand total
+                              // Update the total items and grand total
                     document.getElementById('totalItems').textContent = result.totalItems;
                     document.getElementById('grandTotal').textContent = `INR ${result.grandTotal.toFixed(2)}`;
             
@@ -456,8 +455,26 @@
                         document.getElementById(`productQuantity${index}`).value = item.productQuantity;
                         document.querySelector(`#cartProduct${index} .cart-item-actions .mb-2`).textContent = `INR ${item.totalCostPerProduct}`;
                     });
+                        }
+                    } catch (error) {
+                        console.error(error.message);
+                        window.location.href = '/500'; // Redirect to error page
+                    }
                 }
-            </script>
+            
+                // function updateCartUI(result) {
+                //     // Update the total items and grand total
+                //     document.getElementById('totalItems').textContent = result.totalItems;
+                //     document.getElementById('grandTotal').textContent = `INR ${result.grandTotal.toFixed(2)}`;
+            
+                //     // Update each cart item
+                //     result.updatedCart.forEach((item, index) => {
+                //         document.getElementById(`productQuantity${index}`).value = item.productQuantity;
+                //         document.querySelector(`#cartProduct${index} .cart-item-actions .mb-2`).textContent = `INR ${item.totalCostPerProduct}`;
+                //     });
+                // }
+            </script> 
+
 
 
 

@@ -43,9 +43,9 @@
       background-color: white;
       color: rgb(46, 41, 41);
       /* Dark color for the icon */
-      border: 2px solid rgb(46, 41, 41);
+      /* border: 2px solid rgb(46, 41, 41); */
       /* Dark border */
-      border-radius: 50%;
+      /* border-radius: 50%; */
       /* Makes the icon circular */
       padding: 5px;
       /* Adds space around the icon */
@@ -121,19 +121,6 @@
       color: red;
     }
 
-    .badge {
-      position: absolute;
-      top: 0;
-      right: 0;
-      transform: translate(50%, -50%);
-      background-color: red;
-      color: white;
-      border-radius: 30%;
-      padding: 2px 6px;
-      font-size: 12px;
-      font-weight: bold;
-      line-height: 1;
-    }
 
     @media (max-width: 767.98px) {
       #filterSection {
@@ -157,46 +144,7 @@
       }
     }
 
-    .wishlist-icon {
-      position: relative;
-    }
-
-    .wishlist-count {
-      position: absolute;
-      top: -1px;
-      /* adjust the position to your liking */
-      right: -2px;
-      /* adjust the position to your liking */
-      font-size: 10px;
-      /* adjust the font size to your liking */
-      background-color: rgb(228, 38, 38);
-      /* adjust the background color to your liking */
-      border-radius: 100%;
-      /* make it a circle */
-      padding: 2px 8px;
-      /* adjust the padding to your liking */
-      color: white;
-      /* adjust the text color to your liking */
-    }
-
-    .cart-count {
-      position: absolute;
-      top: -12px;
-      /* adjust the position to your liking */
-      right: -10px;
-      /* adjust the position to your liking */
-      font-size: 10px;
-      /* adjust the font size to your liking */
-      background-color: rgb(228, 38, 38);
-      /* adjust the background color to your liking */
-      border-radius: 100%;
-      /* make it a circle */
-      padding: 4px 8px;
-      /* adjust the padding to your liking */
-      color: white;
-      /* adjust the text color to your liking */
-
-    }
+    
 
 
     .full-width-button {
@@ -211,6 +159,28 @@
       box-sizing: border-box;
       /* Ensures padding and border are included in the width */
     }
+
+    .wishlist-icon,
+      .cart-icon {
+        position: relative;
+        display: inline-block;
+      }
+
+      .wishlist-count,
+      .cart-count {
+        position: absolute;
+        top: -4px; /* adjust the position to your liking */
+        right: -10px; /* adjust the position to your liking */
+        font-size: 10px; /* adjust the font size to your liking */
+        background-color: rgb(228, 38, 38); /* adjust the background color to your liking */
+        border-radius: 50%; /* make it a circle */
+        padding: 4px 9px; /* adjust the padding to your liking */
+        color: white; /* adjust the text color to your liking */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
   </style>
 </head>
 
@@ -247,29 +217,32 @@
                   <i class="fa-solid fa-user"></i>
                 </a>
               </li>
+
               <li class="nav-item text-center mt-2">
-                <a href="/wishlist" class="nav-link" style="position: relative">
-                  <i class="fa-regular fa-heart" style="color: black; position: relative; font-size: 20px"></i>
-                  <span class="wishlist-count">
-                    <%= iconData.wishlistCount %>
-                  </span>
+                <a href="/wishlist" class="nav-link wishlist-icon">
+                  <i
+                    class="fa-regular fa-heart"
+                    style="color: black; font-size: 20px"
+                  ></i>
+                  <span class="wishlist-count"><%= iconData.wishlistCount %></span>
                 </a>
               </li>
+
               <li class="nav-item text-center mt-2">
-                <a href="/cart" class="nav-link" style="position: relative">
-                  <i class="fa-solid fa-cart-shopping" style="color: black; position: relative">
-                    <span class="cart-count">
-                      <%= iconData.cartCount %>
-                    </span>
-                  </i>
+                <a href="/cart" class="nav-link cart-icon">
+                  <i class="fa-solid fa-cart-shopping" style="color: black"></i>
+                  <span class="cart-count"><%= iconData.cartCount %></span>
                 </a>
               </li>
-              <p style="
-                  margin-top: 5%;
-                  margin-left: 3%;
+
+              <p
+                style="
+                  margin-top: 7%;
+                  margin-left: 23%;
                   margin-right: -6%;
                   font-weight: bolder;
-                ">
+                "
+              >
                 <%= name %>
               </p>
               <% }else { %>
@@ -505,7 +478,7 @@
                               <% }); %>
 
                                 <% if(isInWishlist) { %>
-                                  <a class="wishlist-icon">
+                                  <a class="wishlist-icon" id="lisIcon">
                                     <i class="fas fa-heart" style="color: red;"></i>
                                   </a>
                                   <% } else { %>
