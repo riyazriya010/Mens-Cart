@@ -151,7 +151,11 @@
               pin: {
                 pattern: /^[0-9]{5,6}$/,
                 required: true
-              }
+              },
+              title:{
+                pattern: /^[a-zA-Z]+(?: [a-zA-Z]+)*$/,
+                required:true
+              },
             },
             messages: {
               name: {
