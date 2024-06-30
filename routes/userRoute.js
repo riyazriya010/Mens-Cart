@@ -30,7 +30,7 @@ userRouter.post('/otpVerify',userController.otpVerify);
 userRouter.get('/resendOtp',userController.resendOtp);
 userRouter.get('/getRemainingTime', userController.getRemainingTime);
 userRouter.get('/auth/google',passport.authenticate('google',{ scope:['email', 'profile'], prompt: 'select_account' }));
-userRouter.get('/google/callback',passport.authenticate('google',{failureRedirect:'/login'}),userController.googleCallback);
+userRouter.get('/google/callback',passport.authenticate('google',{failureRedirect:'https://menscart.site/login'}),userController.googleCallback);
 userRouter.get('/userProfile',middleware.redirectNotLoggedIn,accountController.userProfile);
 userRouter.post('/userProfileVerify',accountController.userProfileVerify);
 userRouter.get('/about',middleware.redirectIfLoggedIn,userController.aboutGet);
