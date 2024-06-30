@@ -312,11 +312,17 @@ exports.SaledReportDownloadPDF = async (req, res, next) => {
     await page.setContent(htmlContent);
     const pdfBuffer = await page.pdf({ format: "A4" });
 
+    // res.setHeader("Content-Type", "application/pdf");
+    // res.setHeader(
+    //   "Content-Disposition",
+    //   "attachment; filename=salesReport.pdf"
+    // );
+    // res.send(pdfBuffer);
+
+    // Set the correct Content-Length header
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader(
-      "Content-Disposition",
-      "attachment; filename=salesReport.pdf"
-    );
+    res.setHeader("Content-Length", pdfBuffer.length);
+    res.setHeader("Content-Disposition", "attachment; filename=salesReport.pdf");
     res.send(pdfBuffer);
 
     await browser.close();

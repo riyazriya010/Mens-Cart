@@ -160,9 +160,11 @@
                                                             <% if(cartData[i].productId.productStock !==0) { %>
                                                                 <div class="quantity-control mb-2">
                                                                     <button id="decrease"
-                                                                        onclick="decrement('<%= i %>', '<%= cartData[i].productId._id %>')">-</button>
+                                                                        onclick="decrement('<%= i %>', '<%= cartData[i].productId._id %>', '<%= cartData[i].productStock %>')">-</button>
+
                                                                     <input type="text" id="productQuantity<%= i %>"
                                                                         value="<%= cartData[i].productQuantity %>">
+
                                                                     <button id="increase"
                                                                         onclick="increment('<%= cartData[i].productId.productStock %>', '<%= i %>', '<%= cartData[i].productId._id %>')">+</button>
                                                                 </div>
@@ -395,8 +397,8 @@
 
 
 
-            <script>
-                async function increment(productStock, index, productId) {
+            <!-- <script>
+                async function increment(index, productId, productStock) {
                     try {
                         const response = await fetch(`/cart/increase?productId=${productId}`, {
                             method: 'PUT'
@@ -411,13 +413,15 @@
                                 text: 'Maximum stock limit reached!',
                             });
                         } else {
+                            if(productStock <  )
+                            document.getElementById(`productQuantity${index}`).value = item.productQuantity;
                               // Update the total items and grand total
                     document.getElementById('totalItems').textContent = result.totalItems;
                     document.getElementById('grandTotal').textContent = `INR ${result.grandTotal.toFixed(2)}`;
             
                     // Update each cart item
                     result.updatedCart.forEach((item, index) => {
-                        document.getElementById(`productQuantity${index}`).value = item.productQuantity;
+                        // document.getElementById(`productQuantity${index}`).value = item.productQuantity;
                         document.querySelector(`#cartProduct${index} .cart-item-actions .mb-2`).textContent = `INR ${item.totalCostPerProduct}`;
                     });
                         }
@@ -473,9 +477,88 @@
                 //         document.querySelector(`#cartProduct${index} .cart-item-actions .mb-2`).textContent = `INR ${item.totalCostPerProduct}`;
                 //     });
                 // }
-            </script> 
+            </script>  -->
 
 
+            <script>
+                async function increment(productStock,index, productId) {
+        const quantityInput = document.getElementById(`productQuantity${index}`);
+        let currentQuantity = parseInt(quantityInput.value);
+
+        if (currentQuantity < productStock) {
+            currentQuantity++;
+            quantityInput.value = currentQuantity;
+
+            try {
+                const response = await fetch(`/cart/increase?productId=${productId}`, {
+                    method: 'PUT'
+                });
+
+                const result = await response.json();
+
+                // Update the total items and grand total
+                document.getElementById('totalItems').textContent = result.totalItems;
+                document.getElementById('grandTotal').textContent = `INR ${result.grandTotal.toFixed(2)}`;
+
+                // Update each cart item
+                result.updatedCart.forEach((item, idx) => {
+                    // document.getElementById(`productQuantity${idx}`).value = item.productQuantity;
+                    document.querySelector(`#cartProduct${idx} .cart-item-actions .mb-2`).textContent = `INR ${item.totalCostPerProduct}`;
+                });
+            } catch (error) {
+                console.error(error.message);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Something went wrong!',
+                });
+            }
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Maximum stock limit reached!',
+            });
+        }
+    }
+
+    async function decrement(index, productId) {
+        const quantityInput = document.getElementById(`productQuantity${index}`);
+        let currentQuantity = parseInt(quantityInput.value);
+
+        if (currentQuantity > 1) {
+            currentQuantity--;
+            quantityInput.value = currentQuantity;
+
+            try {
+                const response = await fetch(`/cart/decrease?productId=${productId}`, {
+                    method: 'PUT'
+                });
+
+                const result = await response.json();
+
+                // Update the total items and grand total
+                document.getElementById('totalItems').textContent = result.totalItems;
+                document.getElementById('grandTotal').textContent = `INR ${result.grandTotal.toFixed(2)}`;
+
+                // Update each cart item
+                result.updatedCart.forEach((item, idx) => {
+                    // document.getElementById(`productQuantity${idx}`).value = item.productQuantity;
+                    document.querySelector(`#cartProduct${idx} .cart-item-actions .mb-2`).textContent = `INR ${item.totalCostPerProduct}`;
+                });
+            } catch (error) {
+                console.error(error.message);
+                window.location.href = '/500'; // Redirect to error page
+            }
+        } else {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Minimum quantity reached!',
+            });
+        }
+    }
+            </script>
 
 
             <!----- proceed to checkout ----->

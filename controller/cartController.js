@@ -179,11 +179,11 @@ exports.increaseQty = async (req, res, next) => {
       const productId = req.query.productId;
       const productData = await productCollection.product.findById(productId);
       const price = productData.offerPrice || productData.productPrice;
-      const cartItem = await cartCollection.cart.findOne({ productId: productId });
+      // const cartItem = await cartCollection.cart.findOne({ productId: productId });
 
-      if (cartItem.productQuantity + 1 > productData.productStock) {
-          return res.status(200).json({ maxLimitReached: true });
-      }
+      // if (cartItem.productQuantity + 1 > productData.productStock) {
+      //     return res.status(200).json({ maxLimitReached: true });
+      // }
 
       await cartCollection.cart.updateOne(
           { productId: productId },
@@ -195,13 +195,22 @@ exports.increaseQty = async (req, res, next) => {
           }
       );
 
-      const updatedCart = await cartCollection.cart.find({ userId:req.session.userId });
-      console.log(updatedCart)
-      const totalItems = updatedCart.reduce((acc, item) => acc + item.productQuantity, 0);
-      const grandTotal = updatedCart.reduce((acc, item) => acc + item.totalCostPerProduct, 0);
+      // const updatedCart = await cartCollection.cart.find({ userId:req.session.userId });
+
+      const updatedCart = await cartCollection.cart.find({ userId: req.session.userId });
+      const { totalItems, grandTotal } = updatedCart.reduce((acc, item) => {
+          acc.totalItems += item.productQuantity;
+          acc.grandTotal += item.totalCostPerProduct;
+          return acc;
+      }, { totalItems: 0, grandTotal: 0 });
+
+
+      // console.log(updatedCart)
+      // const totalItems = updatedCart.reduce((acc, item) => acc + item.productQuantity, 0);
+      // const grandTotal = updatedCart.reduce((acc, item) => acc + item.totalCostPerProduct, 0);
 
       res.status(200).json({
-          maxLimitReached: false,
+          // maxLimitReached: false,
           updatedCart,
           totalItems,
           grandTotal
@@ -222,9 +231,9 @@ exports.decreaseQty = async (req, res, next) => {
           return res.status(404).send('Cart item not found');
       }
 
-      if (cartItem.productQuantity <= 1) {
-          return res.status(200).json({ minLimitReached: true });
-      }
+      // if (cartItem.productQuantity <= 1) {
+      //     return res.status(200).json({ minLimitReached: true });
+      // }
 
       const productData = await productCollection.product.findById(productId);
       const price = productData.offerPrice || productData.productPrice;
@@ -246,12 +255,20 @@ exports.decreaseQty = async (req, res, next) => {
           }
       );
 
-      const updatedCart = await cartCollection.cart.find({userId:req.session.userId});
-      const totalItems = updatedCart.reduce((acc, item) => acc + item.productQuantity, 0);
-      const grandTotal = updatedCart.reduce((acc, item) => acc + item.totalCostPerProduct, 0);
+      // const updatedCart = await cartCollection.cart.find({userId:req.session.userId});
+      // const totalItems = updatedCart.reduce((acc, item) => acc + item.productQuantity, 0);
+      // const grandTotal = updatedCart.reduce((acc, item) => acc + item.totalCostPerProduct, 0);
+
+      const updatedCart = await cartCollection.cart.find({ userId: req.session.userId });
+      const { totalItems, grandTotal } = updatedCart.reduce((acc, item) => {
+          acc.totalItems += item.productQuantity;
+          acc.grandTotal += item.totalCostPerProduct;
+          return acc;
+      }, { totalItems: 0, grandTotal: 0 });
+
 
       res.status(200).json({
-          minLimitReached: false,
+          // minLimitReached: false,
           updatedCart,
           totalItems,
           grandTotal
