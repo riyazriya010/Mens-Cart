@@ -354,7 +354,7 @@ exports.topProducts = async (req, res) => {
             }
         ]);
 
-        console.log('topProduct: ', topProduct)
+        // console.log('topProduct: ', topProduct)
 
         return topProduct
 

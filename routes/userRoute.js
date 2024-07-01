@@ -56,7 +56,7 @@ userRouter.get('/filterProduct',shopController.filter);
 
 //singleProduct
 userRouter.get('/singleProduct',shopController.singleProduct);
-userRouter.post('/admin/addRating',shopController.addRatings);
+userRouter.post('/addRating',shopController.addRatings);
 
 
 

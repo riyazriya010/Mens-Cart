@@ -1,5 +1,28 @@
 <%- include('../adminPartials/header') %>
 
+<style>
+  .cropped-image-wrapper {
+    display: inline-block;
+    position: relative;
+    margin: 10px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.cropped-image {
+    display: block;
+    max-width: 100%;
+    height: auto;
+}
+
+.drop-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+</style>
+
 <body>
   <div class="container mt-5">
     <div class="row justify-content-center">
@@ -66,7 +89,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <img id="image" style="max-width: 100%; height: auto;" />
+          <img id="image" style="max-width: 50%; height: 50%;" />
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -147,6 +170,10 @@
         const container = document.getElementById('croppedImagesContainer');
         const imageWrapper = document.createElement('div');
         imageWrapper.classList.add('cropped-image-wrapper');
+
+        imageWrapper.style.width = '150px';  // Set desired width
+        imageWrapper.style.height = '150px'; 
+
         const img = document.createElement('img');
         img.src = src;
         img.classList.add('cropped-image');

@@ -195,6 +195,8 @@ exports.filter = async (req, res, next) => {
 };
 
 
+
+
   /* ---- single product ---- */
 
 exports.singleProduct = async (req,res, next) => {
@@ -217,62 +219,114 @@ exports.singleProduct = async (req,res, next) => {
 
 
 
+// exports.addRatings = async (req, res, next) => {
+//   try {
+//     console.log('rating: ',req.body);
+//       const { productId, star, ratings } = req.body;
+
+//       const userId = req.session.userId;
+//       const user = await userCollection.user.findById(userId);
+
+//       // Check if userId is present
+//       if (!userId) {
+//           return res.status(401).json({ success: false, message: 'User not logged in' });
+//       }
+
+//       // Find the product and its ratings document
+//       let productRatings = await ratingCollection.rating.findOne({ productId });
+
+//       if (!productRatings) {
+//           // If no ratings document exists for the product, create a new one
+//           productRatings = new ratingCollection.rating({
+//               productId: productId,
+//               ratings: [{
+//                   userId: userId,
+//                   username:user.username,
+//                   noOfStars: star,
+//                   ratingDescription: ratings
+//               }]
+//           });
+//       } else {
+//           // Check if the user has already rated, if so update their rating
+//           const existingRatingIndex = productRatings.ratings.findIndex(rating => rating.userId.equals(userId));
+
+//           if (existingRatingIndex !== -1) {
+//               // Update existing rating
+//               productRatings.ratings[existingRatingIndex].noOfStars = star;
+//               productRatings.ratings[existingRatingIndex].ratingDescription = ratings;
+//           } else {
+//               // Add new rating
+//               productRatings.ratings.push({
+//                   userId: userId,
+//                   noOfStars: star,
+//                   ratingDescription: ratings
+//               });
+//           }
+//       }
+
+//       // Save the updated or new rating document
+//       await productRatings.save();
+
+//       // Send success response to client
+//       res.json({ success: true });
+
+//   } catch (error) {
+//     next(new AppError(error.message, 500))
+//     }
+// };
+
+
 exports.addRatings = async (req, res, next) => {
   try {
-      const { productId, star, ratings } = req.body;
+    console.log('rating: ', req.body);
+    const { productId, star, ratings } = req.body;
 
-      const userId = req.session.userId;
-      const user = await userCollection.user.findById(userId);
+    const userId = req.session.userId;
+    const user = await userCollection.user.findById(userId);
 
-      // Check if userId is present
-      if (!userId) {
-          return res.status(401).json({ success: false, message: 'User not logged in' });
-      }
+    // Check if userId is present
+    if (!userId) {
+      return res.status(401).json({ success: false, message: 'User not logged in' });
+    }
 
-      // Find the product and its ratings document
-      let productRatings = await ratingCollection.rating.findOne({ productId });
+    // Find the product and its ratings document
+    let productRatings = await ratingCollection.rating.findOne({ productId });
 
-      if (!productRatings) {
-          // If no ratings document exists for the product, create a new one
-          productRatings = new ratingCollection.rating({
-              productId: productId,
-              ratings: [{
-                  userId: userId,
-                  username:user.username,
-                  noOfStars: star,
-                  ratingDescription: ratings
-              }]
-          });
-      } else {
-          // Check if the user has already rated, if so update their rating
-          const existingRatingIndex = productRatings.ratings.findIndex(rating => rating.userId.equals(userId));
+    if (!productRatings) {
+      // If no ratings document exists for the product, create a new one
+      productRatings = new ratingCollection.rating({
+        productId: productId,
+        ratings: []
+      });
+    }
 
-          if (existingRatingIndex !== -1) {
-              // Update existing rating
-              productRatings.ratings[existingRatingIndex].noOfStars = star;
-              productRatings.ratings[existingRatingIndex].ratingDescription = ratings;
-          } else {
-              // Add new rating
-              productRatings.ratings.push({
-                  userId: userId,
-                  noOfStars: star,
-                  ratingDescription: ratings
-              });
-          }
-      }
+    // Check if the user has already rated, if so update their rating
+    const existingRatingIndex = productRatings.ratings.findIndex(rating => rating.userId.equals(userId));
 
-      // Save the updated or new rating document
-      await productRatings.save();
+    if (existingRatingIndex !== -1) {
+      // Update existing rating
+      productRatings.ratings[existingRatingIndex].noOfStars = star;
+      productRatings.ratings[existingRatingIndex].ratingDescription = ratings;
+    } else {
+      // Add new rating
+      productRatings.ratings.push({
+        userId: userId,
+        username: user.username,
+        noOfStars: star,
+        ratingDescription: ratings
+      });
+    }
 
-      // Send success response to client
-      res.json({ success: true });
+    // Save the updated or new rating document
+    await productRatings.save();
+
+    // Send success response to client
+    res.json({ success: true });
 
   } catch (error) {
     next(new AppError(error.message, 500))
-    }
+  }
 };
-
-
 
 
 

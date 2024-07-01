@@ -7,7 +7,6 @@ const orderCollection = require('../models/ordersModel.js');
 const productCollection = require('../models/productModel.js');
 const cartCollection = require('../models/cartModel.js');
 const { ObjectId } = require('mongodb');
-const userCollections = require('../models/userModel.js');
 const addressCollections = require('../models/addressModel.js');
 const { generateOrderId } = require('../helper/orderId.js');
 const paypalPayment = require('../service/payPal.js');
@@ -15,7 +14,7 @@ const couponCollection = require('../models/couponModel.js');
 const { walletBuy, addingCancellAmountToWallet } = require('../controller/accountControlller.js');
 const AppError = require('../middleware/errorHandling.js');
 const { invoicePdf } = require("../service/invoicePdf");
-const { couponCheck } = require('../helper/couponHelper.js');
+const walletCollection = require("../models/walletModel.js");
 
 
 ///orderget
@@ -498,6 +497,8 @@ exports.checkoutOrder = async (req, res, next) => {
             totalItems += item.productQuantity;
         });
 
+        const wallet = await walletCollection.wallet.findOne({ userId:req.session.userId });
+
          res.render('userPages/checkOut-3', { 
             address, 
             paymentMethod, 
@@ -509,7 +510,8 @@ exports.checkoutOrder = async (req, res, next) => {
             couponApplied, 
             couponId, 
             discountAmount, 
-            total 
+            total,
+            wallet
         });
 
     } catch (error) {

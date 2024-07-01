@@ -30,12 +30,12 @@
       background-color: white;
       font-family: Arial, sans-serif;
     }
-
+/* 
     .container {
       max-width: 1200px;
       margin: 0 auto;
       padding: 20px;
-    }
+    } */
 
     .breadcrumb-item+.breadcrumb-item::before {
       content: ">";
@@ -68,7 +68,6 @@
     
 
     .step-indicator span {
-      
       margin: 0 15px;
     }
 
@@ -82,7 +81,7 @@
             box-sizing: border-box; /* Ensures padding and border are included in the width */
         }
 
-        .carousel-control-prev,
+  .carousel-control-prev,
   .carousel-control-next {
     width: 40px;
     height: 40px;
@@ -120,7 +119,7 @@
     
 
     
-  <div class="container mt-2">
+  <div class="container mt-5 mb-3">
     <div class="step-indicator">
       <h6 style="color: black;">Address</h6>
       <span style="color: black;">>>>></span>
@@ -194,7 +193,7 @@
 
     <!----- row-1 ---->
 
-    <div class="row">
+    <div class="row" id="couponUpdate">
       <div class="col-12 col-lg-8">
         <div id="couponCarousel" class="carousel slide" data-ride="carousel">
           <div class="carousel-inner" id="coupon-container">
@@ -262,6 +261,9 @@
           </div>
           <hr>
           <div>
+            <p style="font-size: 13px; font-weight: bold; color:black">
+              Wallet Balance: <span style="color: black;"> <%= wallet.walletBalance %> </span>
+            </p>
             <p style="font-size: 13px; font-weight: bold; color: rgb(240, 65, 65);">
               Chosen Payment Method: <span style="color: black;"> <%= paymentMethod %> </span>
             </p>
@@ -359,12 +361,14 @@
           if(result.success){
             Swal.fire('Coupon Applied', '', 'success').then(() => {
             // window.location.href = '/checkout/placeOrder';
-            window.location.reload()
+            // window.location.reload()
+            $('#couponUpdate').load('/checkout/placeOrder #couponUpdate > *');
           });
           }else{
             Swal.fire('Insufficient Amount', '', 'info').then(() => {
             // window.location.href = '/checkout/placeOrder';
-            window.location.reload()
+            // window.location.reload()
+            $('#couponUpdate').load('/checkout/placeOrder #couponUpdate > *');
           });
           }
 
@@ -396,7 +400,8 @@
                   if (data.success) {
                     Swal.fire('Removed', 'Coupon Removed', 'success')
                       .then((result) => {
-                        window.location.reload()
+                        // window.location.reload()
+                        $('#couponUpdate').load('/checkout/placeOrder #couponUpdate > *');
                       })
 
                   } else {

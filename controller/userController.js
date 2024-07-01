@@ -6,6 +6,7 @@ const { generateReferalCode, signupReferal } = require('../helper/referral.js');
 const { addReferalMoney, newUserAddMoney , walletCreation } = require('../controller/accountControlller.js');
 const productCollection = require('../models/productModel.js');
 const AppError = require('../middleware/errorHandling.js');
+const orderCollection = require("../models/ordersModel.js");
 
 
 
@@ -14,7 +15,50 @@ exports.landingPage =  async (req,res) => {
 
     const products = await productCollection.product.find().sort({ _id: -1 }).limit(4)
 
-    res.render("userPages/landingPage",{ name:res.locals.name, products });
+    const topProducts = await orderCollection.orders.aggregate([
+        {
+            $match: { orderStatus: 'Delivered' }
+        },
+        {
+            $unwind: '$cartData'
+        },
+        {
+            $group: {
+                _id: '$cartData.productId',
+                count: { $sum: 1 }
+            }
+        },
+        {
+            $sort: { count: -1 }
+        },
+        {
+            $limit: 4
+        },
+        {
+            $lookup: {
+                from: 'products',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'product'
+            }
+        },
+        {
+            $unwind: '$product'
+        },
+        {
+            $project: {
+                _id: 0,
+                productId: '$_id',
+                count: 1,
+                productName: '$product.productName',
+                productPrice: '$product.offerPrice'
+            }
+        }
+    ])
+
+    const productData = await productCollection.product.find()
+
+    res.render("userPages/landingPage",{ name:res.locals.name, products, topProducts, productData });
 }
 
 

@@ -253,44 +253,22 @@
       
       <!------ section 3 ---->
       <div class="container my-5">
-        <h4 class="mb-3">On Trendz</h4>
+        <h4 class="mb-3">Top Selling Products</h4>
         <div class="row">
+          <% for(let i=0; i<topProducts.length; i++) { %>
+            <% for(let j=0; j<productData.length; j++) { %>
+              <% if(topProducts[i].productName === productData[j].productName) { %>
           <div class="col-12 col-md-3">
-            <!-- <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
-              <img src="/img/trouser-1.1.avif" alt="" class="card-img-top">
+            <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
+              <img src="/assets/uploadimages/uploads/<%= productData[j].productImage[0] %>" alt="" class="card-img-top">
                 <div class="overlay">
                 <i class="fa-solid fa-heart icons"></i>
               </div>
-            </div> -->
-          </div>
-  
-  
-          <div class="col-12 col-md-3">
-            <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
-              <img src="/img/navy-jean-1.avif" alt="" class="card-img-top">
-                <div class="overlay">
-                  <i class="fa-solid fa-heart icons"></i>
-                </div>
             </div>
           </div>
-  
-          <div class="col-12 col-md-3">
-            <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
-              <img src="/img/shirt-2.1.avif" alt="" class="card-img-top">
-                <div class="overlay">
-                  <i class="fa-solid fa-heart icons"></i>
-                </div>
-            </div>
-          </div>
-  
-          <div class="col-12 col-md-3">
-            <!-- <div class="card mb-4" style="box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); border: 2.4px solid #e0e0e0;">
-              <img src="/img/shrit-1.jpg" alt="" class="card-img-top">
-                <div class="overlay">
-                  <i class="fa-solid fa-heart icons"></i>
-                </div>
-            </div> -->
-          </div>
+          <% } %>
+          <% } %>
+          <% } %>
   
         </div>
       </div>
