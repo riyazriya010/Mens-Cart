@@ -279,7 +279,7 @@
 
 
 
-        <!------ Edit Modla Form ----->
+        <!------ Edit Modal Form ----->
         <% couponData.forEach(function(coupon, index) { %>
             <div class="modal fade" tabindex="-1" id="editCoupon<%= index %>" aria-labelledby="modalLabel<%= index %>"
                 aria-hidden="true">
@@ -368,18 +368,21 @@
                         submitHandler: async function (form, event) {
                             event.preventDefault();
                             try {
+                                // console.log(form)
                                 const formData = {
                                     discountPercentage: form.discountPercentage.value,
                                     startDate: form.startDate.value,
                                     endDate: form.endDate.value,
-                                    MinimumPurchase: form.MinimumPurchase.value
+                                    MinimumPurchase: form.MinimumPurchase.value,
+                                    couponId:form.couponId.value,
                                 }
 
-                                const response = await fetch(`/admin/couponManagement/editCoupon?couponId=${coupon._id}`, {
+                                const response = await fetch(`/admin/couponManagement/editCoupon`, {
                                     method: 'PUT',
                                     headers: { "Content-Type": "application/json" },
                                     body: JSON.stringify(formData)
                                 });
+                                // console.log()
                                 const result = await response.json();
 
                                 if (result.success) {

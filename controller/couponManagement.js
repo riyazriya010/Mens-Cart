@@ -77,8 +77,10 @@ exports.addCoupon = async (req, res, next) => {
 exports.editCoupon = async (req, res, next) => {
 
     try {
+        console.log(req.body)
+        console.log(req.query)
 
-        const couponId = req.query.couponId
+        const couponId = req.body.couponId
         const { discountPercentage, startDate, endDate, MinimumPurchase } = req.body
 
         const couponData = {
