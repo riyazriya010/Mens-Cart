@@ -138,7 +138,7 @@ exports.report = async (req, res, next) => {
       .populate("userId")
       .sort({ _id: -1 });
     const totalcount = products.reduce((total, item) => total + item.Total, 0);
-
+    console.log('salesDetails: ',salesDetails)
     res.render("adminPages/sales", {
       Sreports: salesDetails,
       totalPages,
@@ -388,6 +388,8 @@ exports.filterDate = async (req, res, next) => {
         // })
         .populate('userId')
         .populate('couponApplied');
+        
+        console.log('filtered Data: ',salesData)
 
       req.session.salesDetails = salesData;
       req.session.filterDates = { datevalues: {} };

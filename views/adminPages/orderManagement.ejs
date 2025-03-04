@@ -212,20 +212,20 @@
                         <tbody>
                             <% for(let i=0; i<orders.length; i++) { %>
                             <tr>
-                                <td> <%= orders[i].orderId %> </td>
-                                <td> <%= orders[i].userId.username %> </td>
-                                <td> <%= orders[i].paymentType %> </td>
+                                <td> <%= orders[i]?.orderId %> </td>
+                                <td> <%= orders[i]?.userId?.username %> </td>
+                                <td> <%= orders[i]?.paymentType %> </td>
                                 <td>
-                                  <%= orders[i].cartData.reduce((acc, item)=> acc +
+                                  <%= orders[i]?.cartData?.reduce((acc, item)=> acc +
                                       item.productQuantity, 0) %>
                               </td>
 
-                              <% if(orders[i].paymentType === "Payment Failed") { %>
+                              <% if(orders[i]?.paymentType === "Payment Failed") { %>
                                 <td><span class="table-cell-paymentFailed"><%= orders[i].paymentType %></span></td>
 
                                 <% }else{ %>
 
-                                <% if(orders[i].orderStatus === 'Pending') { %>
+                                <% if(orders[i]?.orderStatus === 'Pending') { %>
                                   <td><span class="table-cell-pending"><%= orders[i].orderStatus %></span></td>
                               <% } else if(orders[i].orderStatus === 'Delivered') { %>
                                   <td><span class="table-cell-delivered"><%= orders[i].orderStatus %></span></td>
@@ -243,20 +243,20 @@
 
                                     <% } %>
 
-                                    <td> ₹<%= orders[i].grandTotalCost.toFixed(2) %> </td>
+                                    <td> ₹<%= orders[i]?.grandTotalCost %> </td>
 
-                                    <td> <% if(orders[i].couponApplied){ %>
-                                      <%= orders[i].couponApplied.discountPercentage %>%
+                                    <td> <% if(orders[i]?.couponApplied){ %>
+                                      <%= orders[i]?.couponApplied?.discountPercentage %>%
                                       <% }else{ %>
                                           Nil
                                           <% } %>
                                    </td>
                                 
                                    <td>
-                                    <% if(orders[i].discountedPrice) { %>
-                                        ₹<%= orders[i].discountedPrice %>
+                                    <% if(orders[i]?.discountedPrice) { %>
+                                        ₹<%= orders[i]?.discountedPrice %>
                                         <% }else{ %>
-                                            ₹<%= orders[i].grandTotalCost.toFixed(2) %>
+                                            ₹<%= orders[i]?.grandTotalCost %>
                                             <% } %>
 
                                 </td>
@@ -266,6 +266,7 @@
                             <% } %>
                         </tbody>
                       </table>
+                      
                     </div>
                   </div>
                 </div>

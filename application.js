@@ -58,6 +58,7 @@ app.use(adminRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
+    console.log('error: ',err)
     const statusCode = err.statusCode || 500;
     const status = err.status || 'error';
     res.status(statusCode).render('500', { statusCode, status, message: err.message });

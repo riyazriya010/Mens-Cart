@@ -11,11 +11,13 @@ const AppError = require('../middleware/errorHandling.js');
 
 exports.orderListing = async (req, res, next) => {
     try {
+        console.log('req.query : ',req.query)
         const page = parseInt(req.query.page) || 1;
         const limit = 5;
         const skip = (page - 1) * limit; // Calculate number of orders to skip
 
-        const totalOrders = await orderCollections.orders.countDocuments(); // Get total count of orders
+        const totalOrders = await orderCollections.orders.countDocuments();
+        console.log('orderCount: ',totalOrders)
         const totalPages = Math.ceil(totalOrders / limit); // Calculate total number of pages
 
         // Populate the userId field with user details
@@ -25,6 +27,8 @@ exports.orderListing = async (req, res, next) => {
             .limit(limit)
             .populate('userId')
             .populate('couponApplied')
+
+            console.log('orders ',orders)
 
         // Function to determine the order status based on product statuses
         async function determineOrderStatus(productStatuses) {
@@ -93,13 +97,17 @@ exports.orderListing = async (req, res, next) => {
 
         //    console.log(filteredOrders);
 
-        res.render('adminPages/orderManagement', {
+        return res.render('adminPages/orderManagement', {
             orders: filteredOrders,
             currentPage: page,
             totalPages
         });
 
+        // console.log('filterdOrders: ', filteredOrders)
+
     } catch (error) {
+        console.log('orderManagement Error: ',error)
+        console.log('orderManagement Stack Error: ',error.stack)
         next(new AppError(error.message, 500))
     }
 };
