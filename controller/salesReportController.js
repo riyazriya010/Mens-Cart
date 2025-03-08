@@ -74,6 +74,8 @@ exports.report = async (req, res, next) => {
 
     let startDate, endDate;
     if (req.session.startDate && req.session.endDate) {
+      console.log('session start Date: ', req.session.startDate)
+      console.log('session end Date: ', req.session.endDate)
       startDate = req.session.startDate;
       endDate = req.session.endDate;
     } else {
@@ -138,7 +140,9 @@ exports.report = async (req, res, next) => {
       .populate("userId")
       .sort({ _id: -1 });
     const totalcount = products.reduce((total, item) => total + item.Total, 0);
+
     console.log('salesDetails: ',salesDetails)
+
     res.render("adminPages/sales", {
       Sreports: salesDetails,
       totalPages,
