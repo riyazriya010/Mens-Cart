@@ -592,12 +592,15 @@ exports.paymentSelected = async (req, res, next) => {
 exports.placeOrder = async (req, res, next) => {
 
     try {
+        console.log('place order came ::::')
+        const cartItems = await cartCollection.cart.find({ userId: req.session.userId });
 
         //check first product is available
         for (const item of cartItems) {
-            const product = await productCollection.product.findById(item.productId).session(session);
+            const product = await productCollection.product.findById(item.productId)
             
             if (!product || product.productStock < item.productQuantity) {
+                console.log('out of stock product :::: ', product)
                 return res.json({ success: false, noStock: true });
             }
         }
