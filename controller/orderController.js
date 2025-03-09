@@ -594,9 +594,14 @@ exports.placeOrder = async (req, res, next) => {
     try {
         console.log('place order came ::::')
         const cartItems = await cartCollection.cart.find({ userId: req.session.userId });
+        console.log('cartItems :::: ', cartItems)
+        if(!cartItems){
+            return res.json({ success: false, noValidBuy: true });
+        }
 
         //check first product is available
         for (const item of cartItems) {
+            console.log('for loop items :::: ', item)
             const product = await productCollection.product.findById(item.productId)
             
             if (!product || product.productStock < item.productQuantity) {
