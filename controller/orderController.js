@@ -595,7 +595,8 @@ exports.placeOrder = async (req, res, next) => {
         console.log('place order came ::::')
         const cartItems = await cartCollection.cart.find({ userId: req.session.userId });
         console.log('cartItems :::: ', cartItems)
-        if(!cartItems){
+        if(!cartItems.length){
+            console.log('cartItems not found :::: ', cartItems)
             return res.json({ success: false, noValidBuy: true });
         }
 
