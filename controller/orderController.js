@@ -593,11 +593,19 @@ exports.placeOrder = async (req, res, next) => {
 
     try {
 
+        //check first product is available
+        for (const item of cartItems) {
+            const product = await productCollection.product.findById(item.productId).session(session);
+            
+            if (!product || product.productStock < item.productQuantity) {
+                return res.json({ success: false, noStock: true });
+            }
+        }
+
+
         //paypal buying
         if (req.session.paymentMethod === "PayPal") {
-            // console.log('return to paypal');
             const paypalLink = await paypalPayment.payAmount(req);
-            // console.log('paypal: ', paypalLink);
             return res.json({ success: true, paypalLinkGot: true, paypalLink: paypalLink });
         }
 
@@ -605,21 +613,16 @@ exports.placeOrder = async (req, res, next) => {
         if(req.session.paymentMethod === "Wallet"){
 
             const walletBuying = await walletBuy(req);
-            // console.log('walletBuying: ',walletBuying);
             if(!walletBuying){
-                // console.log('no money')
                 return res.status(200).json({ success: false, noMoney: true });
             }
-            // console.log('money')
            return res.status(200).json({ success: true });
         }
-
-        // console.log('returned to back')
 
         const addressId = req.session.addressId2 || req.session.addressId
         const address = await addressCollections.address.findById(addressId);
 
-        const cartItems = await cartCollection.cart.find({ userId: req.session.userId });
+        // const cartItems = await cartCollection.cart.find({ userId: req.session.userId });
 
 
         // Reducing the quantity from the product collection

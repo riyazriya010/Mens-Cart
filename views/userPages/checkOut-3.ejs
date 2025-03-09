@@ -328,7 +328,14 @@
           title: 'Insufficient Amount',
           text: 'No amount in wallet'
         });
-      }else {
+      }else if(!result.success && result.noStock){
+        Swal.fire({
+          icon: 'info',
+          title: 'Insufficient Stock',
+          text: 'Product Out of Stock'
+        });
+      }
+      else {
         Swal.fire({
           icon: 'error',
           title: 'Order Not Places',
