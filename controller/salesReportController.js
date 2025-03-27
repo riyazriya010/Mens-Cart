@@ -9,6 +9,15 @@ const path = require('path');
 const fs = require('fs');
 const AppError = require('../middleware/errorHandling.js');
 
+const PdfPrinter = require("pdfmake");
+
+const fonts = {
+  Roboto: {
+    normal: 'Helvetica',
+    bold: 'Helvetica-Bold',
+  },
+};
+const printer = new PdfPrinter(fonts);
 
 
 exports.reportGet = async (req, res, next) => {
@@ -89,17 +98,84 @@ exports.report = async (req, res, next) => {
       endDate2 = new Date(req.session.endDate2);
     }
 
+    // var salesDetails =
+    //   req.session.salesDetails ||
+    //   await orderCollection.orders.find({
+    //     orderDate: { $gte: startDate, $lte: endDate },
+    //     orderStatus: "Delivered",
+    //   })
+    //     .sort({ orderDate: -1 })
+    //     // .populate({path:cartData,populate:{)
+    //     .populate('userId')
+    //     .populate('couponApplied');
+
+
+
+    //New Updated
+    // var salesDetails =
+    //   req.session.salesDetails ||
+    //   await orderCollection.orders.find({
+    //     orderDate: { $gte: startDate, $lte: endDate },
+    //     "cartData.status": "Delivered", // Ensure at least one delivered product exists
+    //   })
+    //     .sort({ orderDate: -1 })
+    //     .populate('userId')
+    //     .populate('couponApplied')
+    //     .lean(); // Convert to plain objects for better manipulation
+
+    // // Filter only the delivered products from cartData
+    // salesDetails = salesDetails.map(order => {
+    //   order.cartData = order.cartData.filter(product => product.status === "Delivered");
+    //   return order;
+    // });
+
+
     var salesDetails =
       req.session.salesDetails ||
-      await orderCollection.orders.find({
-        orderDate: { $gte: startDate, $lte: endDate },
-        orderStatus: "Delivered",
-      })
+      await orderCollection.orders
+        .find({
+          orderDate: { $gte: startDate, $lte: endDate },
+          "cartData.status": "Delivered", // Ensure at least one delivered product exists
+        })
         .sort({ orderDate: -1 })
-        // .populate({path:cartData,populate:{)
-        .populate('userId')
-        .populate('couponApplied');
-    // console.log(salesDetails);
+        .populate("userId")
+        .populate("couponApplied")
+        .lean(); // Convert to plain objects for better manipulation
+
+    // Process each order and filter only Delivered products
+    salesDetails = salesDetails.map((order) => {
+      // Keep only Delivered products
+      order.cartData = order.cartData.filter((product) => product.status === "Delivered");
+
+      // Recalculate the grand total based on only delivered products
+      const deliveredTotal = order.cartData.reduce((total, product) => total + product.totalCostPerProduct, 0);
+
+      // Calculate proportional discount if applicable
+      if (order.discountedPrice) {
+        const totalOrderPrice = order.grandTotalCost; // The original order total before discount
+        const totalDiscount = totalOrderPrice - order.discountedPrice; // Total discount amount
+
+        // Apply proportional discount to each delivered product
+        order.cartData = order.cartData.map((product) => {
+          const productDiscount = (product.totalCostPerProduct / totalOrderPrice) * totalDiscount;
+          product.finalCost = product.totalCostPerProduct - productDiscount;
+          return product;
+        });
+
+        // Final total is sum of adjusted delivered product prices
+        order.finalTotal = order.cartData.reduce((sum, product) => sum + product.finalCost, 0);
+      } else {
+        order.finalTotal = deliveredTotal;
+      }
+
+      return order;
+    });
+
+    const totalRevenue = salesDetails.reduce((sum, order) => sum + order.finalTotal, 0);
+
+
+
+    ///
 
     const productsPerPage = 5;
     const totalPages = salesDetails.length / productsPerPage;
@@ -141,11 +217,12 @@ exports.report = async (req, res, next) => {
       .sort({ _id: -1 });
     const totalcount = products.reduce((total, item) => total + item.Total, 0);
 
-    console.log('salesDetails: ',salesDetails)
+    console.log('salesDetails: ', salesDetails)
 
     res.render("adminPages/sales", {
       Sreports: salesDetails,
       totalPages,
+      totalRevenue,
       // user,
       orders: [],
       page: 1,
@@ -201,7 +278,7 @@ exports.filterOptions = async (req, res, next) => {
     );
 
     res.status(200).json({ success: true });
-    
+
   } catch (error) {
     next(new AppError(error.message, 500))
   }
@@ -210,6 +287,122 @@ exports.filterOptions = async (req, res, next) => {
 
 
 //report Download PDF
+// exports.SaledReportDownloadPDF = async (req, res, next) => {
+//   try {
+//     let startDate, endDate;
+//     if (req.session.startDate && req.session.endDate) {
+//       startDate = req.session.startDate;
+//       endDate = req.session.endDate;
+//     } else {
+//       startDate = new Date();
+//       startDate.setDate(startDate.getDate() - 7);
+//       endDate = new Date();
+//     }
+
+//     const salesData = await orderCollection.orders
+//       .find({
+//         orderDate: { $gte: startDate, $lte: endDate },
+//         orderStatus: "Delivered",
+//       })
+//       .sort({ orderDate: -1 })
+//       .populate('userId')
+//       .populate('couponApplied');
+
+//     const browser = await puppeteer.launch({
+//       channel: "chrome",
+//     });
+
+//     const page = await browser.newPage();
+
+//     let htmlContent = `
+
+//   <h1 style="text-align: center;">Sales Report</h1>
+//   <table style="width:100%; border-collapse: collapse;" border="1">
+
+// <tr>
+//   <th>Order ID</th>
+//   <th>UserName</th>
+//   <th>Order Date</th>
+//   <th>Products</th>
+//   <th>Product Offer</th>
+//   <th>Quantity</th>
+//   <th>Before Offer</th>
+//   <th>Total Cost</th>
+//   <th>Payment Method</th>
+//   <th>Status</th>
+//   <th>Coupons</th>
+//   <th>Before Coupon</th>
+//   <th>Ordered Price</th>
+// </tr>`;
+
+//     salesData.forEach((order) => {
+//       let i = 0;
+//       htmlContent += `
+//   <tr>
+//     <td rowspan="${order.cartData.length}" style="text-align: center;">${order.orderId
+//         }</td>
+//     <td rowspan="${order.cartData.length}" style="text-align: center;">${order.userId.username
+//         }</td>
+//     <td rowspan="${order.cartData.length
+//         }" style="text-align: center;">${formatDate(order.orderDate)}</td>
+// `;
+
+//       order.cartData.forEach((cartItem) => {
+//         htmlContent += `
+//     <td style="text-align: center;">${cartItem.productName}</td>
+//     <td style="text-align: center;">${cartItem.offerApplied
+//             ? `${cartItem.offerApplied}%`
+//             : "Nil"
+//           }</td>
+//     <td style="text-align: center;">${cartItem.productQuantity}</td>
+//     <td style="text-align: center;">Rs.${cartItem.productPrice}</td>
+//     <td style="text-align: center;">Rs.${cartItem.offerPrice
+//             ? `${cartItem.offerPrice}`
+//             : `${cartItem.productPrice}`
+//           }</td>
+//   `;
+
+//         if (i === 0) {
+//           htmlContent += `
+//       <td rowspan="${order.cartData.length}" style="text-align: center;">${order.paymentType
+//             }</td>
+//       <td rowspan="${order.cartData.length}" style="text-align: center;">${order.orderStatus
+//             }</td>
+//       <td rowspan="${order.cartData.length}" style="text-align: center;">${order.couponApplied
+//               ? `${order.couponApplied.discountPercentage}%`
+//               : "Nil"
+//             }</td>
+//       <td rowspan="${order.cartData.length}" style="text-align: center;">${order.grandTotalCost}</td>
+//         <td rowspan="${order.cartData.length
+//             }" style="text-align: center;">Rs.${order.discountedPrice
+//               ? `${order.discountedPrice}`
+//               : `${order.grandTotalCost}`
+//             }</td>
+//     `;
+//         }
+
+//         htmlContent += `
+//   </tr>
+// `;
+//         i++;
+//       });
+//     });
+
+//     htmlContent += "</table>";
+
+//     await page.setContent(htmlContent);
+//     const pdfBuffer = await page.pdf({ format: "A4" });
+//     res.setHeader("Content-Type", "application/pdf");
+//     res.setHeader("Content-Length", pdfBuffer.length);
+//     res.setHeader("Content-Disposition", "attachment; filename=salesReport.pdf");
+//     res.send(pdfBuffer);
+
+//     await browser.close();
+//   } catch (error) {
+//     next(new AppError(error.message, 500))
+//   }
+// }
+
 exports.SaledReportDownloadPDF = async (req, res, next) => {
   try {
     let startDate, endDate;
@@ -222,118 +415,155 @@ exports.SaledReportDownloadPDF = async (req, res, next) => {
       endDate = new Date();
     }
 
-    const salesData = await orderCollection.orders
+    // Fetch sales data
+    let salesDetails = await orderCollection.orders
       .find({
         orderDate: { $gte: startDate, $lte: endDate },
-        orderStatus: "Delivered",
+        "cartData.status": "Delivered",
       })
       .sort({ orderDate: -1 })
-      .populate('userId')
-      .populate('couponApplied');
+      .populate("userId")
+      .populate("couponApplied")
+      .lean();
 
-    const browser = await puppeteer.launch({
-      channel: "chrome",
+    // Process each order to filter only delivered products
+    salesDetails = salesDetails.map((order) => {
+      order.cartData = order.cartData.filter((product) => product.status === "Delivered");
+
+      const deliveredTotal = order.cartData.reduce((total, product) => total + product.totalCostPerProduct, 0);
+
+      if (order.discountedPrice) {
+        const totalOrderPrice = order.grandTotalCost;
+        const totalDiscount = totalOrderPrice - order.discountedPrice;
+
+        order.cartData = order.cartData.map((product) => {
+          const productDiscount = (product.totalCostPerProduct / totalOrderPrice) * totalDiscount;
+          product.finalCost = product.totalCostPerProduct - productDiscount;
+          return product;
+        });
+
+        order.finalTotal = order.cartData.reduce((sum, product) => sum + product.finalCost, 0);
+      } else {
+        order.finalTotal = deliveredTotal;
+      }
+
+      return order;
     });
 
-    const page = await browser.newPage();
+    const totalRevenue = salesDetails.reduce((sum, order) => sum + order.finalTotal, 0);
 
-    let htmlContent = `
+    // Set up fonts
+    const fonts = {
+      Roboto: {
+        normal: 'Helvetica',
+        bold: 'Helvetica-Bold',
+      },
+    };
 
-  <h1 style="text-align: center;">Sales Report</h1>
-  <table style="width:100%; border-collapse: collapse;" border="1">
+    const printer = new PdfPrinter(fonts);
 
-<tr>
-  <th>Order ID</th>
-  <th>UserName</th>
-  <th>Order Date</th>
-  <th>Products</th>
-  <th>Product Offer</th>
-  <th>Quantity</th>
-  <th>Before Offer</th>
-  <th>Total Cost</th>
-  <th>Payment Method</th>
-  <th>Status</th>
-  <th>Coupons</th>
-  <th>Before Coupon</th>
-  <th>Ordered Price</th>
-</tr>`;
+    // Define the table header
+    const tableBody = [
+      [
+        { text: "Order ID", style: "tableHeader" },
+        { text: "UserName", style: "tableHeader" },
+        { text: "Order Date", style: "tableHeader" },
+        { text: "Products", style: "tableHeader" },
+        { text: "Product Offer", style: "tableHeader" },
+        { text: "Quantity", style: "tableHeader" },
+        { text: "Before Offer", style: "tableHeader" },
+        { text: "Total Cost", style: "tableHeader" },
+        { text: "Payment Method", style: "tableHeader" },
+        { text: "Status", style: "tableHeader" },
+        { text: "Coupons", style: "tableHeader" },
+        { text: "Ordered Price", style: "tableHeader" },
+      ],
+    ];
 
-    salesData.forEach((order) => {
-      let i = 0;
-      htmlContent += `
-  <tr>
-    <td rowspan="${order.cartData.length}" style="text-align: center;">${order.orderId
-        }</td>
-    <td rowspan="${order.cartData.length}" style="text-align: center;">${order.userId.username
-        }</td>
-    <td rowspan="${order.cartData.length
-        }" style="text-align: center;">${formatDate(order.orderDate)}</td>
-`;
-
-      order.cartData.forEach((cartItem) => {
-        htmlContent += `
-    <td style="text-align: center;">${cartItem.productName}</td>
-    <td style="text-align: center;">${cartItem.offerApplied
-            ? `${cartItem.offerApplied}%`
-            : "Nil"
-          }</td>
-    <td style="text-align: center;">${cartItem.productQuantity}</td>
-    <td style="text-align: center;">Rs.${cartItem.productPrice}</td>
-    <td style="text-align: center;">Rs.${cartItem.offerPrice
-      ? `${cartItem.offerPrice}`
-      :`${cartItem.productPrice}`
-    }</td>
-  `;
-
-        if (i === 0) {
-          htmlContent += `
-      <td rowspan="${order.cartData.length}" style="text-align: center;">${order.paymentType
-            }</td>
-      <td rowspan="${order.cartData.length}" style="text-align: center;">${order.orderStatus
-            }</td>
-      <td rowspan="${order.cartData.length}" style="text-align: center;">${order.couponApplied
-              ? `${order.couponApplied.discountPercentage}%`
-              : "Nil"
-            }</td>
-      <td rowspan="${order.cartData.length}" style="text-align: center;">${order.grandTotalCost}</td>
-        <td rowspan="${order.cartData.length
-            }" style="text-align: center;">Rs.${order.discountedPrice
-              ? `${order.discountedPrice}`
-              : `${order.grandTotalCost}`
-            }</td>
-    `;
-        }
-
-        htmlContent += `
-  </tr>
-`;
-        i++;
+    // Populate table data
+    salesDetails.forEach((order) => {
+      order.cartData.forEach((cartItem, index) => {
+        tableBody.push([
+          index === 0 ? { text: order.orderId, rowSpan: order.cartData.length, style: "tableCell" } : "",
+          index === 0 ? { text: order.userId.username, rowSpan: order.cartData.length, style: "tableCell" } : "",
+          index === 0
+            ? { text: new Date(order.orderDate).toLocaleDateString("en-GB"), rowSpan: order.cartData.length, style: "tableCell" }
+            : "",
+          { text: cartItem.productName, style: "tableCell" },
+          { text: cartItem.offerApplied ? `${cartItem.offerApplied}%` : "-", style: "tableCell" },
+          { text: cartItem.productQuantity, style: "tableCell" },
+          { text: `${cartItem.productPrice}`, style: "tableCell" },
+          { text: cartItem.offerPrice ? `₹${cartItem.offerPrice}` : `${cartItem.productPrice}`, style: "tableCell" },
+          index === 0 ? { text: order.paymentType, rowSpan: order.cartData.length, style: "tableCell" } : "",
+          index === 0 ? { text: order.orderStatus, rowSpan: order.cartData.length, style: "tableCell" } : "",
+          index === 0 ? { text: order.couponApplied ? `${order.couponApplied.discountPercentage}%` : "-", rowSpan: order.cartData.length, style: "tableCell" } : "",
+          index === 0 ? { text: `${order.finalTotal}`, rowSpan: order.cartData.length, style: "tableCell" } : "",
+        ]);
       });
     });
 
-    htmlContent += "</table>";
+    // Define document structure
+    const docDefinition = {
+      pageSize: "A4",
+      pageMargins: [10, 10, 10, 10],
+      content: [
+        { text: "Sales Report", style: "header" },
+        {
+          style: "tableExample",
+          table: {
+            headerRows: 1,
+            widths: [
+              "8%", "10%", "10%", "12%", "8%", "6%", "8%", "8%", "10%", "8%", "8%", "10%",
+            ],
+            body: tableBody,
+          },
+          layout: "lightHorizontalLines",
+        },
+        {
+          text: `Total Revenue: ${totalRevenue}`,
+          style: "totalRevenue",
+          margin: [0, 10, 0, 0],
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 14,
+          bold: true,
+          alignment: "center",
+          margin: [0, 0, 0, 10],
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 10,
+          fillColor: "#f2f2f2",
+          alignment: "center",
+        },
+        tableCell: {
+          fontSize: 9,
+          margin: [2, 2, 2, 2],
+        },
+        totalRevenue: {
+          fontSize: 12,
+          bold: true,
+          alignment: "right",
+        },
+      },
+    };
 
-    await page.setContent(htmlContent);
-    const pdfBuffer = await page.pdf({ format: "A4" });
-
-    // res.setHeader("Content-Type", "application/pdf");
-    // res.setHeader(
-    //   "Content-Disposition",
-    //   "attachment; filename=salesReport.pdf"
-    // );
-    // res.send(pdfBuffer);
-
-    // Set the correct Content-Length header
+    // Generate PDF and send response
+    const pdfDoc = printer.createPdfKitDocument(docDefinition);
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Length", pdfBuffer.length);
     res.setHeader("Content-Disposition", "attachment; filename=salesReport.pdf");
-    res.send(pdfBuffer);
+    
+    pdfDoc.pipe(res);
+    pdfDoc.end();
 
-    await browser.close();
   } catch (error) {
-    next(new AppError(error.message, 500))
+    next(new AppError(error.message, 500));
   }
-}
+};
+
+
 
 
 
@@ -392,8 +622,8 @@ exports.filterDate = async (req, res, next) => {
         // })
         .populate('userId')
         .populate('couponApplied');
-        
-        console.log('filtered Data: ',salesData)
+
+      console.log('filtered Data: ', salesData)
 
       req.session.salesDetails = salesData;
       req.session.filterDates = { datevalues: {} };
@@ -560,8 +790,8 @@ exports.salesReportDownload = async (req, res, next) => {
           cartItem.productQuantity,
           `Rs.${cartItem.productPrice}`,
           cartItem.offerPrice
-          ? `${cartItem.offerPrice}`
-          : `${cartItem.productPrice}`
+            ? `${cartItem.offerPrice}`
+            : `${cartItem.productPrice}`
           ,
           index === 0 ? order.paymentType : "",
           index === 0 ? order.orderStatus : "",
@@ -571,11 +801,11 @@ exports.salesReportDownload = async (req, res, next) => {
               : "Nil"
             : "",
           index === 0 ? `Rs.${order.grandTotalCost}` : "",
-          index === 0 
-          ? order.discountedPrice
-            ? `Rs.${order.discountedPrice}`
-             : `Rs.${order.grandTotalCost}`
-           : "",
+          index === 0
+            ? order.discountedPrice
+              ? `Rs.${order.discountedPrice}`
+              : `Rs.${order.grandTotalCost}`
+            : "",
         ]);
       });
     });

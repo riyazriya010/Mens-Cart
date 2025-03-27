@@ -339,7 +339,15 @@ exports.returnApprovedOrReject = async (req, res, next) => {
             { "cartData._id": cartObjectId, "cartData.productId": productObjectId }
         )
 
-        const amount = orderDatas.discountedPrice || orderDatas.grandTotalCost
+        //New Update
+        const productData = orderDatas.cartData.find(
+            (p) => p.productId.toString() === productObjectId.toString()
+          );
+          
+          const amount = productData.offerPrice || productData.productPrice;
+          /////
+
+        // const amount = orderDatas.discountedPrice || orderDatas.grandTotalCost
         // console.log('return anount: ',amount);
 
         if(orderDatas.paymentType === "Wallet" || "PayPal" || "Cash On Delivery"){

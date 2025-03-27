@@ -10,6 +10,7 @@ const productCollection = require('../models/productModel.js');
 const orderCollection = require('../models/ordersModel.js');
 const couponCollection = require('../models/couponModel.js');
 const { generateOrderId } = require('../helper/orderId.js');
+const { ObjectId } = require('mongodb');
 const AppError = require('../middleware/errorHandling.js');
 
 
@@ -95,7 +96,18 @@ exports.editAddress = async (req, res, next) => {
 
     const { id } = req.params
 
-    const address = await addressCollection.address.findById(id);
+    const userId = req.session.userId
+
+    // const address = await addressCollection.address.findById(id);
+    const address = await addressCollection.address.findOne({
+      _id: new ObjectId(id),
+      userId: new ObjectId(userId)
+    });
+
+
+    if (!address) {
+      return res.status(403).render('unAuthorised');
+    }
 
     res.render('userPages/editAddress', { address });
 

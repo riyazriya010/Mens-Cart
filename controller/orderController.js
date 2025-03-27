@@ -129,13 +129,19 @@ exports.orderDetailsPage = async (req, res, next) => {
     try {
         // Get the order ID from the request parameters
         const orderId = req.params.id;
+        const userId = req.session.userId
 
         // Fetch the order from the database
-        const order = await orderCollection.orders.findById(orderId);
+        // const order = await orderCollection.orders.findById(orderId);
+        const order = await orderCollection.orders.findOne({
+            _id: new ObjectId(orderId), // Convert to ObjectId if necessary
+            userId: new ObjectId(userId) // Ensure userId is also an ObjectId if stored that way
+        });
         
 
         if (!order) {
-            return res.status(404).render('404'); // Handle case where order is not found
+            return res.status(403).render('unAuthorised');
+            // return res.status(404).render('404');
         }
 
         const address = order.addressChosen;
@@ -311,6 +317,9 @@ exports.cancelOrder = async (req, res, next) => {
         // console.log(req.query);
 
         const { productId, productQuantity, orderId, reason } = req.query;
+        console.log('productID :::: ', productId)
+        console.log('reason :::: ', reason)
+        console.log('productQuantity :::: ', productQuantity)
 
         //checking orderId and productId are valid ObjectIds
         if (!ObjectId.isValid(orderId) || !ObjectId.isValid(productId)) {
@@ -324,7 +333,18 @@ exports.cancelOrder = async (req, res, next) => {
 
         const orderDatas = await orderCollection.orders.findById(orderObjectId)
 
-        const amount = orderDatas.discountedPrice || orderDatas.grandTotalCost
+        const productData = orderDatas.cartData.find(
+            (p) => p.productId.toString() === productObjectId.toString()
+          );
+          
+          const amount = productData.offerPrice || productData.productPrice;
+
+          console.log("Amount to be used:", amount);
+
+        // const productData = orderDatas.cartData.filter(p => p.productId === productObjectId)
+        console.log('orderDatas: ', orderDatas)
+
+        // const amount = orderDatas.discountedPrice || orderDatas.grandTotalCost
 
         if(orderDatas.paymentType === "Wallet" || "PayPal"){
             const cod = await addingCancellAmountToWallet(req, amount);

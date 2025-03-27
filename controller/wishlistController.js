@@ -32,10 +32,11 @@ exports.additemToWishlist = async (req, res, next) => {
             return res.json({ success: false, userNotLogged: true });
         }
 
+        const userId = req.session.userId
         const productId = req.params.id
         console.log(productId);
 
-        const wishlist = await wishlistCollection.wishlist.findOne({productId:productId})
+        const wishlist = await wishlistCollection.wishlist.findOne({userId: userId,productId:productId})
 
         if(wishlist){
             return res.json({success:false, productAlreadyExist:true});

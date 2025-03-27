@@ -1,7 +1,7 @@
 <%- include('../userPartials/header') %>
 
-<style>
-     body {
+  <style>
+    body {
       background-color: white;
       font-family: Arial, sans-serif;
     }
@@ -34,7 +34,7 @@
       line-height: 12px;
     }
 
-    .table-cell{
+    .table-cell {
       color: white;
       background-color: #295f4e;
       border: 1px solid #295f4e;
@@ -52,449 +52,603 @@
       padding: 4px;
       box-sizing: border-box;
     }
+
     .tabled-cell {
-    display: inline-block;
-    padding: 10px 10px;
-    /* background-color: #007bff; */
-    background-color: #295f4e;
-    color: white;
-    text-align: center;
-    /* border-radius: 5px; */
-    border: 1px solid #295f4e;
-    width: 100%;
-    padding: 6px;
-    font-size: 14px;
-    font-weight: bold;
-    box-sizing: border-box;
-    margin-top: 10px; /* Ensures there is space between the content and the border */
-}
+      display: inline-block;
+      padding: 10px 10px;
+      /* background-color: #007bff; */
+      background-color: #295f4e;
+      color: white;
+      text-align: center;
+      /* border-radius: 5px; */
+      border: 1px solid #295f4e;
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+      font-weight: bold;
+      box-sizing: border-box;
+      margin-top: 10px;
+      /* Ensures there is space between the content and the border */
+    }
+  </style>
 
-</style>
+  <body>
 
-<body>
-    
 
-<!---- main content ---->
-<div class="container mt-5">
+    <!---- main content ---->
+    <div class="container mt-5">
 
-    <!----- Shipping and Order Info ----->
-    <div class="row mb-3">
-      <div class="col-lg-6">
-        <div class="card">
-          <div class="card-body">
-            <h5 class="card-title"><strong>Shipping Address</strong></h5>
-            <% for(let i=0; i<address.length; i++) { %>
-            <div style="display: flex;">
-            <p> <%= address[i].name %> </p>
-            <p><span class="addressDetails-base-name"> <%= address[i].addressTitle %> </span></p>
-          </div>
-            <p><%= address[i].address1 %>, <%= address[i].address2 %> <br> <%= address[i].city %> <%= address[i].state %> - <%= address[i].pincode %></p>
-            <% } %>
-          </div>
-        </div>
-      </div>
-      <div class="col-lg-6">
-        <div class="card mt-2">
-          <div class="card-body">
-            <h5 class="card-title"><strong>Order Information</strong></h5>
-            <p><strong>Order ID: </strong><%= order.orderId %></p>
-            <p><strong>Order Date:</strong> <%= order.orderDate.toDateString() %></p>
-
-            <% if(order.paymentType === 'Payment Failed') { %>
-              <p><strong>Status:</strong> <span class="table-cell"> <%= order.paymentType %> </span></p>
-              <% }else{ %>
-
-                <% if(status === 'Pending') { %>
-                  <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
-                  <p><strong>Status:</strong> <strong style="color: #0061c9;"><%= status %></strong></p>
-                  <% }else if(status === 'Shipped') { %>
-                    <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
-                    <p><strong>Status:</strong> <strong style="color: rgb(227, 148, 58);"><%= status %></strong></p>
-                    <% }else if(status === 'Delivered') { %>
-                      <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
-                      <p><strong>Status:</strong> <strong style="color: #32a048;"><%= status %></strong></p>
-                      <% }else if(status === 'requested to return') { %>
-                        <!-- <p><strong>Status:</strong> <span class="table-cel"> <%= status %> </span></p> -->
-                        <p><strong>Status:</strong> <strong  style="color: rgb(84, 113, 145);"><%= status %></strong></p>
-                     <% }else if(status === 'Cancelled') { %>
-                        <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
-                        <p><strong>Status:</strong> <strong style="color: rgb(227, 58, 58);"><%= status %></strong></p>
-                        <% }else if(status === 'Approved Return') { %>
-                          <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
-                          <p><strong>Status:</strong> <strong style="color: rgb(51, 206, 152);"><%= status %></strong></p>
-                          <% }else if(status === 'Reject Return') { %>
-                            <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
-                            <p><strong>Status:</strong> <strong style="color: rgb(146, 37, 37);"><%= status %></strong></p>
-                            <% } %>
-
+      <!----- Shipping and Order Info ----->
+      <div class="row mb-3">
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title"><strong>Shipping Address</strong></h5>
+              <% for(let i=0; i<address.length; i++) { %>
+                <div style="display: flex;">
+                  <p>
+                    <%= address[i].name %>
+                  </p>
+                  <p><span class="addressDetails-base-name">
+                      <%= address[i].addressTitle %>
+                    </span></p>
+                </div>
+                <p>
+                  <%= address[i].address1 %>, <%= address[i].address2 %> <br>
+                      <%= address[i].city %>
+                        <%= address[i].state %> - <%= address[i].pincode %>
+                </p>
                 <% } %>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+        <div class="col-lg-6">
+          <div class="card mt-2">
+            <div class="card-body">
+              <h5 class="card-title"><strong>Order Information</strong></h5>
+              <p><strong>Order ID: </strong>
+                <%= order.orderId %>
+              </p>
+              <p><strong>Order Date:</strong>
+                <%= order.orderDate.toDateString() %>
+              </p>
 
-    <!------ re-payment button ----->
+              <% if(order.paymentType==='Payment Failed' ) { %>
+                <p><strong>Status:</strong> <span class="table-cell">
+                    <%= order.paymentType %>
+                  </span></p>
+                <% }else{ %>
 
-    <% if (order.paymentType === 'Payment Failed') { %>
-      <% const total = order.discountedPrice || order.grandTotalCost; %>
-          <button class="table-cell mb-3" onclick="failedPayment('<%= order._id %>','<%= total %>')">Pay Now</button>
-  <% } %>
+                  <% if(status==='Pending' ) { %>
+                    <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                    <p><strong>Status:</strong> <strong style="color: #0061c9;">
+                        <%= status %>
+                      </strong></p>
+                    <% }else if(status==='Shipped' ) { %>
+                      <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                      <p><strong>Status:</strong> <strong style="color: rgb(227, 148, 58);">
+                          <%= status %>
+                        </strong></p>
+                      <% }else if(status==='Delivered' ) { %>
+                        <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                        <p><strong>Status:</strong> <strong style="color: #32a048;">
+                            <%= status %>
+                          </strong></p>
+                        <% }else if(status==='requested to return' ) { %>
+                          <!-- <p><strong>Status:</strong> <span class="table-cel"> <%= status %> </span></p> -->
+                          <p><strong>Status:</strong> <strong style="color: rgb(84, 113, 145);">
+                              <%= status %>
+                            </strong></p>
+                          <% }else if(status==='Cancelled' ) { %>
+                            <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                            <p><strong>Status:</strong> <strong style="color: rgb(227, 58, 58);">
+                                <%= status %>
+                              </strong></p>
+                            <% }else if(status==='Approved Return' ) { %>
+                              <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                              <p><strong>Status:</strong> <strong style="color: rgb(51, 206, 152);">
+                                  <%= status %>
+                                </strong></p>
+                              <% }else if(status==='Reject Return' ) { %>
+                                <!-- <p><strong>Status:</strong> <span class="table-cell"> <%= status %> </span></p> -->
+                                <p><strong>Status:</strong> <strong style="color: rgb(146, 37, 37);">
+                                    <%= status %>
+                                  </strong></p>
+                                <% } %>
 
-
-
-  <% if (order.paymentType !== 'Payment Failed') { %>
-    <a href='/order/singleOrder/downloadInvoice/<%= order._id %>'><button type="button" class="table-cell mb-3">
-      Download Invoice</button></a>
-<% } %>
-
-    <!----- Ordered Products ----->
-    <div class="row mb-3">
-      <div class="col-12">
-        <div class="table-responsive">
-          <table class="table text-center align-middle">
-            <thead class="table-dark">
-              <tr>
-                <th>Image</th>
-                <th>Product Name</th>
-                <th>Status</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Discount</th>
-                <th>Subtotal</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% for(let i = 0; i < cart.length; i++) { %>
-                    <!--- Find the product that matches the current cart item --->
-                  <%  let product = products.find(p => p._id.toString() === cart[i].productId.toString()); %>
-                <tr>
-                  <% if (product) { %>  <!-- Ensure product exists before accessing its properties -->
-                    <td style="width: 100px;">
-                      <img src="/assets/uploadimages/uploads/<%= product.productImage[0] %>" alt="" style="max-width: 100%; height: 60px; object-fit: cover;">
-                    </td>
-                    <td> <%= product.productName %> </td>
-
-                    <% if(order.paymentType === 'Payment Failed') { %>
-                      <td> <span class="tabled-cell"> <%= order.paymentType %> </span> </td>
-                      <% }else{ %>
-
-                        <% if(cart[i].status === 'Pending') { %>
-                          <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
-                          <td> <strong style="color: #0061c9;"> <%= cart[i].status %> </strong> </td>
-                        <% }else if(cart[i].status === 'Delivered') { %>
-                          <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
-                          <td> <strong style="color: #32a048;"> <%= cart[i].status %> </strong> </td>
-                          <% }else if(cart[i].status === 'Cancelled') { %>
-                            <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
-                            <td> <strong style="color: rgb(227, 58, 58);;"> <%= cart[i].status %> </strong> </td>
-                            <% }else if(cart[i].status === 'Shipped') { %>
-                              <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
-                              <td> <strong style="color: rgb(227, 148, 58);;" > <%= cart[i].status %> </strong> </td>
-                              <% }else if(cart[i].status === 'requested to return'){ %>
-                                <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
-                                <td> <strong style="color: rgb(84, 113, 145);;"> <%= cart[i].status %> </strong> </td>
-                                <% }else if(cart[i].status === 'Approved Return') {  %>
-                                  <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
-                                  <td> <strong style="color: rgb(51, 206, 152);;"> <%= cart[i].status %> </strong> </td>
-                                  <% }else if(cart[i].status === 'Reject Return') { %>
-                                    <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
-                                    <td> <strong style="color: rgb(146, 37, 37);;"> <%= cart[i].status %> </strong> </td>
-                                    <% } %>
-
-                        <% } %>
-
-                    <td> ₹<%= cart[i].productPrice %> </td>
-                    <td> <%= cart[i].productQuantity %> </td>
-                    <td> 
-                      <% if(cart[i].offerApplied) { %>
-                        <%= cart[i].offerApplied%>%
-                        <% }else{ %>
-                          Nil
-                          <% } %>
-                    </td>
-                    <td>₹<%= cart[i].totalCostPerProduct %></td> <!-- Assuming product price is available -->
-                    <td>
-                      <% if(order.paymentType === 'Payment Failed') { %>
-                        <% }else{ %>
-                          <% if(cart[i].status === 'Cancelled') { %>
-                            <h6 style="color: red;"><strong>Cancelled</strong></h6>
-                            <% }else if(cart[i].status === 'Delivered') { %>
-                              <% if(fourteenDaysFromNow){ %>
-                                <button class="full-width-button" data-bs-toggle="modal" data-bs-target="#returnOrder" data-order-id="<%= order._id %>" data-product-id="<%= product._id %>">Return Order</button>
-                                <% }else{ %>
-                                  <h6 style="color: black;"><strong>Delivered</strong></h6>
                                   <% } %>
-                             <% }else if(cart[i].status === 'requested to return') { %>
-                              <h6 style="color: rgb(0, 0, 0);"><strong>requested to return</strong></h6>
-                             <% }else if(cart[i].status === 'Approved Return') { %>
-                              <h6 style="color: rgb(0, 0, 0);"><strong>requested Approved</strong></h6>
-                             <% }else if(cart[i].status === 'Reject Return') { %>
-                              <h6 style="color: rgb(0, 0, 0);"><strong>requested Rejected</strong></h6>
-                             <% }else{ %>
-                              <button class="full-width-button btn-sm" data-bs-toggle="modal" data-bs-target="#cancelOrder" >Cancel</button>
-                              <% } %>
-    
-                              <!------- cancel reason modal ------>
-                              <div class="modal" tabindex="-1" id="cancelOrder">
-                                <div class="modal-dialog">
-                                  <div class="modal-content">
-                                    <div class="modal-header">
-                                      <h5 class="modal-title">Reason For Cancel Order</h5>
-                                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                      <form id="cancelForm">
-                                        <div class="form-group mt-3 mb-3">
-                                          <label for="reason">Reason:</label>
-                                          <textarea name="cancelReason" class="form-control" id="cancelReason" rows="3"></textarea>
-                                        </div>
-                            
-                                        <hr>
-                                        
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="cancelOrder(event,'<%= cart[i].productId %>','<%= cart[i].productQuantity %>','<%= order._id %>')">Submit</button>
-                                      </form>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-      
-                          <% } %>
-                      
-                          
-                    </td>
-                  <% } %>
-                </tr>
-              <% } %>
-            </tbody>
-          </table>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!------ re-payment button ----->
+
+      <% if (order.paymentType==='Payment Failed' ) { %>
+        <% const total=order.discountedPrice || order.grandTotalCost; %>
+          <button class="table-cell mb-3" onclick="failedPayment('<%= order._id %>','<%= total %>')">Pay Now</button>
+          <% } %>
+
+
+
+            <% if (order.paymentType !=='Payment Failed' ) { %>
+              <a href='/order/singleOrder/downloadInvoice/<%= order._id %>'><button type="button"
+                  class="table-cell mb-3">
+                  Download Invoice</button></a>
+              <% } %>
+
+                <!----- Ordered Products ----->
+                <div class="row mb-3">
+                  <div class="col-12">
+                    <div class="table-responsive">
+                      <table class="table text-center align-middle">
+                        <thead class="table-dark">
+                          <tr>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Status</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Discount</th>
+                            <th>Subtotal</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% for(let i=0; i < cart.length; i++) { %>
+                            <!--- Find the product that matches the current cart item --->
+                            <% let product=products.find(p=> p._id.toString() === cart[i].productId.toString()); %>
+                              <tr>
+                                <% if (product) { %> <!-- Ensure product exists before accessing its properties -->
+                                  <td style="width: 100px;">
+                                    <img src="/assets/uploadimages/uploads/<%= product.productImage[0] %>" alt=""
+                                      style="max-width: 100%; height: 60px; object-fit: cover;">
+                                  </td>
+                                  <td>
+                                    <%= product.productName %>
+                                  </td>
+
+                                  <% if(order.paymentType==='Payment Failed' ) { %>
+                                    <td> <span class="tabled-cell">
+                                        <%= order.paymentType %>
+                                      </span> </td>
+                                    <% }else{ %>
+
+                                      <% if(cart[i].status==='Pending' ) { %>
+                                        <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
+                                        <td> <strong style="color: #0061c9;">
+                                            <%= cart[i].status %>
+                                          </strong> </td>
+                                        <% }else if(cart[i].status==='Delivered' ) { %>
+                                          <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
+                                          <td> <strong style="color: #32a048;">
+                                              <%= cart[i].status %>
+                                            </strong> </td>
+                                          <% }else if(cart[i].status==='Cancelled' ) { %>
+                                            <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
+                                            <td> <strong style="color: rgb(227, 58, 58);;">
+                                                <%= cart[i].status %>
+                                              </strong> </td>
+                                            <% }else if(cart[i].status==='Shipped' ) { %>
+                                              <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> -->
+                                              <td> <strong style="color: rgb(227, 148, 58);;">
+                                                  <%= cart[i].status %>
+                                                </strong> </td>
+                                              <% }else if(cart[i].status==='requested to return' ){ %>
+                                                <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
+                                                <td> <strong style="color: rgb(84, 113, 145);;">
+                                                    <%= cart[i].status %>
+                                                  </strong> </td>
+                                                <% }else if(cart[i].status==='Approved Return' ) { %>
+                                                  <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
+                                                  <td> <strong style="color: rgb(51, 206, 152);;">
+                                                      <%= cart[i].status %>
+                                                    </strong> </td>
+                                                  <% }else if(cart[i].status==='Reject Return' ) { %>
+                                                    <!-- <td> <span class="tabled-cell"> <%= cart[i].status %> </span> </td> </td> -->
+                                                    <td> <strong style="color: rgb(146, 37, 37);;">
+                                                        <%= cart[i].status %>
+                                                      </strong> </td>
+                                                    <% } %>
+
+                                                      <% } %>
+
+                                                        <td> ₹<%= cart[i].productPrice %>
+                                                        </td>
+                                                        <td>
+                                                          <%= cart[i].productQuantity %>
+                                                        </td>
+                                                        <td>
+                                                          <% if(cart[i].offerApplied) { %>
+                                                            <%= cart[i].offerApplied%>%
+                                                              <% }else{ %>
+                                                                Nil
+                                                                <% } %>
+                                                        </td>
+                                                        <td>₹<%= cart[i].totalCostPerProduct %>
+                                                        </td> <!-- Assuming product price is available -->
+                                                        <td>
+                                                          <% if(order.paymentType==='Payment Failed' ) { %>
+                                                            <% }else{ %>
+                                                              <% if(cart[i].status==='Cancelled' ) { %>
+                                                                <h6 style="color: red;"><strong>Cancelled</strong></h6>
+                                                                <% }else if(cart[i].status==='Delivered' ) { %>
+                                                                  <% if(fourteenDaysFromNow){ %>
+                                                                    <button class="full-width-button"
+                                                                      data-bs-toggle="modal"
+                                                                      data-bs-target="#returnOrder"
+                                                                      data-order-id="<%= order._id %>"
+                                                                      data-product-id="<%= product._id %>">Return
+                                                                      Order</button>
+                                                                    <% }else{ %>
+                                                                      <h6 style="color: black;">
+                                                                        <strong>Delivered</strong>
+                                                                      </h6>
+                                                                      <% } %>
+                                                                        <% }else
+                                                                          if(cart[i].status==='requested to return' ) {
+                                                                          %>
+                                                                          <h6 style="color: rgb(0, 0, 0);">
+                                                                            <strong>requested to return</strong>
+                                                                          </h6>
+                                                                          <% }else if(cart[i].status==='Approved Return'
+                                                                            ) { %>
+                                                                            <h6 style="color: rgb(0, 0, 0);">
+                                                                              <strong>requested Approved</strong>
+                                                                            </h6>
+                                                                            <% }else if(cart[i].status==='Reject Return'
+                                                                              ) { %>
+                                                                              <h6 style="color: rgb(0, 0, 0);">
+                                                                                <strong>requested Rejected</strong>
+                                                                              </h6>
+                                                                              <% }else{ %>
+                                                                                <!-- <button class="full-width-button btn-sm" data-bs-toggle="modal" data-bs-target="#cancelOrder" >Cancel</button> -->
+                                                                                <!-- Cancel Button with Unique Modal ID -->
+                                                                                <!-- Cancel Button with Unique Modal ID -->
+                                                                                <button class="full-width-button btn-sm"
+                                                                                  data-bs-toggle="modal"
+                                                                                  data-bs-target="#cancelOrder-<%= cart[i]._id %>">
+                                                                                  Cancel
+                                                                                </button>
+                                                                                <% } %>
+
+                                                                                  <!------- cancel reason modal ------>
+                                                                                  <!-- <div class="modal" tabindex="-1"
+                                                                                    id="cancelOrder">
+                                                                                    <div class="modal-dialog">
+                                                                                      <div class="modal-content">
+                                                                                        <div class="modal-header">
+                                                                                          <h5 class="modal-title">Reason
+                                                                                            For Cancel Order</h5>
+                                                                                          <button type="button"
+                                                                                            class="btn-close"
+                                                                                            data-bs-dismiss="modal"
+                                                                                            aria-label="Close"></button>
+                                                                                        </div>
+                                                                                        <div class="modal-body">
+                                                                                          <form id="cancelForm">
+                                                                                            <div
+                                                                                              class="form-group mt-3 mb-3">
+                                                                                              <label
+                                                                                                for="reason">Reason:</label>
+                                                                                              <textarea
+                                                                                                name="cancelReason"
+                                                                                                class="form-control"
+                                                                                                id="cancelReason"
+                                                                                                rows="3"></textarea>
+                                                                                            </div>
+
+                                                                                            <hr>
+
+                                                                                            <button type="button"
+                                                                                              class="btn btn-secondary"
+                                                                                              data-bs-dismiss="modal">Close</button>
+                                                                                            <button type="button"
+                                                                                              class="btn btn-primary"
+                                                                                              onclick="cancelOrder(event,'<%= cart[i].productId %>','<%= cart[i].productQuantity %>','<%= order._id %>')">Submit</button>
+                                                                                          </form>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                  </div> -->
+
+                                                                                  <!------- Cancel Reason Modal with Unique ID ------->
+                                                                                  <div class="modal" tabindex="-1"
+                                                                                    id="cancelOrder-<%= cart[i]._id %>">
+                                                                                    <div class="modal-dialog">
+                                                                                      <div class="modal-content">
+                                                                                        <div class="modal-header">
+                                                                                          <h5 class="modal-title">Reason
+                                                                                            For Cancel Order</h5>
+                                                                                          <button type="button"
+                                                                                            class="btn-close"
+                                                                                            data-bs-dismiss="modal"
+                                                                                            aria-label="Close"></button>
+                                                                                        </div>
+                                                                                        <div class="modal-body">
+                                                                                          <form
+                                                                                            id="cancelForm-<%= cart[i]._id %>">
+                                                                                            <div
+                                                                                              class="form-group mt-3 mb-3">
+                                                                                              <label
+                                                                                                for="cancelReason-<%= cart[i]._id %>">Reason:</label>
+                                                                                              <textarea
+                                                                                                name="cancelReason"
+                                                                                                class="form-control"
+                                                                                                id="cancelReason-<%= cart[i]._id %>"
+                                                                                                rows="3"></textarea>
+                                                                                            </div>
+
+                                                                                            <hr>
+
+                                                                                            <button type="button"
+                                                                                              class="btn btn-secondary"
+                                                                                              data-bs-dismiss="modal">Close</button>
+                                                                                            <button type="button"
+                                                                                              class="btn btn-primary"
+                                                                                              onclick="cancelOrder(event, '<%= cart[i].productId %>', '<%= cart[i].productQuantity %>', '<%= order._id %>', '<%= cart[i]._id %>')">
+                                                                                              Submit
+                                                                                            </button>
+                                                                                          </form>
+                                                                                        </div>
+                                                                                      </div>
+                                                                                    </div>
+                                                                                  </div>
+
+                                                                                  <% } %>
+
+
+                                                        </td>
+                                                        <% } %>
+                              </tr>
+                              <% } %>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+
+
+
+
+
+                <!----- Price Details ----->
+                <div class="row mb-3">
+                  <div class="col-lg-6 offset-lg-6">
+                    <div class="card">
+                      <div class="card-body">
+                        <h6 class="card-title">PRICE DETAILS</h6>
+                        <p>Total Items: <span style="font-weight: bold;">
+                            <%= totalQuantity %>
+                          </span></p>
+                        <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                          <p>Subtotal</p>
+                          <p> ₹ <%= subtotal %>
+                          </p>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 14px;">
+                          <p>Shipping</p>
+                          <p style="color: green;">FREE</p>
+                        </div>
+                        <hr>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                          <p>Grand Total</p>
+                          <p> ₹ <%= subtotal %>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
     </div>
 
 
-    
 
-  
-   
-    <!----- Price Details ----->
-    <div class="row mb-3">
-      <div class="col-lg-6 offset-lg-6">
-        <div class="card">
-          <div class="card-body">
-            <h6 class="card-title">PRICE DETAILS</h6>
-            <p>Total Items: <span style="font-weight: bold;"> <%= totalQuantity %> </span></p>
-            <div style="display: flex; justify-content: space-between; font-size: 14px;">
-              <p>Subtotal</p>
-              <p> ₹ <%= subtotal %> </p>
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 14px;">
-              <p>Shipping</p>
-              <p style="color: green;">FREE</p>
-            </div>
-            <hr>
-            <div style="display: flex; justify-content: space-between; font-weight: bold;">
-              <p>Grand Total</p>
-              <p> ₹ <%= subtotal %> </p>
-            </div>
+    <!----- return reason modal ----->
+
+    <div class="modal" tabindex="-1" id="returnOrder">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Reason For Return Order</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form id="returnForm">
+              <div class="form-group mt-3 mb-3">
+                <label for="reason">Reason:</label>
+                <textarea name="returnReason" class="form-control" id="returnReason" rows="3"></textarea>
+              </div>
+
+              <hr>
+
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
           </div>
         </div>
       </div>
     </div>
 
-  </div>
 
 
 
-  <!----- return reason modal ----->
-
-  <div class="modal" tabindex="-1" id="returnOrder">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Reason For Return Order</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="returnForm">
-            <div class="form-group mt-3 mb-3">
-              <label for="reason">Reason:</label>
-              <textarea name="returnReason" class="form-control" id="returnReason" rows="3"></textarea>
-            </div>
-
-            <hr>
-            
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-
-
-    
 
     <%- include('../userPartials/footer') %>
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+      <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-      
-async function cancelOrder(event, productId, productQuantity, orderId) {
-    event.preventDefault();
+      <script>
 
-    try {
+        async function cancelOrder(event, productId, productQuantity, orderId, cartId) {
+          event.preventDefault();
 
-      const reason = document.getElementById('cancelReason').value
+          try {
 
-        // Show confirmation alert
-        const result = await Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this! Cancel?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, Cancel it!'
-        });
+            // const reason = document.getElementById('cancelReason').value
 
-        if (result.isConfirmed) {
-            // Proceed with cancellation
-            const response = await fetch(`/order/cancel?productId=${encodeURIComponent(productId)}&productQuantity=${encodeURIComponent(productQuantity)}&orderId=${encodeURIComponent(orderId)}&reason=${encodeURIComponent(reason)}`, {
-                method: 'POST'
+            let reasonField = document.getElementById(`cancelReason-${cartId}`);
+
+            if (!reasonField) {
+              console.error("Cancel reason field not found!");
+              return;
+            }
+
+            let cancelReason = reasonField.value.trim();
+
+            if (!cancelReason) {
+              alert("Please provide a reason for cancellation.");
+              return;
+            }
+
+
+            // Show confirmation alert
+            const result = await Swal.fire({
+              title: 'Are you sure?',
+              text: "You won't be able to revert this! Cancel?",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, Cancel it!'
             });
 
-            if (response.ok) {
+            if (result.isConfirmed) {
+              // Proceed with cancellation
+              const response = await fetch(`/order/cancel?productId=${encodeURIComponent(productId)}&productQuantity=${encodeURIComponent(productQuantity)}&orderId=${encodeURIComponent(orderId)}&reason=${encodeURIComponent(cancelReason)}`, {
+                method: 'POST'
+              });
+
+              if (response.ok) {
                 const responseData = await response.json();
                 if (responseData.success) {
-                    // Show success alert
-                    await Swal.fire({
-                        title: 'Cancelled!',
-                        text: 'Product has been cancelled from your order.',
-                        icon: 'success',
-                        confirmButtonText: 'OK'
-                    });
-                    // Redirect to the cart page after successful cancellation
-                    window.location.reload();
+                  // Show success alert
+                  await Swal.fire({
+                    title: 'Cancelled!',
+                    text: 'Product has been cancelled from your order.',
+                    icon: 'success',
+                    confirmButtonText: 'OK'
+                  });
+                  // Redirect to the cart page after successful cancellation
+                  window.location.reload();
                 } else {
-                    throw new Error('Cancellation unsuccessful');
+                  throw new Error('Cancellation unsuccessful');
                 }
-            } else {
+              } else {
                 throw new Error('Network response was not ok');
+              }
             }
+          } catch (error) {
+            console.error('Error:', error);
+            // Show error alert
+            Swal.fire({
+              title: 'Error!',
+              text: 'Failed to cancel product. Please try again later.',
+              icon: 'error',
+              confirmButtonText: 'OK'
+            });
+          }
         }
-    } catch (error) {
-        console.error('Error:', error);
-        // Show error alert
-        Swal.fire({
-            title: 'Error!',
-            text: 'Failed to cancel product. Please try again later.',
-            icon: 'error',
-            confirmButtonText: 'OK'
-        });
-    }
-}
-    </script>
+      </script>
 
 
 
 
 
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const returnOrderModal = document.getElementById('returnOrder');
-    returnOrderModal.addEventListener('show.bs.modal', function(event) {
-      const button = event.relatedTarget;
-      const orderId = button.getAttribute('data-order-id');
-      const productId = button.getAttribute('data-product-id');
-      const form = document.getElementById('returnForm');
-      form.dataset.orderId = orderId;
-      form.dataset.productId = productId;
-    });
-
-    const returnForm = document.getElementById('returnForm');
-    returnForm.addEventListener('submit', async function(event) {
-      event.preventDefault();
-      const orderId = returnForm.dataset.orderId;
-      const productId = returnForm.dataset.productId;
-      const reason = document.getElementById('returnReason').value;
-
-      // Show SweetAlert2 confirmation dialog
-      const result = await Swal.fire({
-        title: 'Are you sure?',
-        text: "Do you really want to request a return for this product?",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes, request return!'
-      });
-
-      // If the user cancels, do nothing
-      if (!result.isConfirmed) {
-        return;
-      }
-
-      try {
-        const response = await fetch(`/order/return`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ orderId, productId, reason })
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          Swal.fire(
-            'Requested!',
-            'Your return request has been submitted.',
-            'success'
-          ).then(() => {
-            window.location.reload();
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const returnOrderModal = document.getElementById('returnOrder');
+          returnOrderModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const orderId = button.getAttribute('data-order-id');
+            const productId = button.getAttribute('data-product-id');
+            const form = document.getElementById('returnForm');
+            form.dataset.orderId = orderId;
+            form.dataset.productId = productId;
           });
-        } else {
-          Swal.fire(
-            'Error!',
-            'There was a problem submitting your return request.',
-            'error'
-          );
+
+          const returnForm = document.getElementById('returnForm');
+          returnForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            const orderId = returnForm.dataset.orderId;
+            const productId = returnForm.dataset.productId;
+            const reason = document.getElementById('returnReason').value;
+
+            // Show SweetAlert2 confirmation dialog
+            const result = await Swal.fire({
+              title: 'Are you sure?',
+              text: "Do you really want to request a return for this product?",
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonColor: '#3085d6',
+              cancelButtonColor: '#d33',
+              confirmButtonText: 'Yes, request return!'
+            });
+
+            // If the user cancels, do nothing
+            if (!result.isConfirmed) {
+              return;
+            }
+
+            try {
+              const response = await fetch(`/order/return`, {
+                method: 'PUT',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ orderId, productId, reason })
+              });
+
+              const result = await response.json();
+
+              if (result.success) {
+                Swal.fire(
+                  'Requested!',
+                  'Your return request has been submitted.',
+                  'success'
+                ).then(() => {
+                  window.location.reload();
+                });
+              } else {
+                Swal.fire(
+                  'Error!',
+                  'There was a problem submitting your return request.',
+                  'error'
+                );
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              Swal.fire(
+                'Error!',
+                'There was a problem communicating with the server.',
+                'error'
+              );
+            }
+          });
+        });
+      </script>
+
+
+      <script>
+        async function failedPayment(orderId, total) {
+          try {
+            const response = await fetch(`/failed/payment?orderId=${orderId}&total=${total}`, {
+              method: 'GET'
+            });
+
+            const result = await response.json();
+
+            if (result.paypalLink) {
+              window.location.href = result.paypalLink;
+            }
+          } catch (error) {
+            console.error(error.message);
+          }
         }
-      } catch (error) {
-        console.error('Error:', error);
-        Swal.fire(
-          'Error!',
-          'There was a problem communicating with the server.',
-          'error'
-        );
-      }
-    });
-  });
-</script>
-
-
-<script>
-  async function failedPayment(orderId, total) {
-    try {
-      const response = await fetch(`/failed/payment?orderId=${orderId}&total=${total}`, {
-        method: 'GET'
-      });
-
-      const result = await response.json();
-
-      if (result.paypalLink) {
-        window.location.href = result.paypalLink;
-      }
-    } catch (error) {
-      console.error(error.message);
-    }
-  }
-</script>
+      </script>
 
 
 
-</body>
+  </body>

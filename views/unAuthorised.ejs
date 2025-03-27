@@ -1,0 +1,27 @@
+<body style="display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #1a1a2e; font-family: Arial, sans-serif; text-align: center; color: #fff; flex-direction: column; animation: fadeIn 1s ease-in-out;">
+    <div style="position: relative;">
+        <h1 style="font-size: 40px; margin-bottom: 10px; animation: fadeInText 1.5s ease-in-out;">Unauthorized Access</h1>
+        <div style="font-size: 120px; font-weight: bold; position: relative; display: inline-block;">
+            4<span style="color: orange;">0</span>3
+            <!-- <div style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 100px; height: 100px; background: url('https://cdn-icons-png.flaticon.com/512/159/159707.png') no-repeat center; background-size: contain; opacity: 0.8; animation: bounce 1.2s infinite;"></div> -->
+        </div>
+        <p style="font-size: 18px; color: #bbb; margin-top: 10px; animation: fadeInText 2s ease-in-out;">Oops! You don't have permission to view this order.</p>
+    </div>
+
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInText {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</body>

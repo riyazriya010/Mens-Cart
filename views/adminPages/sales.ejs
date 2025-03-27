@@ -165,8 +165,9 @@
                                         <th>Total Cost</th>
                                         <th>Payment Method</th>
                                         <th>Status</th>
-                                        <th>Coupons</th>
-                                        <th>Before Coupon</th>
+                                        <th>Overall Coupon</th>
+                                        <!-- <th>Before Coupon</th> -->
+                                        <!-- <th>Ordered Price</th> -->
                                         <th>Ordered Price</th>
                                     </tr>
                                 </thead>
@@ -196,9 +197,9 @@
                                                         <td style="text-align: center;">
                                                             <% if(cartItem.offerApplied) { %>
                                                                 <%= cartItem.offerApplied %>%
-                                                                <% }else{%>
-                                                                       -
-                                                                    <% } %>
+                                                                    <% }else{%>
+                                                                        -
+                                                                        <% } %>
                                                         </td>
                                                         <td style="text-align: center;">
                                                             <%= cartItem.productQuantity %>
@@ -212,9 +213,9 @@
                                                             <span>
                                                                 <% if(cartItem.offerPrice) { %>
                                                                     ₹<%= cartItem.offerPrice %>
-                                                                    <% }else{%>
-                                                                        ₹<%= cartItem.productPrice %>
-                                                                        <% } %>
+                                                                        <% }else{%>
+                                                                            ₹<%= cartItem.productPrice %>
+                                                                                <% } %>
                                                             </span>
                                                         </td>
                                                         <% if (j===0) { %>
@@ -231,24 +232,27 @@
                                                                 <% if (order.couponApplied) { %>
                                                                     <%= `${order.couponApplied.discountPercentage}%` %>
                                                                         <% } else { %>
-                                                                               -
+                                                                            -
                                                                             <% } %>
                                                             </td>
-                                                            <td rowspan="<%= order.cartData.length %>"
+                                                            <!-- <td rowspan="<%= order.cartData.length %>"
                                                                 style="text-align: center;">
                                                                 
                                                                     <span>
                                                                         ₹<%= order.grandTotalCost %>
                                                                     </span>
-                                                            </td>
+                                                            </td> -->
                                                             <td rowspan="<%= order.cartData.length %>"
                                                                 style="text-align: center;">
-                                                                <span>
+                                                                <!-- <span>
                                                                     <% if(order.discountedPrice){ %>
                                                                         ₹<%= order.discountedPrice %>
                                                                         <% }else{ %>
                                                                             ₹<%= order.grandTotalCost %>
                                                                             <% } %>
+                                                                </span> -->
+                                                                <span>
+                                                                    ₹<%= order.finalTotal %>
                                                                 </span>
                                                             </td>
                                                             <% } %>
@@ -266,7 +270,10 @@
 
             <div>
                 <h5>
-                    Overall sales Count : <%= Sreports.length %>
+                    Sales Count : <%= Sreports.length %>
+                </h5>
+                <h5>
+                    Revenue : <%= totalRevenue %>
                 </h5>
             </div>
 
@@ -307,103 +314,103 @@
             <script>
                 const orderDet = '<%- JSON.stringify(Sreports) %>'
                 const salesDet = '<%- JSON.stringify(products) %>'
-        
+
                 const orders = JSON.parse(orderDet)
                 const delivsDet = JSON.parse(salesDet)
-        
+
                 console.log("Sreporst :", orders);
                 console.log("Prods :", delivsDet);
-        
+
             </script>
 
 
-<script>
-    let filterBtn2 = document.getElementById('filterBtn')
-    document.getElementById('applyOptionFilter').addEventListener('click', async (e) => {
-        e.preventDefault();
-        let filterOption = document.getElementById('filterOption').value;
-        let formData = { filterOption };
-        console.log(formData)
-        let response = await fetch('/admin/salesReport/filterOptions', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData)
-        });
-        let result = await response.json();
+            <script>
+                let filterBtn2 = document.getElementById('filterBtn')
+                document.getElementById('applyOptionFilter').addEventListener('click', async (e) => {
+                    e.preventDefault();
+                    let filterOption = document.getElementById('filterOption').value;
+                    let formData = { filterOption };
+                    console.log(formData)
+                    let response = await fetch('/admin/salesReport/filterOptions', {
+                        method: 'POST',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(formData)
+                    });
+                    let result = await response.json();
 
-        if (result.success) {
-            window.location.reload();
-        }
-    });
-
-    document.getElementById('applyFilters').addEventListener("click", async (e) => {
-        // Get values from date inputs
-        e.preventDefault()
-        const filterDateFrom = document.getElementById('filterDateFrom').value;
-        const filterDateTo = document.getElementById('filterDateTo').value;
-
-        // Construct the data object to send
-        const formData = {
-            filterDateFrom,
-            filterDateTo
-        };
-
-        try {
-            // Send the data using fetch
-            const response = await fetch('/filterdate', {
-                method: 'POST', // Use 'POST' to send data to the server
-                headers: {
-                    'Content-Type': 'application/json' // Specify the content type as JSON
-                },
-                body: JSON.stringify(formData) // Convert the data object to a JSON string
-            });
-
-            let data = await response.json();
-
-
-            if (data.success) {
-                window.location.reload()
-                // Check if the response is successful
-            }
-            if (data.dateInvalid) {
-                await Swal.fire({
-                    icon: "error",
-                    title: "Invalid Date Filters",
+                    if (result.success) {
+                        window.location.reload();
+                    }
                 });
-            }
-            // Handle the response data
 
-            // Log the data to the console
-            // Do something with the data, e.g., update the UI
-        } catch (error) {
-            console.error('There was a problem with the fetch operation:', error); // Log any errors to the console
-        }
-    });
+                document.getElementById('applyFilters').addEventListener("click", async (e) => {
+                    // Get values from date inputs
+                    e.preventDefault()
+                    const filterDateFrom = document.getElementById('filterDateFrom').value;
+                    const filterDateTo = document.getElementById('filterDateTo').value;
 
-</script>
-<script>
-    document.getElementById('downloadPdf').addEventListener('click', async () => {
-        console.log('hai')
-        const filterDateFrom = document.getElementById('filterDateFrom').value;
-        const filterDateTo = document.getElementById('filterDateTo').value;
-        try {
-            const response = await fetch(`/salesReport/download/pdf?startDate=${filterDateFrom}&endDate=${filterDateTo}`, {
-                method: 'GET'
-            });
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'salesReport.pdf';
-            document.body.appendChild(a);
-            a.click();
-            window.URL.revokeObjectURL(url);
-            document.body.removeChild(a);
-        } catch (error) {
-            console.error('Error downloading PDF:', error);
-        }
-    });
-</script>
+                    // Construct the data object to send
+                    const formData = {
+                        filterDateFrom,
+                        filterDateTo
+                    };
+
+                    try {
+                        // Send the data using fetch
+                        const response = await fetch('/filterdate', {
+                            method: 'POST', // Use 'POST' to send data to the server
+                            headers: {
+                                'Content-Type': 'application/json' // Specify the content type as JSON
+                            },
+                            body: JSON.stringify(formData) // Convert the data object to a JSON string
+                        });
+
+                        let data = await response.json();
+
+
+                        if (data.success) {
+                            window.location.reload()
+                            // Check if the response is successful
+                        }
+                        if (data.dateInvalid) {
+                            await Swal.fire({
+                                icon: "error",
+                                title: "Invalid Date Filters",
+                            });
+                        }
+                        // Handle the response data
+
+                        // Log the data to the console
+                        // Do something with the data, e.g., update the UI
+                    } catch (error) {
+                        console.error('There was a problem with the fetch operation:', error); // Log any errors to the console
+                    }
+                });
+
+            </script>
+            <script>
+                document.getElementById('downloadPdf').addEventListener('click', async () => {
+                    console.log('hai')
+                    const filterDateFrom = document.getElementById('filterDateFrom').value;
+                    const filterDateTo = document.getElementById('filterDateTo').value;
+                    try {
+                        const response = await fetch(`/salesReport/download/pdf?startDate=${filterDateFrom}&endDate=${filterDateTo}`, {
+                            method: 'GET'
+                        });
+                        const blob = await response.blob();
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = 'salesReport.pdf';
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                        document.body.removeChild(a);
+                    } catch (error) {
+                        console.error('Error downloading PDF:', error);
+                    }
+                });
+            </script>
 
 
     </body>
