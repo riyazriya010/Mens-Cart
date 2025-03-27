@@ -98,38 +98,6 @@ exports.report = async (req, res, next) => {
       endDate2 = new Date(req.session.endDate2);
     }
 
-    // var salesDetails =
-    //   req.session.salesDetails ||
-    //   await orderCollection.orders.find({
-    //     orderDate: { $gte: startDate, $lte: endDate },
-    //     orderStatus: "Delivered",
-    //   })
-    //     .sort({ orderDate: -1 })
-    //     // .populate({path:cartData,populate:{)
-    //     .populate('userId')
-    //     .populate('couponApplied');
-
-
-
-    //New Updated
-    // var salesDetails =
-    //   req.session.salesDetails ||
-    //   await orderCollection.orders.find({
-    //     orderDate: { $gte: startDate, $lte: endDate },
-    //     "cartData.status": "Delivered", // Ensure at least one delivered product exists
-    //   })
-    //     .sort({ orderDate: -1 })
-    //     .populate('userId')
-    //     .populate('couponApplied')
-    //     .lean(); // Convert to plain objects for better manipulation
-
-    // // Filter only the delivered products from cartData
-    // salesDetails = salesDetails.map(order => {
-    //   order.cartData = order.cartData.filter(product => product.status === "Delivered");
-    //   return order;
-    // });
-
-
     var salesDetails =
       req.session.salesDetails ||
       await orderCollection.orders
@@ -644,11 +612,22 @@ exports.filterDate = async (req, res, next) => {
 
 exports.removeAllFillters = async (req, res, next) => {
   try {
-    req.session.salesDetails = null;
-    req.session.startDate2 = null;
-    req.session.endDate2 = null;
+    // req.session.salesDetails = null;
+    // req.session.startDate2 = null;
+    // req.session.endDate2 = null;
+
+    req.session.salesDetails = null
+      req.session.filterDates = null
+      req.session.startDate = null
+      req.session.endDate = null
+      req.session.startDate2 = null
+      req.session.endDate2 = null
+      // req.session.filterDates.datevalues = null
+      // req.session.admin.dateValues = null
+
     res.redirect("/admin/report");
   } catch (error) {
+    console.log('report error ',error)
     next(new AppError(error.message, 500))
   }
 }

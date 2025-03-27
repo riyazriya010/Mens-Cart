@@ -272,7 +272,7 @@ exports.categoryOfferManagement = async (req, res, next) => {
         const skip = (page - 1) * limit;
 
         const categoryData = await categoryCollection.category.find()
-        const categoryOfferData = await categoryOfferCollection.categoryOfferModel.find().skip(skip).limit(limit);
+        const categoryOfferData = await categoryOfferCollection.categoryOfferModel.find().sort({ createdAt: -1 }).skip(skip).limit(limit);
 
         const totalCategories = await categoryCollection.category.countDocuments();
         const totalCategoryOffers = await categoryOfferCollection.categoryOfferModel.countDocuments();

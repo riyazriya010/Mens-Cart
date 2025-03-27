@@ -491,7 +491,7 @@
 
             try {
                 const response = await fetch(`/cart/increase?productId=${productId}`, {
-                    method: 'PUT'
+                    method: 'PATCH'
                 });
 
                 const result = await response.json();
@@ -532,7 +532,7 @@
 
             try {
                 const response = await fetch(`/cart/decrease?productId=${productId}`, {
-                    method: 'PUT'
+                    method: 'PATCH'
                 });
 
                 const result = await response.json();

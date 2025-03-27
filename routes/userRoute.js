@@ -65,8 +65,8 @@ userRouter.get('/cart',middleware.redirectNotLoggedIn,cartController.cartGet);
 userRouter.post('/cart/addToCart',cartController.addToCart)
 userRouter.delete('/cart/deleteCart',cartController.deleteCartItem);
 userRouter.delete('/deleteAll',cartController.deleteAll);
-userRouter.put('/cart/increase',cartController.increaseQty);
-userRouter.put('/cart/decrease',cartController.decreaseQty);
+userRouter.patch('/cart/increase',cartController.increaseQty);
+userRouter.patch('/cart/decrease',cartController.decreaseQty);
 userRouter.get('/cart/emptyCart',middleware.redirectNotLoggedIn,cartController.emptyCart);
 
 
@@ -108,8 +108,8 @@ userRouter.get('/order/singleOrder/:id',middleware.redirectNotLoggedIn,orderCont
 userRouter.get('/order/singleOrder/downloadInvoice/:id',orderController.downloadInvoice);
 userRouter.post('/order/cancel',orderController.cancelOrder);
 userRouter.put('/order/return',orderController.returnOrder);
-userRouter.put('/coupon/apply',couponController.couponApply);
-userRouter.put('/coupon/remove',couponController.removeCoupon);
+userRouter.patch('/coupon/apply',couponController.couponApply);
+userRouter.patch('/coupon/remove',couponController.removeCoupon);
 
 
 //wallet

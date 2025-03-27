@@ -34,14 +34,14 @@ exports.productGet = async (req, res, next) => {
                 productData = await productCollection.product.find({
                     productName: { $regex: searchQuery, $options: 'i' },
                     isDeleted: false
-                }).populate("parentCategory").skip(skip).limit(limit)
+                }).populate("parentCategory").sort({ createdAt: -1 }).skip(skip).limit(limit)
                 totalProduct = await productCollection.product.countDocuments({
                     productName: { $regex: searchQuery, $options: 'i' },
                     isDeleted: false
                 });
             } else {
                 totalProduct = await productCollection.product.countDocuments({ isDeleted: false }).populate("parentCategory")
-                productData = await productCollection.product.find({ isDeleted: false }).populate("parentCategory").skip(skip).limit(limit);
+                productData = await productCollection.product.find({ isDeleted: false }).populate("parentCategory").sort({ createdAt: -1 }).skip(skip).limit(limit);
             }
 
             const totalPages = Math.ceil(totalProduct / limit);
@@ -358,6 +358,7 @@ exports.productOfferManagement = async (req, res, next) => {
         const productData = await productCollection.product.find()
         const productOfferData = await productOfferCollection.productOffermodel.find()
             .populate('productId')
+            .sort({ createdAt: -1 })
             .skip(skip)
             .limit(limit);
 

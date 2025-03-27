@@ -18,8 +18,8 @@ exports.couponGet = async (req, res, next) => {
         const limit = 5;
         const skip = (page - 1) * limit;
 
-        const couponData = await couponCollection.coupon.find({ isDelete: false }).skip(skip).limit(limit);
-        const couponDet = await couponCollection.coupon.find({ isDelete: true }).skip(skip).limit(limit);
+        const couponData = await couponCollection.coupon.find({ isDelete: false }).sort({ createdAt: -1 }).skip(skip).limit(limit);
+        const couponDet = await couponCollection.coupon.find({ isDelete: true }).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
         const totalActiveCoupons = await couponCollection.coupon.countDocuments({ isDelete: false });
         const totalDeletedCoupons = await couponCollection.coupon.countDocuments({ isDelete: true });

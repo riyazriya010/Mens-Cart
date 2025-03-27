@@ -626,13 +626,13 @@ exports.userGet = async (req,res,next) => {
                 // Perform a search query in your MongoDB collection
                 userData = await userCollection.user.find({
                     username: { $regex: searchQuery, $options: 'i' }
-                }).skip(skip).limit(limit);
+                }).sort({ createdAt: -1 }).skip(skip).limit(limit);
                 totalUser = await userCollection.user.countDocuments({
                     username: { $regex: searchQuery, $options: 'i' }
                 });
             } else {
                 totalUser = await userCollection.user.countDocuments({});
-                userData = await userCollection.user.find({}).skip(skip).limit(limit);
+                userData = await userCollection.user.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit);
             }
     
             const totalPages = Math.ceil(totalUser / limit);

@@ -417,7 +417,7 @@
           try {
 
             const response = await fetch(`/coupon/apply?couponId=${couponId}&total=${total}`, {
-              method: 'PUT'
+              method: 'PATCH'
             })
 
             const result = await response.json()
@@ -457,7 +457,7 @@
             }).then((result) => {
               if (result.isConfirmed) {
                 fetch(`/coupon/remove`, {
-                  method: 'PUT', // Using POST to support forms without JavaScript
+                  method: 'PATCH', // Using POST to support forms without JavaScript
                 })
                   .then(response => response.json())
                   .then(data => {
