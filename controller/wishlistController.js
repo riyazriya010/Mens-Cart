@@ -4,25 +4,52 @@ const cartCollections = require('../models/cartModel.js');
 const AppError = require('../middleware/errorHandling.js');
 
 
+// exports.wishlistGet = async (req, res, next) => {
+
+//     try {
+
+//         const wishlistData = await wishlistCollection.wishlist.find({ userId: req.session.userId }).populate('productId')
+//         // console.log(wishlistData)
+
+//         if (wishlistData.length === 0) {
+//             return res.redirect('/wishlist/emptyList');
+//         }
+
+//         res.render('userPages/wishlist', { wishlistData });
+
+//     } catch (error) {
+//         next(new AppError(error.message, 500))
+//     }
+// }
+
 exports.wishlistGet = async (req, res, next) => {
-
     try {
+        const wishlistData = await wishlistCollection.wishlist.find({ userId: req.session.userId })
+            .populate('productId');
 
+        // Find unlisted products in the wishlist
+        const unlistedItems = wishlistData.filter(item => !item.productId || item.productId.isListed === false);
 
+        // Remove unlisted products from the wishlist
+        if (unlistedItems.length > 0) {
+            const unlistedItemIds = unlistedItems.map(item => item._id);
+            await wishlistCollection.wishlist.deleteMany({ _id: { $in: unlistedItemIds } });
+        }
 
-        const wishlistData = await wishlistCollection.wishlist.find({ userId: req.session.userId }).populate('productId')
-        // console.log(wishlistData)
+        // Filter only listed products
+        const filteredWishlistData = wishlistData.filter(item => item.productId && item.productId.isListed === true);
 
-        if(wishlistData.length === 0){
+        if (filteredWishlistData.length === 0) {
             return res.redirect('/wishlist/emptyList');
-          }
+        }
 
-        res.render('userPages/wishlist', { wishlistData });
+        res.render('userPages/wishlist', { wishlistData: filteredWishlistData });
 
     } catch (error) {
-        next(new AppError(error.message, 500))
+        next(new AppError(error.message, 500));
     }
-}
+};
+
 
 
 exports.additemToWishlist = async (req, res, next) => {
@@ -36,10 +63,10 @@ exports.additemToWishlist = async (req, res, next) => {
         const productId = req.params.id
         console.log(productId);
 
-        const wishlist = await wishlistCollection.wishlist.findOne({userId: userId,productId:productId})
+        const wishlist = await wishlistCollection.wishlist.findOne({ userId: userId, productId: productId })
 
-        if(wishlist){
-            return res.json({success:false, productAlreadyExist:true});
+        if (wishlist) {
+            return res.json({ success: false, productAlreadyExist: true });
         }
 
         const wishlistData = {
@@ -68,8 +95,8 @@ exports.addToCart = async (req, res, next) => {
         const productData = await productCollection.product.findById(productId).populate('parentCategory')
         console.log(productData)
 
-        if(productData.productStock === 0){
-            return res.json({success:false, outOfStock:true});
+        if (productData.productStock === 0) {
+            return res.json({ success: false, outOfStock: true });
         }
 
         const cart = await cartCollections.cart.findOne({ userId: req.session.userId, productId: productId })
@@ -98,8 +125,8 @@ exports.addToCart = async (req, res, next) => {
         }
 
         const wishlist = await wishlistCollection.wishlist.updateOne(
-            {productId:productId},
-            {$set:{addedToCart:true}}
+            { productId: productId },
+            { $set: { addedToCart: true } }
         )
 
         res.json({ success: true })
@@ -111,27 +138,27 @@ exports.addToCart = async (req, res, next) => {
 
 
 //delete item
-exports.deleteItem = async (req,res, next) => {
+exports.deleteItem = async (req, res, next) => {
     try {
 
         const productId = req.query.productId
 
         const wishlist = await wishlistCollection.wishlist.findOneAndDelete({
-            productId:productId
+            productId: productId
         })
 
-        if(!wishlist){
-            return res.json({success:false, prodcutNotFound:true})
+        if (!wishlist) {
+            return res.json({ success: false, prodcutNotFound: true })
         }
 
-        const isList = await wishlistCollection.wishlist.find({userId:req.session.userId})
+        const isList = await wishlistCollection.wishlist.find({ userId: req.session.userId })
 
-        if(isList.length === 0){
-            return res.json({success:true, listEmpty:true})
+        if (isList.length === 0) {
+            return res.json({ success: true, listEmpty: true })
         }
 
-        res.json({success:true})
-        
+        res.json({ success: true })
+
     } catch (error) {
         next(new AppError(500));
     }
@@ -139,16 +166,16 @@ exports.deleteItem = async (req,res, next) => {
 
 
 
-exports.emptyWishlist = async (req,res,next) => {
+exports.emptyWishlist = async (req, res, next) => {
     try {
 
-        const isList = await wishlistCollection.wishlist.find({userId:req.session.userId})
+        const isList = await wishlistCollection.wishlist.find({ userId: req.session.userId })
 
-        if(isList.length === 0){
+        if (isList.length === 0) {
             return res.render('userPages/emptyList');
-          } 
-          res.redirect('/wishList');
-        
+        }
+        res.redirect('/wishList');
+
     } catch (error) {
         next(new AppError(500));
     }

@@ -9,45 +9,101 @@ const AppError = require('../middleware/errorHandling.js');
 
 
 
-exports.cartGet = async (req, res, next) => {
-    try {
+// exports.cartGet = async (req, res, next) => {
+//     try {
 
-      const cartData = await cartCollection.cart.find({ userId: req.session.userId }).populate('productId');
+//       const cartData = await cartCollection.cart.find({ userId: req.session.userId }).populate('productId');
 
-      if(cartData.length === 0){
-        return res.redirect('/cart/emptyCart');
-      }
+//       if(cartData.length === 0){
+//         return res.redirect('/cart/emptyCart');
+//       }
   
+//       let totalItems = 0;
+//       let grandTotal = 0;
+//       let outOfStockItems = [];
+  
+//       // Loop through the cart items and check actual available quantities
+//       for (const item of cartData) {
+//         const product = item.productId;
+//         const price = product.offerPrice || product.productPrice
+  
+//         if (product.productStock < item.productQuantity) {
+//           // If available quantity is less than cart quantity, adjust it
+//           outOfStockItems.push({ productName: product.productName, requestedQuantity: item.productQuantity, availableQuantity: product.productStock });
+  
+//           // Update the cart item to reflect the actual available quantity
+//           await cartCollection.cart.updateOne({ _id: item._id }, { $set: { productQuantity: product.productStock, totalCostPerProduct: product.productStock * price } });
+  
+//           item.productQuantity = product.productStock;
+//           item.totalCostPerProduct = product.productStock * price;
+//         }
+  
+//         totalItems += item.productQuantity;
+//         grandTotal += item.totalCostPerProduct;
+//       }
+  
+//       res.render("userPages/cartPage", { cartData, totalItems, grandTotal, outOfStockItems });
+  
+//     } catch (error) {
+//       next(new AppError(error.message, 500))
+//     }
+//   };
+
+exports.cartGet = async (req, res, next) => {
+  try {
+      const cartData = await cartCollection.cart.find({ userId: req.session.userId })
+          .populate('productId');
+
+      // Separate out unlisted products
+      const unlistedItems = cartData.filter(item => !item.productId || item.productId.isListed === false);
+
+      // Remove unlisted products from cart
+      if (unlistedItems.length > 0) {
+          const unlistedItemIds = unlistedItems.map(item => item._id);
+          await cartCollection.cart.deleteMany({ _id: { $in: unlistedItemIds } });
+      }
+
+      // Filter only listed products
+      const filteredCartData = cartData.filter(item => item.productId && item.productId.isListed === true);
+
+      if (filteredCartData.length === 0) {
+          return res.redirect('/cart/emptyCart');
+      }
+
       let totalItems = 0;
       let grandTotal = 0;
       let outOfStockItems = [];
-  
-      // Loop through the cart items and check actual available quantities
-      for (const item of cartData) {
-        const product = item.productId;
-        const price = product.offerPrice || product.productPrice
-  
-        if (product.productStock < item.productQuantity) {
-          // If available quantity is less than cart quantity, adjust it
-          outOfStockItems.push({ productName: product.productName, requestedQuantity: item.productQuantity, availableQuantity: product.productStock });
-  
-          // Update the cart item to reflect the actual available quantity
-          await cartCollection.cart.updateOne({ _id: item._id }, { $set: { productQuantity: product.productStock, totalCostPerProduct: product.productStock * price } });
-  
-          item.productQuantity = product.productStock;
-          item.totalCostPerProduct = product.productStock * price;
-        }
-  
-        totalItems += item.productQuantity;
-        grandTotal += item.totalCostPerProduct;
+
+      for (const item of filteredCartData) {
+          const product = item.productId;
+          const price = product.offerPrice || product.productPrice;
+
+          if (product.productStock < item.productQuantity) {
+              outOfStockItems.push({
+                  productName: product.productName,
+                  requestedQuantity: item.productQuantity,
+                  availableQuantity: product.productStock
+              });
+
+              await cartCollection.cart.updateOne(
+                  { _id: item._id },
+                  { $set: { productQuantity: product.productStock, totalCostPerProduct: product.productStock * price } }
+              );
+
+              item.productQuantity = product.productStock;
+              item.totalCostPerProduct = product.productStock * price;
+          }
+
+          totalItems += item.productQuantity;
+          grandTotal += item.totalCostPerProduct;
       }
-  
-      res.render("userPages/cartPage", { cartData, totalItems, grandTotal, outOfStockItems });
-  
-    } catch (error) {
-      next(new AppError(error.message, 500))
-    }
-  };
+
+      res.render("userPages/cartPage", { cartData: filteredCartData, totalItems, grandTotal, outOfStockItems });
+
+  } catch (error) {
+      next(new AppError(error.message, 500));
+  }
+};
 
 
 
