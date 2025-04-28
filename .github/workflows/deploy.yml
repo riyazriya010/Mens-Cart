@@ -1,20 +1,11 @@
-name: 🚀 Deploy MernsCart to EC2
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   deploy:
-    name: Deploy to EC2
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      - name: Deploy over SSH
+      - name: Set up SSH
         uses: appleboy/ssh-action@v0.1.8
         with:
           host: ${{ secrets.EC2_HOST }}
