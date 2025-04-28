@@ -1,18 +1,29 @@
+name: CI/CD Deployment
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment when pushing to the main branch
+
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    name: Deploy to EC2
+    runs-on: ubuntu-latest  # This specifies that the job will run on an Ubuntu runner
+
     steps:
+      # Checkout the code from the repository
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # Set up SSH access to the EC2 instance
       - name: Set up SSH
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_SSH_KEY }}
+          host: ${{ secrets.EC2_HOST }}          # EC2 public IP from secrets
+          username: ${{ secrets.EC2_USERNAME }}  # EC2 username from secrets
+          key: ${{ secrets.EC2_SSH_KEY }}       # SSH private key from secrets
           script: |
-            cd /home/ubuntu/MernsCart || exit
-            git pull origin main
-            npm install
-            pm2 restart all || pm2 start application.js --name=MernsCart
+            cd /home/ubuntu/MernsCart || exit   # Navigate to the project directory
+            git pull origin main                # Pull the latest changes from Git
+            npm install                         # Install dependencies
+            pm2 restart all || pm2 start application.js --name=MernsCart  # Restart the app using PM2
